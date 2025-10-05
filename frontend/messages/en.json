@@ -1,0 +1,1413 @@
+{
+  "welcome": "Welcome",
+  "hello": "Hello World",
+  "SearchBar": {
+    "locations": {
+      "kuwaitCity": "Kuwait City",
+      "hawalli": "Hawalli",
+      "salmiya": "Salmiya",
+      "ahmadi": "Ahmadi",
+      "jahra": "Jahra"
+    },
+    "areas": {
+      "capital": "Capital",
+      "hawalli": "Hawalli",
+      "ahmadi": "Ahmadi",
+      "jahra": "Jahra"
+    },
+    "categories": {
+      "all": "All",
+      "restaurants": "Restaurants",
+      "attractions": "Attractions",
+      "hotels": "Hotels",
+      "shopping": "Shopping"
+    },
+    "selectLocation": "Select Location",
+    "searchLocations": "Search locations",
+    "location": "Location",
+    "useCurrentLocation": "Use Current Location",
+    "getLocationAutomatically": "Get your location automatically",
+    "currentLocation": "Current Location",
+    "gps": "GPS",
+    "locationError": "Unable to get your location",
+    "geoNotSupported": "Geolocation is not supported in your browser",
+    "searchPlaceholder": "Search..."
+  },
+  "Navbar": {
+    "home": "Home",
+    "offers": "Offers",
+    "flashDeals": "Flash Deals",
+    "explore": "Explore",
+    "services": "Services",
+    "products": "Products",
+    "events": "Events",
+    "more": "More",
+    "app": "App",
+    "login": "Login",
+    "signup": "Signup",
+    "about": "About Us",
+    "contact": "Contact",
+    "for_businesses": "For Businesses",
+    "privacy": "Privacy Policy",
+    "terms": "Terms & Conditions",
+    "giftcenter": "Gift Center",
+    
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout",
+    "notifications": "Notifications",
+    "viewAllNotifications": "View all notifications",
+    "postAd": "+ Post Ad",
+
+  "viewPublicProfile": "View public profile",
+  "loyaltyPoints": "Loyalty Points",
+  "switchToSeller": "Switch to seller",
+    "switchToUser": "Switch to User",
+  "myAds": "My Ads",
+  "myWallet": "My Wallet",
+  "favourites": "Favourites",
+  "blogs": "Blogs"
+
+  },
+  "carousel": {
+    "slide1": {
+      "title": "Kuwait's #1 Business Discovery Platform",
+      "subtitle": "Find exclusive deals, and support local businesses",
+      "alt": "Luxurious shopping mall interior with ornate architecture"
+    },
+    "slide2": {
+      "title": "Discover Amazing Kuwait's Local Restaurants",
+      "subtitle": "Explore the best dining experiences in your neighborhood",
+      "alt": "Modern restaurant interior"
+    },
+    "slide3": {
+      "title": "Support Kuwait's Local Retail Businesses",
+      "subtitle": "Shop local and find unique products from Kuwait's entrepreneurs",
+      "alt": "Local retail shop"
+    },
+    "buttons": {
+      "exploreDeal": "Explore Deals",
+      "forBusinesses": "For Businesses"
+    },
+    "dotIndicator": "Go to slide {index}"
+  },
+  "CategoriesSection": {
+    "restaurants": "Restaurants",
+    "hotels-stays": "Hotels & Stays",
+    "salons-spas": "Salons & Spas",
+    "shopping": "Shopping",
+    "entertainment": "Entertainment",
+    "services": "Services",
+    "weddings": "Weddings",
+    "marketplace": "Marketplace",
+    "viewAll": "View All",
+    "aria": {
+      "browseCategory": "Browse {categoryName}",
+      "viewAll": "View all categories",
+      "sectionLabel": "Categories"
+    }
+  },
+  "LandingPage": {
+    "categories": {
+      "title": "Explore By Category",
+      "description": "Discover amazing deals across all your favorite categories"
+    },
+    "explore": {
+      "titlePrefix": "Featured in",
+      "titleHighlight": "Explore",
+      "description": "Discover Kuwait's most popular spots with exclusive deals"
+    },
+    "services": {
+      "titlePrefix": "Featured in",
+      "titleHighlight": "Services",
+      "description": "Professional services you can trust with amazing offers"
+    },
+    "products": {
+      "titlePrefix": "Featured in",
+      "titleHighlight": "Products",
+      "description": "Shop the latest products from verified sellers"
+    },
+    "common": {
+      "viewAll": "View All"
+    }
+  },
+  "FlashDeals": {
+    "title": "Flash Deals",
+    "subtitle": "Limited time offers that disappear fast!",
+    "viewAll": "View All"
+  },
+  "footer": {
+    "logo": {
+      "alt": "Wafferli Logo"
+    },
+    "description": "Kuwait's #1 platform connecting customers with local businesses through exclusive deals and authentic experiences.",
+    "buttons": {
+      "whatsapp": "Whatsapp Us",
+      "call": "Call Us"
+    },
+    "sections": {
+      "customers": "For Customers",
+      "businesses": "For Businesses",
+      "company": "Company"
+    },
+    "links": {
+      "browseDeals": "Browse Deals",
+      "flashDeals": "Flash Deals",
+      "mobileApps": "Mobile Apps",
+      "helpCenter": "Help Center",
+      "partnerWithUs": "Partner With Us",
+      "businessDashboard": "Business Dashboard",
+      "marketingTools": "Marketing Tools",
+      "successStories": "Success Stories",
+      "pricingPlans": "Pricing Plans",
+      "aboutWafferli": "About Wafferli",
+      "blogNews": "Blog / News",
+      "careers": "Careers",
+      "contactUs": "Contact Us",
+      "faqs": "FAQs",
+      "sitemap": "Sitemap"
+    },
+    "legal": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "cookies": "Cookie Policy"
+    },
+    "copyright": "© {year} Wafferli. All rights reserved."
+  },
+  "Blog": {
+    "title": "Featured Blog",
+    "subtitle": "Discover Kuwait through insider guides and local insights",
+    "viewAll": "View All",
+    "readMore": "Read More"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know about using Wafferli",
+    "stillHaveQuestions": "Still have questions?",
+    "viewAll": "View All FAQs",
+    "questions": {
+      "redeemDeals": "How do I redeem deals on Wafferli?",
+      "validity": "How long are deals valid for?",
+      "giftCards": "Can I buy and send gift cards through Wafferli?",
+      "joinBusiness": "How can my business join Wafferli?"
+    },
+    "answers": {
+      "redeemDeals": "To redeem deals, simply show the offer code at the participating store or use it during online checkout.",
+      "validity": "Each offer comes with its own validity period, which is clearly mentioned in the deal details.",
+      "giftCards": "Yes, Wafferli provides gift cards that you can purchase and share with family and friends.",
+      "joinBusiness": "Businesses can join Wafferli by signing up on our platform and submitting the required details."
+    }
+  },
+  "getWafferliApp": {
+    "title": "Get the Wafferli App",
+    "subtitle": "Enjoy instant alerts, exclusive offers, and the best deals at your fingertips.",
+    "instantAlerts": {
+      "title": "Instant Alerts",
+      "description": "Get notified instantly about new offers and flash deals."
+    },
+    "exclusiveOffers": {
+      "title": "Exclusive Offers",
+      "description": "Unlock deals and discounts available only on the Wafferli app."
+    },
+    "buttons": {
+      "ios": "Download on iOS",
+      "android": "Download on Android"
+    },
+    "imageAlt": "Wafferli mobile app preview"
+  },
+  "newsletter": {
+    "title": "Subscribe to our Newsletter",
+    "subtitle": "Join our mailing list to receive the latest deals and exclusive updates straight to your inbox.",
+    "emailLabel": "Email Address",
+    "placeholder": "Enter your email",
+    "subscribe": "Subscribe Now"
+  },
+  "Auth": {
+    "hero": {
+      "joinCommunity": "Join the Community",
+      "title": "Unlock Exclusive Deals &",
+      "titleHighlight": "Personalized Offers",
+      "subtitle": "Join thousands of savvy shoppers discovering the best of Kuwait",
+      "stats": {
+        "happyMembers": "Happy Members",
+        "dealsClaimed": "Deals Claimed",
+        "totalSavings": "Total Savings"
+      }
+    },
+    "features": {
+      "title": "What You'll Get",
+      "saveYourFavorites": {
+        "title": "Save Your Favorites",
+        "description": "Never lose track of deals you love"
+      },
+      "claimHistory": {
+        "title": "Claim History",
+        "description": "Track all your savings and purchases"
+      },
+      "personalizedDeals": {
+        "title": "Personalized Deals",
+        "description": "Get offers tailored just for you"
+      },
+      "loyaltyRewards": {
+        "title": "Loyalty Rewards",
+        "description": "Earn points with every purchase"
+      },
+      "fullExperience": {
+        "title": "Get the Full Experience",
+        "description": "Download our mobile app for exclusive features",
+        "ios": "iOS",
+        "android": "Android"
+      }
+    },
+    "login": {
+      "title": "Welcome Back!",
+      "subtitle": "Sign in to access your exclusive deals",
+      "emailOrPhone": "Email or Phone",
+      "password": "Password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot Password?",
+      "signIn": "Sign In",
+      "orContinueWith": "Or continue with",
+      "signInWithGoogle": "Sign In With Google",
+      "signInWithApple": "Sign In With Apple",
+      "noAccount": "Don't have an account?",
+      "createAccount": "Create Account"
+    },
+    "signup": {
+      "title": "Join Wafferli Today!",
+      "subtitle": "Create your account and start saving",
+      "fullName": "Full Name",
+      "emailAddress": "Email Address",
+      "phoneNumber": "Phone Number",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "agreeToTerms": "I agree to",
+      "termsOfService": "Terms of Service",
+      "and": "and",
+      "privacyPolicy": "Privacy Policy",
+      "createAccount": "Create Account",
+      "orSignUpWith": "Or sign up with",
+      "signUpWithGoogle": "Sign Up With Google",
+      "signUpWithApple": "Sign Up With Apple",
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign In",
+      "referral": {
+      "title": "You’re Almost there!",
+      "subtitle": "Enter Referral Code (if any)",
+      "placeholder": "e.g. WAFFLE2024",
+      "discount": "Get 15% off for any first offer you avail."
+    },
+    "nextStep": "Next",
+    "finish": "Finish"
+    }
+  },
+  "Sidebar": {
+    "deal_types": "Deal Types",
+    "price_range": "Price Range",
+    "minimum_discount": "Minimum Discount",
+    "minimum_rating": "Minimum Rating"
+  },
+  "Checkbox": {
+    "salons": "Salons",
+    "health_beauty": "Health & Beauty",
+    "automotive": "Automotive"
+  },
+  "DealsPage": {
+    "available_offers": "Available Offers",
+    "showing_deals": "Showing deals",
+    "search_placeholder": "Search for deals or merchants...",
+    "oldest_first": "Oldest First",
+    "price_low_high": "Price: Low to High",
+    "price_high_low": "Price: High to Low",
+    "discount_high_low": "Discount: High to Low",
+    "flash_deals": "Flash Deals",
+    "limited_time": "Limited Time",
+    "all_offers": "All Offers",
+    "load_more": "Load More",
+    "meta_description": "Discover the best deals and offers in Kuwait on dining, hotels, entertainment, and more with Wafferli.",
+    "categories": "Categories",
+    "location": "Location",
+    "rating": "Rating",
+    "price": "Price",
+    "discount": "Discount",
+    "expires": "Expires"
+  },
+  "about": {
+    "hero": {
+      "badge": "About Wafferli",
+      "title": {
+        "part1": "Connecting Communities,",
+        "part2": "One Deal at a Time"
+      },
+      "subtitle": "We're more than a platform – we're the bridge that brings customers and local businesses together, creating a thriving community where everyone wins.",
+      "stats": {
+        "businesses": "Partner Businesses",
+        "customers": "Happy Customers",
+        "saved": "KD Saved"
+      }
+    },
+    "story": {
+      "title": "Our Story",
+      "subtitle": "Born from a passion to support local businesses and help customers discover amazing deals in their community",
+      "badge": {
+        "title": "Made with Love",
+        "subtitle": "in Kuwait"
+      },
+      "content": {
+        "title": "From Idea to Impact",
+        "paragraph1": "Wafferli started as a simple idea: what if we could make it easier for people to discover and support local businesses while saving money? Our founder, Ahmed, noticed that many amazing local businesses struggled to reach customers, while customers missed out on great deals happening right in their neighborhood.",
+        "paragraph2": "Today, we're proud to be Kuwait's leading platform connecting communities. Every deal claimed, every business discovered, and every connection made brings us closer to our vision of a thriving local economy where everyone benefits."
+      },
+      "founder": {
+        "name": "Ahmed Al-Rashid",
+        "title": "Founder & CEO"
+      }
+    },
+    "timeline": {
+      "2020": {
+        "title": "The Idea",
+        "description": "Founded with a vision to support local businesses in Kuwait"
+      },
+      "2021": {
+        "title": "First Launch",
+        "description": "Launched with 50 partner businesses and 1,000 users"
+      },
+      "2022": {
+        "title": "Rapid Growth",
+        "description": "Expanded to 500+ businesses and 25,000+ active users"
+      },
+      "2023": {
+        "title": "Mobile App",
+        "description": "Launched mobile app with exclusive features"
+      },
+      "2024": {
+        "title": "Market Leader",
+        "description": "Became Kuwait's #1 local business discovery platform"
+      }
+    },
+    "mission": {
+      "title": "Our Mission",
+      "description": "To empower local businesses and enrich customer experiences by creating meaningful connections through exclusive deals, authentic reviews, and community-driven discovery.",
+      "badge1": "Community Focused",
+      "badge2": "Locally Driven"
+    },
+    "vision": {
+      "title": "Our Vision",
+      "description": "To become the essential bridge that transforms how communities discover, support, and celebrate local businesses, creating a thriving ecosystem where everyone prospers.",
+      "badge1": "Growth Oriented",
+      "badge2": "Excellence Driven"
+    },
+    "customers": {
+      "title": "How We Help Customers",
+      "subtitle": "We make it easy for you to discover, save, and connect with the best local businesses in Kuwait"
+    },
+    "benefits": {
+      "discover": {
+        "title": "Discover Hidden Gems",
+        "description": "Find amazing local businesses you never knew existed in your neighborhood"
+      },
+      "save": {
+        "title": "Save Money Daily",
+        "description": "Access exclusive deals and discounts that save you hundreds every month"
+      },
+      "exclusive": {
+        "title": "Exclusive Access",
+        "description": "Get first access to flash deals and member-only offers"
+      },
+      "personalized": {
+        "title": "Personalized Recommendations",
+        "description": "Receive tailored suggestions based on your preferences and location"
+      },
+      "trusted": {
+        "title": "Trusted Reviews",
+        "description": "Make informed decisions with verified reviews from real customers"
+      },
+      "community": {
+        "title": "Community Connection",
+        "description": "Connect with fellow locals and share your favorite discoveries"
+      }
+    },
+    "business": {
+      "title": "How We Support Businesses",
+      "subtitle": "We provide the tools, insights, and community connections that help local businesses thrive",
+      "increase": {
+        "title": "Increase Visibility",
+        "description": "Get discovered by thousands of potential customers actively looking for your services"
+      },
+      "boost": {
+        "title": "Boost Customer Engagement",
+        "description": "Connect directly with customers through our platform and build lasting relationships"
+      },
+      "marketing": {
+        "title": "Marketing Support",
+        "description": "Our team helps you create compelling offers and marketing campaigns"
+      }
+    }
+  },
+  "callToAction": {
+    "title": "Ready to Join the Wafferli Community?",
+    "description": "Whether you're looking for amazing deals or want to grow your business, we're here to help you succeed.",
+    "downloadApp": "Download App",
+    "partnerWithUs": "Partner With Us",
+    "newsletter": {
+      "placeholder": "Enter your email",
+      "subscribe": "Subscribe",
+      "disclaimer": "Get updates on new features and exclusive offers"
+    }
+  },
+  "search_placeholder": "Find amazing deals near you...",
+  "distance": "Distance",
+  "km": "km",
+  "deal_types": "Deal Types",
+  "new_arrivals": "New Arrivals",
+  "expiring_soon": "Expiring Soon",
+  "flash_deals": "Flash Deals",
+  "new": "NEW",
+  "kd": "KD",
+  "load_more_deals": "Load More Deals",
+  "traditional_kuwaiti_feast": "Traditional Kuwaiti Feast",
+  "al_boom_restaurant": "Al Boom Restaurant",
+  "full_body_massage_package": "Full Body Massage Package",
+  "luxury_spa_center": "Luxury Spa Center",
+  "designer_collection_sale": "Designer Collection Sale",
+  "fashion_boutique": "Fashion Boutique",
+  "buy_2_get_1_free_coffee": "Buy 2 Get 1 Free Coffee",
+  "coffee_corner_cafe": "Coffee Corner Cafe",
+  "3_month_membership_deal": "3-Month Membership Deal",
+  "elite_fitness_club": "Elite Fitness Club",
+  "weekend_staycation_package": "Weekend Staycation Package",
+  "sunset_hotel": "Sunset Hotel",
+  "explore": {
+    "hero": {
+      "badge": "Explore Kuwait",
+      "title": "Discover the Heart of Kuwait",
+      "subtitle": "From iconic landmarks to hidden gems, explore the best destinations Kuwait has to offer",
+      "searchPlaceholder": "Find places, attractions, experiences..."
+    },
+    "sections": {
+      "trending_this_week": "Trending This Week",
+      "all_places": "All Places"
+    },
+    "badges": {
+      "trending": "Trending",
+      "sponsored": "Sponsored",
+      "popular": "Popular",
+      "free": "FREE"
+    },
+    "status": {
+      "open": "Open",
+      "closed": "Closed"
+    },
+    "actions": {
+      "directions": "Directions",
+      "moreInfo": "More Info",
+      "load_more_places": "Load More Places"
+    },
+    "places": {
+      "scientific_center": "Scientific Center",
+      "souq_al_mubarakiya": "Souq Al-Mubarakiya",
+      "marina_beach": "Marina Beach",
+      "kuwait_towers": "Kuwait Towers",
+      "the_avenues_mall": "The Avenues Mall",
+      "al_shaheed_park": "Al Shaheed Park",
+      "grand_mosque": "Grand Mosque",
+      "360_mall": "360 Mall"
+    },
+    "descriptions": {
+      "scientific_center": "Popular with families this week",
+      "souq_al_mubarakiya": "Trending for authentic shopping",
+      "marina_beach": "Perfect weather this week",
+      "kuwait_towers": "Iconic symbol of Kuwait with panoramic city views and rotating restaurant",
+      "the_avenues_mall": "Kuwait's largest shopping mall with international brands and dining...",
+      "al_shaheed_park": "Beautiful urban park with walking trails, museums, and cultural events...",
+      "grand_mosque": "Magnificent Islamic architecture and spiritual center of Kuwait",
+      "360_mall": "Premium shopping destination with luxury brands and fine dining"
+    },
+    "categories": {
+      "restaurants": "Restaurants",
+      "shopping": "Shopping",
+      "cafes": "Cafes",
+      "landmarks": "Landmarks",
+      "parks": "Parks",
+      "family": "Family",
+      "cultural": "Cultural",
+      "hotels": "Hotels",
+      "entertainment": "Entertainment",
+      "weddings": "Weddings"
+    },
+    "filters": "Filters",
+    "clear_all": "Clear All",
+    "location": "Location",
+    "all_areas": "All Areas",
+    "kuwait_city": "Kuwait City",
+    "hawalli": "Hawalli",
+    "farwaniya": "Farwaniya",
+    "salmiya": "Salmiya",
+    "ahmadi": "Ahmadi",
+    "jahra": "Jahra",
+    "mubarak_al_kabeer": "Mubarak Al-Kabeer",
+    "fahaheel": "Fahaheel",
+    "avenues_mall": "Avenues Mall",
+    "al_zahra": "Al Zahra",
+    "features_amenities": "Features & Amenities",
+    "family_friendly": "Family Friendly",
+    "parking_available": "Parking Available",
+    "wheelchair_accessible": "Wheelchair Accessible",
+    "indoor": "Indoor",
+    "free_entry": "Free Entry",
+    "listing_type": "Listing Type",
+    "sponsored_locations": "Sponsored Locations",
+    "verified_reviews": "Verified Reviews",
+    "trending": "Trending",
+    "apply_filters": "Apply Filters",
+    "explore_categories" : "Categories",
+    "sortOptions": {
+      "newest_first": "Newest First",
+      "rating_high_low": "Rating: High to Low",
+      "nearest": "Nearest",
+      "most_popular": "Most Popular",
+      "trending": "Trending This Week"
+    }
+  },
+
+
+  "TextField": "TextField",
+
+
+
+
+
+
+"categories": {
+    "all": "All Posts",
+    "food": "Food & Restaurants",
+    "lifestyle": "Lifestyle",
+    "business": "Business Tips",
+    "events": "Events",
+    "culture": "Kuwait Culture"
+  },
+  "poster": {
+    "foodGuide": {
+      "title": "The Ultimate Guide to Kuwait's Hidden Food Gems",
+      "excerpt": "Discover the best local eateries and street food spots that only locals know about. From traditional Kuwaiti dishes to contemporary fusion cuisine.",
+      "readTime": "8 min read",
+      "content": {
+        "p1": "Kuwait's culinary scene is a treasure trove of flavors waiting to be discovered. Beyond the well-known restaurants and international chains, there's a vibrant world of hidden gems that showcase the true essence of Kuwaiti cuisine and hospitality.",
+        "h2_1": "Traditional Kuwaiti Breakfast Spots",
+        "p2": "Start your culinary journey with an authentic Kuwaiti breakfast at these local favorites. From fresh balaleet (sweet vermicelli with eggs) to crispy khanfaroosh (traditional donuts), these breakfast spots serve it up just like it's been done for generations.",
+        "h3_1": "Um Ali's Kitchen - Salmiya",
+        "p3": "Tucked away in a quiet corner of Salmiya, Um Ali's Kitchen has been serving traditional Kuwaiti breakfast for over 30 years. Their balaleet is legendary among locals, and the warm hospitality makes every visit feel like coming home.",
+        "h2_2": "Street Food Adventures",
+        "p4": "The real magic of Kuwait's food scene happens on the streets. From late-night shawarma stands to traditional sweets shops, these vendors have perfected their craft over decades.",
+        "h3_2": "Abu Salem Shawarma - Hawalli",
+        "p5": "This unassuming cart has been serving the best shawarma in Kuwait for over 20 years. The secret? A special blend of spices and the perfect balance of meat, vegetables, and sauce.",
+        "h2_3": "Modern Fusion Discoveries",
+        "p6": "Kuwait's young generation of chefs is creating exciting fusion dishes that blend traditional flavors with international techniques. These restaurants represent the future of Kuwaiti cuisine.",
+        "p7": "Whether you're a longtime resident or a curious visitor, these hidden gems offer an authentic taste of Kuwait that you won't find in guidebooks. Each location tells a story of tradition, innovation, and the warm hospitality Kuwait is known for."
+      }
+    },
+    "digitalMarketing": {
+      "title": "How Local Businesses Are Thriving with Digital Marketing",
+      "excerpt": "Success stories from Kuwait entrepreneurs who transformed their businesses using social media and online platforms.",
+      "readTime": "6 min read"
+    },
+    "familyActivities": {
+      "title": "Top 10 Weekend Activities for Families in Kuwait",
+      "excerpt": "Fun activities and perfect destinations for family outings, from parks to entertainment centers.",
+      "readTime": "5 min read"
+    },
+    "architecture": {
+      "title": "Traditional Kuwaiti Architecture: Past Meets Present",
+      "excerpt": "Exploring how modern Kuwait incorporates traditional architectural elements into contemporary buildings.",
+      "readTime": "7 min read"
+    },
+    "businessGuide": {
+      "title": "Starting Your Small Business in Kuwait: A Complete Guide",
+      "excerpt": "Everything you need to know about licenses, permits, and regulations for starting a business in Kuwait.",
+      "readTime": "10 min read"
+    },
+    "coffeeShops": {
+      "title": "Kuwait's Best Coffee Shops for Remote Work",
+      "excerpt": "A curated list of cafes with great WiFi, comfortable seating, and perfect ambiance for productivity.",
+      "readTime": "4 min read"
+    },
+    "culturalEvents": {
+      "title": "Upcoming Cultural Events This Winter in Kuwait",
+      "excerpt": "Don't miss these exciting cultural festivals, art exhibitions, and performances happening this season.",
+      "readTime": "6 min read"
+    },
+    "sustainableLiving": {
+      "title": "The Rise of Sustainable Living in Kuwait",
+      "excerpt": "How Kuwait residents are embracing eco-friendly practices and sustainable lifestyle choices.",
+      "readTime": "8 min read"
+    }
+  },
+  "authors": {
+    "sarah": "Sarah Al-Rashid",
+    "ahmed": "Ahmed Al-Mutairi",
+    "fatima": "Fatima Al-Sabah",
+    "omar": "Omar Al-Kandari",
+    "nadia": "Nadia Al-Qattan",
+    "layla": "Layla Al-Rashid",
+    "khalid": "Khalid Al-Mutawa",
+    "maryam": "Maryam Al-Saleh",
+    "sarahBio": "Food enthusiast and Kuwait native with over 10 years of experience exploring the local culinary scene. Sarah has written for various food magazines and blogs about Middle Eastern cuisine."
+  },
+  "tags": {
+    "title": "Tags",
+    "kuwait": "Kuwait",
+    "food": "Food",
+    "restaurants": "Restaurants",
+    "localGuide": "Local Guide",
+    "streetFood": "Street Food"
+  },
+  "blog": {
+    "title": "Waferly Blog",
+    "description": "Discover Kuwait's best stories, business insights, and local culture through our curated articles"
+  },
+  "search": {
+    "placeholder": "Search articles, topics, or authors..."
+  },
+  "browseByCategory": "Browse by Category",
+  "allFilters": "All Filters",
+  "posts": "posts",
+  "featuredArticles": "Featured Articles",
+  "viewAll": "View All",
+  "latestArticles": "Latest Articles",
+  "sort": {
+    "newest": "Newest First",
+    "popular": "Most Popular",
+    "trending": "Trending"
+  },
+  "loadMore": "Load More Articles",
+  "stayUpdated": {
+    "title": "Stay Updated",
+    "description": "Get the latest articles and insights delivered straight to your inbox.",
+    "placeholder": "Enter your email",
+    "subscribe": "Subscribe Now",
+    "note": "Join 5,000+ readers. Unsubscribe at any time."
+  },
+  "backToBlog": "Back to Blog",
+  "currentArticle": "Current Article",
+  "featured": "Featured",
+  "trending": "Trending",
+  "share": "Share",
+  "liked": "Liked",
+  "like": "Like",
+  "helpful": "Was this article helpful?",
+  "follow": "Follow",
+  "articles": "articles",
+  "followers": "followers",
+  "comments": {
+    "title": "Comments",
+    "hide": "Hide",
+    "show": "Show",
+    "placeholder": "Share your thoughts...",
+    "note": "Be respectful and constructive in your comments.",
+    "post": "Post Comment",
+    "comment1": "Great article! I visited Um Ali's Kitchen and it's truly amazing. Thanks for sharing these hidden gems.",
+    "date1": "2 days ago",
+    "comment2": "As a food blogger myself, I appreciate the detailed descriptions. Abu Salem's shawarma is indeed the best in Kuwait!",
+    "date2": "1 day ago",
+    "comment3": "This makes me so proud of our local food scene. These places deserve more recognition!",
+    "date3": "12 hours ago"
+  },
+  "relatedArticles": "Related Articles",
+  "newsletteres": {
+    "title": "Never Miss an Article",
+    "description": "Subscribe to our newsletter and get the latest insights delivered straight to your inbox.",
+    "placeholder": "Enter your email",
+    "subscribe": "Subscribe",
+    "note": "Join 5,000+ readers. Unsubscribe at any time."
+  },
+  "reply": "Reply",
+  "yourAvatar": "Your Avatar",
+
+
+
+  "events": {
+    "filters": "Filters",
+    "clear_all": "Clear all",
+    "location": "Location",
+    "all_areas": "All Areas",
+    "kuwait_city": "Kuwait City",
+    "hawalli": "Hawalli",
+    "farwaniya": "Farwaniya",
+    "ahmadi": "Ahmadi",
+    "jahra": "Jahra",
+    "mubarak_al_kabeer": "Mubarak Al-Kabeer",
+    "salmiya": "Salmiya",
+    "fahaheel": "Fahaheel",
+    "event_type": "Event Type",
+    "all_types": "All Types",
+    "types": {
+      "concert": "Concert",
+      "festival": "Festival",
+      "workshop": "Workshop",
+      "conference": "Conference",
+      "sports": "Sports",
+      "art_exhibition": "Art Exhibition",
+      "theater": "Theater"
+    },
+    "features_amenities": "Features & Amenities",
+    "family_friendly": "Family Friendly",
+    "parking_available": "Parking Available",
+    "wheelchair_accessible": "Wheelchair Accessible",
+    "indoor": "Indoor",
+    "free_entry": "Free Entry",
+    "listing_type": "Listing Type",
+    "sponsored_locations": "Sponsored Locations",
+    "verified_reviews": "Verified Reviews",
+    "trending": "Trending",
+    "apply_filters": "Apply Filters",
+    "badges": {
+      "trending": "Trending",
+      "sponsored": "Sponsored",
+      "popular": "Popular"
+    },
+    "actions": {
+      "directions": "Directions",
+      "moreInfo": "More Info"
+    },
+    "sortOptions": {
+      "newest_first": "Newest First",
+      "rating_high_low": "Rating: High to Low",
+      "nearest": "Nearest",
+      "most_popular": "Most Popular",
+      "trending": "Trending"
+    },
+    "sections": {
+      "all_events": "All Events"
+    },
+    "events": {
+      "kuwait_music_festival": "Kuwait Music Festival",
+      "business_conference": "Business Conference",
+      "art_exhibition": "Art Exhibition",
+      "sports_tournament": "Sports Tournament",
+      "tech_workshop": "Tech Workshop",
+      "theater_play": "Theater Play",
+      "cultural_festival": "Cultural Festival",
+      "concert_night": "Concert Night",
+      "art_workshop": "Art Workshop",
+      "business_summit": "Business Summit"
+    },
+    "descriptions": {
+      "kuwait_music_festival": "An annual music festival featuring local and international artists.",
+      "business_conference": "A gathering of business leaders to discuss industry trends.",
+      "art_exhibition": "Showcasing contemporary art from Kuwaiti artists.",
+      "sports_tournament": "Exciting sports tournament with various games.",
+      "tech_workshop": "Hands-on workshop on latest technology trends.",
+      "theater_play": "A captivating theater performance.",
+      "cultural_festival": "Celebrating Kuwaiti culture with various activities.",
+      "concert_night": "Live concert under the stars.",
+      "art_workshop": "Interactive art creation workshop.",
+      "business_summit": "Summit for business networking and insights."
+    }
+  },
+
+  "filters": "Filters",
+  "newest_first": "Newest First",
+  "ending_soon": "Ending Soon",
+  "highest_discount": "Highest Discount",
+  "most_popular": "Most Popular",
+  "nearest": "Nearest",
+  "available_offers": "Available Offers",
+  "showing_deals": "Showing deals",
+  "clear_all": "Clear All",
+  "limited_time": "Limited Time",
+  "all_offers": "All Offers",
+  "kuwait_city": "Kuwait City",
+  "salmiya": "Salmiya",
+  "avenues_mall": "Avenues Mall",
+  "hawalli": "Hawalli",
+  "farwaniya": "Farwaniya",
+  "explores": {
+    "badges": {
+      "trending": "Trending",
+      "sponsored": "Sponsored",
+      "popular": "Popular"
+    },
+    "actions": {
+      "directions": "Directions",
+      "moreInfo": "More Info"
+    },
+    "categories": {
+      "restaurants": "Restaurants",
+      "shopping": "Shopping",
+      "cafes": "Cafes",
+      "landmarks": "Landmarks",
+      "parks": "Parks",
+      "family": "Family",
+      "cultural": "Cultural",
+      "hotels": "Hotels",
+      "entertainment": "Entertainment",
+      "weddings": "Weddings"
+    },
+    "all_areas": "All Areas",
+    "kuwait_city": "Kuwait City",
+    "hawalli": "Hawalli",
+    "farwaniya": "Farwaniya",
+    "ahmadi": "Ahmadi",
+    "jahra": "Jahra",
+    "mubarak_al_kabeer": "Mubarak Al-Kabeer",
+    "salmiya": "Salmiya",
+    "fahaheel": "Fahaheel",
+    "filters": "Filters",
+    "clear_all": "Clear All",
+    "location": "Location",
+    "explore_categories": "Explore Categories",
+    "features_amenities": "Features & Amenities",
+    "family_friendly": "Family Friendly",
+    "parking_available": "Parking Available",
+    "wheelchair_accessible": "Wheelchair Accessible",
+    "indoor": "Indoor",
+    "free_entry": "Free Entry",
+    "listing_type": "Listing Type",
+    "sponsored_locations": "Sponsored Locations",
+    "verified_reviews": "Verified Reviews",
+    "trending": "Trending",
+    "apply_filters": "Apply Filters",
+    "hero": {
+      "badge": "Explore Kuwait",
+      "title": "Discover Kuwait's Hidden Gems",
+      "subtitle": "From traditional souks to modern landmarks, explore the best places Kuwait has to offer",
+      "searchPlaceholder": "Search places, restaurants, landmarks..."
+    }
+  },
+ 
+
+  
+  "restaurants": "Restaurants",
+  "hotels": "Hotels",
+  "cafes": "Cafes",
+  "salons": "Salons",
+  "entertainment": "Entertainment",
+  "shopping": "Shopping",
+  "health_beauty": "Health & Beauty",
+  "automotive": "Automotive",
+
+  "all_areas": "All Areas",
+  "ahmadi": "Ahmadi",
+  "jahra": "Jahra",
+  "location": "Location",
+  "price_range": "Price Range",
+  "minimum_discount": "Minimum Discount",
+  "minimum_rating": "Minimum Rating",
+  "apply_filters": "Apply Filters",
+
+
+
+  
+  "FAQ": {
+    "breadcrumb": {
+      "home": "Home",
+      "faq": "FAQ"
+    },
+    "title": "Frequently Asked Questions",
+    "subtitle": "Can’t find the answer you’re looking for?",
+    "contactUs": "Contact us",
+    "searchPlaceholder": "Search for a question or keyword...",
+    "categories": {
+      "all": "All",
+      "account": "Account & Profile",
+      "using": "Using Wafferli",
+      "business": "For Businesses",
+      "technical": "Technical Support",
+      "general": "General"
+    },
+    "questions": {
+      "createAccount": "How do I create an account?",
+      "findDeals": "How can I find deals near me?",
+      "redeemDeals": "How do I redeem a deal?",
+      "marketplace": "What is the Wafferli Marketplace?",
+      "joinBusiness": "How can my business join Wafferli?"
+    },
+    "answers": {
+      "createAccount": "To create an account, click on the 'Sign Up' button at the top right of the page, enter your details, and confirm your email address.",
+      "findDeals": "Use the search bar or browse categories to find the latest deals near your location. You can filter results by distance or type of business.",
+      "redeemDeals": "Once you select a deal, click on 'Redeem' and show the generated QR code to the merchant at checkout.",
+      "marketplace": "The Wafferli Marketplace is a platform where you can discover special offers, seasonal discounts, and exclusive promotions from our partner businesses.",
+      "joinBusiness": "Businesses can join Wafferli by registering through the Business Portal. Once approved, you can list your offers and reach thousands of customers."
+    },
+    "stillNeedHelp": "Still need help?",
+    "supportDescription": "Our support team is available to assist you with any questions or issues.",
+    "liveChat": "Live Chat",
+    "callUs": "Call Us"
+  },
+     "marketplace": {
+      "allAds": "All Ads",
+
+    "hero": {
+      "badge": "Marketplace",
+      "title": "Discover",
+      "titleHighlight": "Products & Services",
+      "titleSuffix": "from Kuwait Businesses",
+      "subtitle": "Kuwait's trusted local marketplace for everything you need",
+      "searchPlaceholder": "Search products, services, or shops...",
+  "activeAds": "Active Ads"
+    },
+    "tabs": {
+      "shopProducts": "Shop Products",
+      "bookServices": "Book Services"
+    },
+    "categories": {
+      "allProducts": "All Products",
+      "electronics": "Electronics & Technology",
+      "homeGarden": "Home & Garden",
+      "fashionApparel": "Fashion & Apparel",
+      "healthBeauty": "Health & Beauty",
+      "sportsRecreation": "Sports & Recreation",
+      "automotive": "Automotive",
+      "other": "Other"
+    },
+    "subcategories": {
+      "allElectronics": "All Electronics & Technology",
+      "mobileDevices": "Mobile Devices",
+      "mobileAccessories": "Mobile Accessories",
+      "desktopComputers": "Desktop Computers",
+      "laptopsNotebooks": "Laptops & Notebooks",
+      "computerAccessories": "Computer Accessories"
+    },
+    "filters": {
+      "title": "Filters",
+      "clearAll": "Clear All",
+      "location": "Location",
+      "yourLocation": "Your Location",
+      "allAreas": "All Areas",
+      "kuwaitCity": "Kuwait City",
+      "hawalli": "Hawalli",
+      "farwaniya": "Farwaniya",
+      "ahmadi": "Ahmadi",
+      "jahra": "Jahra",
+      "mubarakAlKabeer": "Mubarak Al-Kabeer",
+      "salmiya": "Salmiya",
+      "fahaheel": "Fahaheel",
+      "priceRange": "Price Range",
+      "brands": "Brands",
+      "condition": "Condition",
+      "brandNew": "Brand New",
+      "usedExcellent": "Used - Excellent",
+      "usedGood": "Used - Good",
+      "refurbished": "Refurbished",
+      "minimumRating": "Minimum Rating",
+      "applyFilters": "Apply Filters",
+      "serviceCategories": "Service Categories"
+    },
+    "badges": {
+      "sponsored": "Sponsored",
+      "brandNew": "Brand New",
+      "product": "Product",
+      "service": "Service"
+    },
+    "actions": {
+      "chat": "Chat"
+    },
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "sortOptions": {
+      "newestFirst": "Newest First",
+      "ratingHighLow": "Rating: High to Low",
+      "priceLowHigh": "Price: Low to High",
+      "priceHighLow": "Price: High to Low",
+      "mostPopular": "Most Popular"
+    },
+    "sections": {
+      "allElectronics": "All Electronics & Technology",
+      "showingAds": "Showing {count} ads"
+    },
+    "services": {
+      "comingSoon": "Services Coming Soon",
+      "description": "We're working on bringing you the best service providers in Kuwait. Stay tuned!",
+      "categories": {
+        "professional": "Professional Services",
+        "professionalDesc": "Medical, Legal, Consulting, etc.",
+        "homePersonal": "Home & Personal Services",
+        "homePersonalDesc": "Cleaning, Repair, Beauty, etc."
+      },
+      "subcategories": {
+        "medical": "Medical",
+        "legal": "Legal",
+        "consulting": "Consulting",
+        "accounting": "Accounting",
+        "marketing": "Marketing",
+        "design": "Design",
+        "cleaning": "Cleaning",
+        "repair": "Repair",
+        "beauty": "Beauty",
+        "fitness": "Fitness",
+        "tutoring": "Tutoring",
+        "petCare": "Pet Care"
+      },
+      "startingFrom": "starting from",
+      "filters": {
+        "serviceCategories": "Service Categories"
+      }
+    },
+    "productsCount": "products",
+    "noProductsFound": "No products found",
+    "tryAdjustingFilters": "Try adjusting your filters to see more results",
+    "search": {
+      "types": {
+        "all": "All",
+        "products": "Products",
+        "services": "Services"
+      },
+      "searchPlaceholder": "Search products, services, or shops...",
+      "location": "Location",
+      "selectLocation": "Select Location",
+      "searchLocations": "Search locations...",
+      "currentLocation": "Current Location",
+      "useCurrentLocation": "Use Current Location",
+      "getLocationAutomatically": "Get location automatically",
+      "gps": "GPS",
+      "locationError": "Unable to get your location",
+      "geoNotSupported": "Geolocation is not supported by this browser",
+      "voiceSearch": "Voice Search",
+      "locations": {
+        "kuwaitCity": "Kuwait City",
+        "hawalli": "Hawalli",
+        "salmiya": "Salmiya",
+        "ahmadi": "Ahmadi",
+        "jahra": "Jahra"
+      },
+      "areas": {
+        "capital": "Capital Governorate",
+        "hawalli": "Hawalli Governorate",
+        "ahmadi": "Ahmadi Governorate",
+        "jahra": "Jahra Governorate"
+      }
+    },
+    "breadcrumb": {
+      "home": "Home",
+      "marketplace": "Marketplace",
+      "products": "Products",
+      "services": "Services"
+    },
+    "details": {
+      "availability": "Availability",
+      "serviceInfo": "Service Information",
+      "contactForScheduling": "Contact for scheduling",
+      "responseTime": "Response Time",
+      "within24Hours": "Within 24 hours",
+      "interestedInProduct": "Interested in this product?",
+      "contactSeller": "Contact the seller to get more details",
+      "needThisService": "Need this service?",
+      "getQuote": "Get a personalized quote from the provider",
+      "description": "Description",
+      "locationDirections": "Location & Directions",
+      "customerReviews": "Customer Reviews",
+      "writeReview": "Write a Review",
+      "youMightAlsoLike": "You Might Also Like",
+      "viewAll": "View All",
+      "reportAd": "Report Ad",
+      "adId": "Ad ID",
+      "getDirections": "Get Directions",
+      "kmAway": "km away",
+      "minDrive": "min drive",
+      "safetyGuidelines": "Safety Guidelines",
+      "documentSaleProcess": "Document the sale/purchase process, including full details of the product.",
+      "doNotTransferMoney": "Do not transfer any money until you have verified the following: (Seller's identity, the documentation of sale, receipt of the product).",
+      "getSignedReceipt": "Make sure to obtain a signed receipt from the seller."
+    }
+  },
+   "giftCards": {
+    "title": "Gift Card Center",
+    "scratchCard": "Scratch Card",
+    "dailyReward": "Daily Reward: 10 points",
+    "loyaltyPoints": "loyalty points",
+    "claimNow": "Claim Now",
+    "claimed": "Claimed",
+    "congratulations": "Congratulations!",
+    "youWonScratchCard": "You won a scratch card!",
+    "scratchNow": "Scratch Now",
+    "scratching": "Scratching...",
+    "scratchCardOpened": "Scratch Card Opened!",
+    "discountCode": "Discount Code:",
+    "validUntil": "Valid until",
+    "keepCodeSafe": "Note: Keep your code safe, as it is a one-time code and will expire with use",
+    "shareCode": "Share Code",
+    "copy": "Copy",
+    "copied": "Copied",
+    "qrCode": "QR Code",
+    "share": "Share",
+    "discounts": "Discounts",
+    "fromScratchCards": "From Scratch Cards",
+    "giftPoints": "Gift Points",
+    "giftLoyaltyPoints": "Gift Loyalty Points by entering the user's email",
+    "points": "Points",
+    "recipientEmail": "Recipient's Email",
+    "traditionalKuwaitiFeast": "Traditional Kuwaiti Feast",
+    "alBoomRestaurant": "Al Boom Restaurant"
+  },
+  
+  "ForBusinesses": {
+    "hero": {
+      "badge": "For Local Businesses",
+      "title": {
+        "part1": "Grow Your Business with",
+        "part2": "Local Advertising"
+      },
+      "subtitle": "Reach thousands of local customers, boost your sales, and build lasting relationships in your community with our targeted advertising platform.",
+      "stats": {
+        "businesses": "Active Businesses",
+        "customers": "Happy Customers",
+        "saved": "Total Saved"
+      }
+    },
+    "benefits": {
+      "title": "Why Choose Our Platform?",
+      "subtitle": "Everything you need to succeed in local marketing, all in one place",
+      "items": {
+        "reach": {
+          "title": "Maximum Local Reach",
+          "description": "Connect with thousands of potential customers in your area through our extensive local network.",
+          "stat": "5000+ Daily Views"
+        },
+        "analytics": {
+          "title": "Detailed Analytics",
+          "description": "Track your ad performance, customer engagement, and ROI with comprehensive analytics dashboard.",
+          "stat": "Real-time Insights"
+        },
+        "payment": {
+          "title": "Secure Payments",
+          "description": "Integrated payment processing with multiple options including K-Net, Visa, and cash on delivery.",
+          "stat": "100% Secure"
+        },
+        "sponsored": {
+          "title": "Targeted Advertising",
+          "description": "Reach the right customers at the right time with our advanced targeting and sponsored ad options.",
+          "stat": "3x Better Results"
+        }
+      }
+    },
+    "adTypes": {
+      "title": "Choose Your Ad Type",
+      "subtitle": "Select the perfect advertising solution for your business needs and budget",
+      "cta": "Get Started",
+      "explore": {
+        "title": "Local Explore Ads",
+        "description": "Promote your business to local customers discovering new places",
+        "price": "$5/day",
+        "features": [
+          "Local map visibility",
+          "Business profile showcase",
+          "Customer reviews display",
+          "Contact information prominent",
+          "Opening hours visibility"
+        ]
+      },
+      "events": {
+        "title": "Event Promotions",
+        "description": "Boost your events and special activities to attract more attendees",
+        "price": "$10/day",
+        "features": [
+          "Event calendar listing",
+          "Social media integration",
+          "Early bird discounts",
+          "RSVP tracking",
+          "Reminder notifications"
+        ]
+      },
+      "offers": {
+        "title": "Special Offers",
+        "description": "Highlight your discounts, deals, and limited-time promotions",
+        "price": "$7/day",
+        "features": [
+          "Deal countdown timers",
+          "Coupon code generation",
+          "Flash sale notifications",
+          "Bulk discount options",
+          "Loyalty program integration"
+        ]
+      },
+      "products": {
+        "title": "Product Showcase",
+        "description": "Feature your best products with high-quality images and descriptions",
+        "price": "$8/day",
+        "features": [
+          "Product image gallery",
+          "Detailed descriptions",
+          "Price comparison tools",
+          "Stock availability",
+          "Quick order options"
+        ]
+      },
+      "services": {
+        "title": "Service Listings",
+        "description": "Promote your professional services and expertise to local clients",
+        "price": "$6/day",
+        "features": [
+          "Service portfolio display",
+          "Professional credentials",
+          "Customer testimonials",
+          "Booking calendar integration",
+          "Consultation scheduling"
+        ]
+      }
+    },
+    "boosting": {
+      "title": "Boost Your Visibility",
+      "subtitle": "Enhance your reach and get better results with our premium boosting options",
+      "selected": "Selected",
+      "standard": {
+        "title": "Standard Boost",
+        "price": "$15/week",
+        "description": "Basic visibility enhancement for consistent exposure",
+        "features": [
+          "Priority in search results",
+          "Extended visibility hours",
+          "Basic analytics dashboard",
+          "Email support",
+          "Mobile optimization"
+        ]
+      },
+      "featured": {
+        "title": "Featured Boost",
+        "price": "$35/week",
+        "description": "Enhanced visibility with premium features for maximum impact",
+        "popular": "Most Popular",
+        "features": [
+          "Top placement guarantee",
+          "Advanced analytics suite",
+          "A/B testing tools",
+          "Priority customer support",
+          "Social media cross-posting",
+          "Custom branding options"
+        ]
+      },
+      "sponsored": {
+        "title": "Sponsored Ads",
+        "price": "$60/week",
+        "description": "Premium placement with advanced targeting for maximum ROI",
+        "features": [
+          "Homepage featured placement",
+          "Advanced demographic targeting",
+          "Conversion tracking",
+          "Dedicated account manager",
+          "Custom ad creative design",
+          "Performance optimization",
+          "Detailed ROI reporting"
+        ]
+      }
+    },
+    "testimonials": {
+      "title": "What Our Clients Say",
+      "subtitle": "Real success stories from businesses like yours that have grown with our platform",
+      "items": [
+        {
+          "name": "Sarah Johnson",
+          "business": "Johnson's Bakery",
+          "category": "Food & Beverage",
+          "quote": "Our sales increased by 40% within the first month of using these ads. The targeting is incredibly effective and the customer support is outstanding!",
+          "results": "40% increase in sales"
+        },
+        {
+          "name": "Mike Chen",
+          "business": "Tech Repair Pro",
+          "category": "Technology",
+          "quote": "The analytics dashboard helped us understand our customers better. We've doubled our customer base and improved our service offerings significantly.",
+          "results": "200% customer growth"
+        },
+        {
+          "name": "Emily Rodriguez",
+          "business": "Fitness First Gym",
+          "category": "Health & Fitness",
+          "quote": "Event promotions brought in 150 new members in just two weeks. The ROI on our advertising spend has been exceptional.",
+          "results": "150 new members"
+        },
+        {
+          "name": "Ahmed Al-Rashid",
+          "business": "Al-Rashid Restaurant",
+          "category": "Restaurant",
+          "quote": "The local explore ads have made our restaurant a neighborhood favorite. We see new faces every day and our repeat customer rate has improved dramatically.",
+          "results": "60% more foot traffic"
+        },
+        {
+          "name": "Fatima Al-Zahra",
+          "business": "Beauty Bliss Salon",
+          "category": "Beauty & Wellness",
+          "quote": "The service listings feature helped us book appointments 3 months in advance. Our clients love the easy booking system and we've expanded our services.",
+          "results": "300% booking increase"
+        }
+      ]
+    }
+  },
+
+    "Eventpage": {
+    "hero": {
+      "badge": "Events",
+      "title": "Discover <highlight>Unforgettable Moments</highlight> in Kuwait",
+      "subtitle": "From cultural festivals to live concerts, find exciting events happening around Kuwait and never miss out on the fun",
+      "searchLabel": "Find amazing events near you",
+      "searchPlaceholder": "Find amazing events near you...",
+      "useLocation": "Use current location",
+      "treesAlt": "Stylized yellow trees and fireworks illustration"
+    }
+  },
+
+  "wishlist": {
+    "title": "My Wishlist",
+    "empty": "Your wishlist is empty.",
+    "sections": {
+      "flash": "Flash Deals",
+      "offer": "Offers",
+      "product": "Products",
+      "event": "Events",
+      "explore": "Explore Places",
+      "marketplace-product": "Marketplace Products",
+      "marketplace-service": "Marketplace Services"
+    }
+  },
+  "wallet": {
+    "myWallet": "My Wallet",
+    "loyaltyPoints": "Loyalty Points",
+    "yourLoyaltyBalance": "Your loyalty balance",
+    "silverMember": "Silver Member",
+    "myClaimedOffers": "My Claimed Offers",
+    "searchByOfferTitle": "Search by Offer Title",
+    "viewAll": "View All",
+    "active": "Active",
+    "used": "Used",
+    "offers": "offers",
+    "traditionalKuwaitiFeast": "Traditional Kuwaiti Feast",
+    "alBoomRestaurant": "Al Boom Restaurant",
+    "validUntil": "Valid Until",
+    "offerCode": "Offer Code",
+    "qrCode": "QR Code",
+    "share": "Share",
+    "spinToWin": "Spin to Win",
+    "loyaltyTiers": "Loyalty Tiers",
+    "bronze": "Bronze",
+    "silver": "Silver",
+    "gold": "Gold",
+    "current": "Current",
+    "inviteFriends": "Invite Friends",
+    "earn100Points": "Earn 100 points for every friend who signs up using your referral code",
+    "scanAtBusiness": "Scan this QR code at the business to redeem your offer.",
+    "keepCodeSafe": "Note: Keep your code safe, as it is a one-time code and will expire with use.",
+    "shareCode": "Share Code",
+    "copied": "Copied!",
+    "congratulations": "Congratulations",
+    "youWonSpin": "You won a spin!",
+    "spinNow": "Spin Now",
+    "spinning": "Spinning...",
+    "spinCompleted": "Spin Completed",
+    "discountCode": "Discount Code"
+  },
+ "profile": {
+  "memberSince": "Member since",
+  "activeAds": "Active ads",
+  "chat": "Chat",
+  "directions": "Directions",
+  "ads": "Ads",
+  "all": "All",
+  "showingResults": "Showing {count} results",
+  "newestFirst": "Newest First",
+  "instock": "In Stock"
+}
+ 
+  
+}
+
+
+
