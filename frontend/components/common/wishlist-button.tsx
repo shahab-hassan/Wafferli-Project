@@ -1,42 +1,82 @@
-// components/WishlistButton.tsx
-"use client"
+"use client";
 
-import { Heart } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { useWishlist, type WishlistItem } from "@/contexts/wishListContext"
+import { useDispatch, useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+import { Heart } from "lucide-react";
+import { toggleFavorite } from "@/features/slicer/AdSlice";
+import toast from "react-hot-toast";
 
 interface WishlistButtonProps {
-  item: WishlistItem
-  className?: string
-  iconClass?: string
+  adId: string;
+  isFavorited?: boolean;
 }
 
-export function WishlistButton({ item, className, iconClass }: WishlistButtonProps) {
-  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist()
-  const isWishlisted = isInWishlist(item.props.id)
+export default function WishlistButton({
+  adId,
+  isFavorited = false,
+}: WishlistButtonProps) {
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFav, setIsFav] = useState(isFavorited);
+  const { isAuthenticated } = useSelector((state: any) => state.auth);
 
-  const handleToggle = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (isWishlisted) {
-      removeFromWishlist(item.props.id)
-    } else {
-      addToWishlist(item)
+  //  Sync with prop changes
+  useEffect(() => {
+    setIsFav(isFavorited);
+  }, [isFavorited]);
+
+  //  Correct toggle function
+  const toggleWishlist = async () => {
+    if (!adId || isLoading || !isAuthenticated) {
+      if (!isAuthenticated) {
+        toast.error("You must be logged in to add favorites");
+      }
+      return;
     }
-  }
+
+    try {
+      setIsLoading(true);
+
+      //  Toggle locally first for instant UI feedback
+      setIsFav((prev) => !prev);
+
+      const res = await dispatch(toggleFavorite(adId) as any).unwrap();
+
+      //  Set based on API response
+      if (res.success) {
+        setIsFav(res.data.isFavorited); //  API ke hisab se set karo
+      } else {
+        //  If API fails, revert back
+        setIsFav((prev) => !prev);
+        toast.error("Failed to update favorite");
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+      //  Revert on error
+      setIsFav((prev) => !prev);
+      toast.error("Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <button
-      onClick={handleToggle}
-      className={cn(
-        "absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 backdrop-blur-sm",
-        isWishlisted
-          ? "bg-white/20 text-primary border-2 border-white"
-          : "bg-white/90 text-grey-2 hover:bg-white hover:text-primary border-2 border-transparent hover:border-primary/20",
-        className
-      )}
+      onClick={toggleWishlist}
+      disabled={isLoading}
+      className={`p-2 rounded-full bg-white/80 hover:bg-white transition-all duration-200 ${
+        isFav ? "text-red-500" : "text-gray-600" //  isFav use karo
+      } ${isLoading ? "opacity-50 cursor-not-allowed" : "hover:scale-110"}`}
     >
-      <Heart className={cn("w-3 h-3", isWishlisted && "fill-current", iconClass)} />
+      {isLoading ? (
+        <div className="w-5 h-5 border-2 border-gray-300 border-t-red-500 rounded-full animate-spin" />
+      ) : (
+        <Heart
+          className="w-5 h-5 transition-all duration-200"
+          fill={isFav ? "currentColor" : "none"} //  isFav use karo
+          strokeWidth={isFav ? 0 : 2} //  isFav use karo
+        />
+      )}
     </button>
-  )
+  );
 }

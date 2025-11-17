@@ -1,167 +1,211 @@
-"use client"
+"use client";
 
-import { useState, useRef } from "react"
-import { useTranslations } from "next-intl"
-import { Copy, Eye, MapPin, Phone, Globe, Search, Share2, QrCode, X, Gift } from "lucide-react"
-import ClaimQRModal from "@/components/common/claim-qr-modal"
-import Image from "next/image"
+import { useState, useRef, useEffect } from "react";
+import { useTranslations } from "next-intl";
+import {
+  Copy,
+  Eye,
+  MapPin,
+  Phone,
+  Globe,
+  Search,
+  Share2,
+  QrCode,
+  X,
+  Gift,
+} from "lucide-react";
+import ClaimQRModal from "@/components/common/claim-qr-modal";
+import Image from "next/image";
+import { useDispatch } from "react-redux";
+import { MyClaimedOffer, SearchClaimedOffer } from "@/features/slicer/AdSlice";
+import { Pagination } from "@/components/common/pagination";
 
-type SpinState = "congratulations" | "spinning" | "opened"
+// Loyalty tiers configuration
+const LOYALTY_TIERS = {
+  bronze: { min: 0, max: 500, name: "Bronze", color: "bg-orange-500" },
+  silver: { min: 501, max: 1000, name: "Silver", color: "bg-gray-500" },
+  gold: { min: 1001, max: 2000, name: "Gold", color: "bg-yellow-500" },
+  diamond: { min: 2001, max: Infinity, name: "Diamond", color: "bg-blue-500" },
+};
 
 export default function MyWalletPage() {
-  const t = useTranslations("wallet")
+  const t = useTranslations("wallet");
 
-  const [showQRModal, setShowQRModal] = useState(false)
-  const [selectedOffer, setSelectedOffer] = useState(null)
-  const [showCodes, setShowCodes] = useState({})
-  const [copiedReferral, setCopiedReferral] = useState(false)
+  const [claimedOffers, setClaimedOffers] = useState<any[]>([]);
+  const [userData, setUserData] = useState<any>(null);
+  const [loyaltySummary, setLoyaltySummary] = useState<any>(null);
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [selectedOffer, setSelectedOffer] = useState(null);
+  const [showCodes, setShowCodes] = useState({});
+  const [copiedReferral, setCopiedReferral] = useState(false);
+  const [copiedDiscount, setCopiedDiscount] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: 10,
+    hasNextPage: false,
+    hasPrevPage: false,
+  });
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch();
 
-  const [showSpinModal, setShowSpinModal] = useState(false)
-  const [spinState, setSpinState] = useState<SpinState>("congratulations")
-  const [wonDiscountIndex, setWonDiscountIndex] = useState(0)
-  const overlayRef = useRef<HTMLDivElement>(null)
-  const [copiedDiscount, setCopiedDiscount] = useState(false)
+  // Calculate progress and next tier info based on backend data
+  const calculateProgress = () => {
+    if (!loyaltySummary)
+      return { progress: 0, nextTier: null, pointsNeeded: 0 };
 
-  const discounts = [
-    {
-      title: t("traditionalKuwaitiFeast"),
-      vendor: t("alBoomRestaurant"),
-      valid: `${t("validUntil")} December 31, 2024`,
-      hours: "12:00 PM - 10:00 PM",
-      original: "120 KD",
-      price: "48 KD",
-      code: "************",
-      img: "/discount-1.jpg",
-      badge: "60% OFF",
-    },
-    {
-      title: "Seafood Platter Deal",
-      vendor: "Marina Eats",
-      valid: `${t("validUntil")} January 15, 2025`,
-      hours: "01:00 PM - 11:00 PM",
-      original: "90 KD",
-      price: "36 KD",
-      code: "************",
-      img: "/discount-2.jpg",
-      badge: "40% OFF",
-    },
-    {
-      title: "Family Buffet Offer",
-      vendor: "Gulf Banquets",
-      valid: `${t("validUntil")} February 10, 2025`,
-      hours: "11:00 AM - 10:00 PM",
-      original: "150 KD",
-      price: "75 KD",
-      code: "************",
-      img: "/discount-3.jpg",
-      badge: "50% OFF",
-    },
-  ]
+    const totalPoints = loyaltySummary.totalPoints || 0;
+    const currentTier = loyaltySummary.membershipStatus?.toLowerCase();
 
-  const claimedOffers = [
-    {
-      id: 1,
-      title: t("traditionalKuwaitiFeast"),
-      vendor: t("alBoomRestaurant"),
-      badge: "60% OFF",
-      validUntil: t("validUntil") + " December 31, 2024",
-      hours: "12:00 PM - 10:00 PM",
-      originalPrice: "120 KD",
-      discountedPrice: "48 KD",
-      code: "************",
-      address: "Gulf Road, Kuwait City, Kuwait",
-      phone: "+965 2222 3333",
-      website: "www.alboom-restaurant.com",
-      status: "active",
-      hasSpin: true,
-    },
-    {
-      id: 2,
-      title: t("traditionalKuwaitiFeast"),
-      vendor: t("alBoomRestaurant"),
-      badge: "60% OFF",
-      validUntil: t("validUntil") + " December 31, 2024",
-      hours: "12:00 PM - 10:00 PM",
-      originalPrice: "120 KD",
-      discountedPrice: "48 KD",
-      code: "************",
-      address: "Gulf Road, Kuwait City, Kuwait",
-      phone: "+965 2222 3333",
-      website: "www.alboom-restaurant.com",
-      status: "used",
-      claimedDate: "Claimed December 31, 2024",
-      hasSpin: false,
-    },
-    {
-      id: 3,
-      title: t("traditionalKuwaitiFeast"),
-      vendor: t("alBoomRestaurant"),
-      badge: "60% OFF",
-      validUntil: t("validUntil") + " December 31, 2024",
-      hours: "12:00 PM - 10:00 PM",
-      originalPrice: "120 KD",
-      discountedPrice: "48 KD",
-      code: "************",
-      address: "Gulf Road, Kuwait City, Kuwait",
-      phone: "+965 2222 3333",
-      website: "www.alboom-restaurant.com",
-      status: "used",
-      claimedDate: "Claimed December 31, 2024",
-      hasSpin: false,
-    },
-  ]
+    let nextTier = null;
+    let progress = 0;
+    let pointsNeeded = 0;
 
-  const handleShowQR = (offer) => {
-    setSelectedOffer(offer)
-    setShowQRModal(true)
-  }
+    // Find current tier and next tier
+    const tiers = Object.keys(LOYALTY_TIERS);
+    const currentTierIndex = tiers.findIndex((tier) => tier === currentTier);
 
-  const toggleCode = (id) => {
-    setShowCodes((prev) => ({ ...prev, [id]: !prev[id] }))
-  }
+    if (currentTierIndex !== -1 && currentTierIndex < tiers.length - 1) {
+      nextTier = LOYALTY_TIERS[tiers[currentTierIndex + 1]];
+      const currentTierConfig = LOYALTY_TIERS[currentTier];
+
+      const pointsInCurrentTier = totalPoints - currentTierConfig.min;
+      const totalPointsInTier = currentTierConfig.max - currentTierConfig.min;
+
+      progress = Math.min(
+        100,
+        Math.max(0, (pointsInCurrentTier / totalPointsInTier) * 100)
+      );
+      pointsNeeded = nextTier.min - totalPoints;
+    } else {
+      // User is at the highest tier
+      progress = 100;
+      pointsNeeded = 0;
+    }
+
+    return { progress, nextTier, pointsNeeded };
+  };
+
+  // Fetch claimed offers from API
+  const fetchAllWallet = async (page = 1, query = "") => {
+    try {
+      if (query.trim()) {
+        setSearchLoading(true);
+      } else {
+        setLoading(true);
+      }
+
+      let res;
+
+      if (query.trim()) {
+        res = await dispatch(
+          SearchClaimedOffer({ page, limit: 10, query }) as any
+        ).unwrap();
+      } else {
+        res = await dispatch(
+          MyClaimedOffer({ page, limit: 10 }) as any
+        ).unwrap();
+      }
+
+      console.log("API Response:", res.data);
+
+      // Set all data from API response
+      setClaimedOffers(res.data.claims || []);
+      setUserData(res.data.user || null);
+      setLoyaltySummary(res.data.loyaltySummary || null);
+
+      setPagination(
+        res.data.pagination || {
+          currentPage: 1,
+          totalPages: 1,
+          totalItems: 0,
+          itemsPerPage: 10,
+          hasNextPage: false,
+          hasPrevPage: false,
+        }
+      );
+    } catch (err) {
+      console.error("Error fetching wallet:", err);
+    } finally {
+      setLoading(false);
+      setSearchLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllWallet(1, searchQuery);
+  }, [searchQuery]);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handlePageChange = (page: number) => {
+    fetchAllWallet(page, searchQuery);
+  };
+
+  const handleShowQR = (offer: any) => {
+    setSelectedOffer(offer);
+    setShowQRModal(true);
+  };
+
+  const toggleCode = (id: any) => {
+    setShowCodes((prev: any) => ({ ...prev, [id]: !prev[id] }));
+  };
 
   const copyReferral = async () => {
     try {
-      await navigator.clipboard.writeText("WAFFERLI2024")
-      setCopiedReferral(true)
-      setTimeout(() => setCopiedReferral(false), 1200)
+      if (userData?.referralCode) {
+        await navigator.clipboard.writeText(userData.referralCode);
+        setCopiedReferral(true);
+        setTimeout(() => setCopiedReferral(false), 1200);
+      }
     } catch {
       // ignore
     }
-  }
+  };
 
-  const handleSpin = () => {
-    const idx = Math.floor(Math.random() * discounts.length)
-    setWonDiscountIndex(idx)
-    setShowSpinModal(true)
-    setSpinState("congratulations")
-  }
-
-  const handleSpinNow = () => {
-    setSpinState("spinning")
-    setTimeout(() => setSpinState("opened"), 1400)
-  }
-
-  const copyDiscountCode = async (code) => {
+  const copyDiscountCode = async (code: any) => {
     try {
-      await navigator.clipboard.writeText(code)
-      setCopiedDiscount(true)
-      setTimeout(() => setCopiedDiscount(false), 1200)
+      await navigator.clipboard.writeText(code);
+      setCopiedDiscount(true);
+      setTimeout(() => setCopiedDiscount(false), 1200);
     } catch {
       // ignore
     }
-  }
+  };
 
-  const onOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === overlayRef.current) setShowSpinModal(false)
-  }
+  // Format date function
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
 
-  const won = discounts[wonDiscountIndex]
+  // Calculate discounted price
+  const calculateDiscountedPrice = (
+    fullPrice: number,
+    discountPercent: number
+  ) => {
+    return (fullPrice * (1 - discountPercent / 100)).toFixed(2);
+  };
+
+  const { progress, nextTier, pointsNeeded } = calculateProgress();
+  const totalPoints = loyaltySummary?.totalPoints || 0;
+  const membershipStatus = loyaltySummary?.membershipStatus || "Bronze";
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-4">{t("myWallet")}</h1>
+        <h1 className="text-2xl font-semibold text-gray-900 mb-4">
+          {t("myWallet")}
+        </h1>
 
         {/* Loyalty Points Bar */}
         <div className="flex flex-col lg:flex-row gap-2 mb-8">
@@ -172,20 +216,36 @@ export default function MyWalletPage() {
               </div>
               <div>
                 <div className="font-semibold">{t("loyaltyPoints")}</div>
-                <div className="text-xs opacity-80">{t("yourLoyaltyBalance")}</div>
+                <div className="text-xs opacity-80">
+                  {t("yourLoyaltyBalance")}
+                </div>
               </div>
             </div>
-            <div className="text-2xl font-bold">1,250 points</div>
+            <div className="text-2xl font-bold">{totalPoints} points</div>
           </div>
+
           <div className="bg-gray-500 text-white rounded-xl p-4 flex items-center justify-between flex-1">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 flex items-center justify-center text-white">👑</div>
-              <span>{t("silverMember")}</span>
+              <div className="w-6 h-6 flex items-center justify-center text-white">
+                👑
+              </div>
+              <span>{membershipStatus} Member</span>
             </div>
             <div className="flex-1 mx-4 h-1.5 bg-white/30 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-primary to-secondary rounded-full" style={{ width: "75%" }}></div>
+              <div
+                className="h-full bg-gradient-to-r from-primary to-secondary rounded-full transition-all duration-500"
+                style={{ width: `${progress}%` }}
+              ></div>
             </div>
-            <span className="text-sm opacity-80">750 points to Gold</span>
+            <span className="text-sm opacity-80 whitespace-nowrap">
+              {nextTier ? (
+                <>
+                  {pointsNeeded} points to {nextTier.name}
+                </>
+              ) : (
+                "Max level reached!"
+              )}
+            </span>
           </div>
         </div>
 
@@ -193,292 +253,308 @@ export default function MyWalletPage() {
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="flex-1">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">{t("myClaimedOffers")}</h2>
-              <span className="text-sm text-gray-500">3 {t("offers")}</span>
-            </div>
-            <input
-              type="text"
-              placeholder={t("searchByOfferTitle")}
-              className="w-full rounded-xl px-4 py-3 mb-4 border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary/20"
-            />
-            <div className="flex flex-wrap gap-4 mb-6">
-              <button className="text-gray-600 font-medium">{t("viewAll")} (0)</button>
-              <button className="bg-green-100 text-green-600 px-3 py-1 rounded-full font-medium">{t("active")} (1)</button>
-              <button className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full font-medium">{t("used")} (1)</button>
+              <h2 className="text-xl font-semibold text-gray-900">
+                {t("myClaimedOffers")}
+              </h2>
+              <span className="text-sm text-gray-500">
+                {pagination.totalItems} {t("offers")}
+              </span>
             </div>
 
-            {claimedOffers.map((offer) => (
-              <div key={offer.id} className="bg-white rounded-xl p-4 border border-gray-200 mb-4 relative">
-                <div className="flex flex-col sm:flex-row gap-4 items-start">
-                  <div className="w-16 h-16 bg-gray-50 rounded-lg flex-shrink-0" /> {/* Placeholder image */}
-                  <div className="flex-1">
-                    <div className="inline-block bg-gradient-to-r from-primary to-secondary text-white px-2 py-1 rounded text-xs font-semibold mb-1">
-                      {offer.badge}
-                    </div>
-                    <h3 className="font-bold text-gray-900">{offer.title}</h3>
-                    <p className="text-sm text-gray-600">{offer.vendor}</p>
-                    {offer.claimedDate && <p className="text-xs text-gray-500">{offer.claimedDate}</p>}
-                    <p className="text-xs text-gray-500">{offer.validUntil} ○ {offer.hours}</p>
-                  </div>
-                  <div className="text-right flex-shrink-0 w-full sm:w-auto">
-                    <p className="text-sm text-gray-400 line-through">{offer.originalPrice}</p>
-                    <p className="text-lg font-bold text-gray-900">{offer.discountedPrice}</p>
-                    {offer.hasSpin && (
-                      <button onClick={handleSpin} className="mt-2 rounded-full px-4 py-2 text-sm font-semibold bg-tertiary text-black block ml-auto w-full sm:w-auto">
-                        ⚡ {t("spinToWin")}
-                      </button>
-                    )}
-                  </div>
+            {/* Search Input */}
+            <div className="relative mb-4">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder={t("searchByOfferTitle")}
+                value={searchQuery}
+                onChange={handleSearch}
+                className="w-full rounded-xl pl-10 pr-4 py-3 border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary/20"
+              />
+              {searchLoading && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                 </div>
-                <div className="mt-4">
-                  <label className="text-sm text-gray-600 block mb-1">{t("offerCode")}:</label>
-                  <div className="flex items-center gap-2">
-                    <div className="flex-1 bg-secondary/10 rounded-full px-4 py-2 relative">
-                      <input
-                        type={showCodes[offer.id] ? "text" : "password"}
-                        value={offer.code}
-                        readOnly
-                        className="w-full bg-transparent border-none focus:outline-none text-sm font-mono pr-8"
-                      />
-                      <button onClick={() => toggleCode(offer.id)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600">
-                        <Eye className="w-4 h-4" />
-                      </button>
-                    </div>
-                    <button onClick={() => copyDiscountCode(offer.code)} className="text-primary flex items-center gap-1 whitespace-nowrap">
-                      <Copy className="w-4 h-4" />
-                      Copy
-                    </button>
-                  </div>
-                  {copiedDiscount && <div className="text-xs text-green-600 mt-2">{t("copied")}</div>}
+              )}
+            </div>
+
+            {loading ? (
+              <div className="flex justify-center items-center py-12">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                  <span className="text-gray-500">Loading your offers...</span>
                 </div>
-                <div className="mt-3 flex items-center gap-4 text-xs text-primary flex-wrap">
-                  <div className="flex items-center gap-1 whitespace-nowrap">
-                    <MapPin className="w-4 h-4 flex-shrink-0" />
-                    {offer.address}
-                  </div>
-                  <div className="flex items-center gap-1 whitespace-nowrap">
-                    <Phone className="w-4 h-4 flex-shrink-0" />
-                    {offer.phone}
-                  </div>
-                  <div className="flex items-center gap-1 whitespace-nowrap">
-                    <Globe className="w-4 h-4 flex-shrink-0" />
-                    {offer.website}
-                  </div>
-                </div>
-                <div className="mt-3 flex flex-wrap justify-end gap-4 text-sm text-gray-600">
-                  <button onClick={() => handleShowQR(offer)} className="flex items-center gap-1 hover:text-primary rounded-full bg-gray-50 px-3 py-1 border border-gray-200">
-                    <QrCode className="w-4 h-4" />
-                    {t("qrCode")}
-                  </button>
-                  <button className="flex items-center gap-1 hover:text-primary rounded-full bg-gray-50 px-3 py-1 border border-gray-200">
-                    <Share2 className="w-4 h-4" />
-                    {t("share")}
-                  </button>
-                </div>
-                {offer.status === "active" && (
-                  <span className="absolute top-4 right-4 bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs">
-                    {t("active")}
-                  </span>
-                )}
-                {offer.status === "used" && (
-                  <span className="absolute top-4 right-4 bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-xs">
-                    {t("used")}
-                  </span>
-                )}
               </div>
-            ))}
+            ) : claimedOffers.length === 0 ? (
+              <div className="text-center py-12 text-gray-500 bg-white rounded-xl border border-gray-200">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Gift className="w-8 h-8 text-gray-400" />
+                </div>
+                <p className="text-lg font-medium mb-2">
+                  No claimed offers found
+                </p>
+                <p className="text-sm text-gray-400">
+                  {searchQuery
+                    ? "Try searching with different keywords"
+                    : "Start claiming offers to see them here"}
+                </p>
+              </div>
+            ) : (
+              <>
+                {claimedOffers.map((offer) => (
+                  <div
+                    key={offer._id}
+                    className="bg-white rounded-xl p-4 border border-gray-200 mb-4 relative"
+                  >
+                    <div className="flex flex-col sm:flex-row gap-4 items-start">
+                      {/* Offer Image */}
+                      <div className="w-16 h-16 bg-gray-50 rounded-lg flex-shrink-0 overflow-hidden">
+                        {offer.offerId?.images?.[0] && (
+                          <img
+                            src={offer.offerId.images[0]}
+                            alt={offer.offerId.title}
+                            className="w-full h-full object-cover"
+                          />
+                        )}
+                      </div>
+
+                      <div className="flex-1">
+                        {/* Badge */}
+                        <div className="inline-block bg-gradient-to-r from-primary to-secondary text-white px-2 py-1 rounded text-xs font-semibold mb-1">
+                          {offer.offerId?.adType?.toUpperCase() || "OFFER"}
+                        </div>
+
+                        <h3 className="font-bold text-gray-900">
+                          {offer.offerId?.title || "No Title"}
+                        </h3>
+
+                        {/* Vendor/Seller Info */}
+                        {offer.seller && (
+                          <p className="text-sm text-gray-600">
+                            {offer.seller.name}
+                          </p>
+                        )}
+
+                        {/* Claim Date */}
+                        {offer.claimedAt && (
+                          <p className="text-xs text-gray-500">
+                            Claimed on {formatDate(offer.claimedAt)}
+                          </p>
+                        )}
+
+                        {/* Location & Expiry */}
+                        <p className="text-xs text-gray-500">
+                          {offer.offerId?.city && (
+                            <>
+                              📍 {offer.offerId.city}
+                              {offer.offerId?.neighbourhood &&
+                                `, ${offer.offerId.neighbourhood}`}
+                              {" • "}
+                            </>
+                          )}
+                          {offer.offerId?.expiryDate && (
+                            <>
+                              Valid until {formatDate(offer.offerId.expiryDate)}
+                            </>
+                          )}
+                        </p>
+                      </div>
+
+                      {/* Price Section */}
+                      <div className="text-right flex-shrink-0 w-full sm:w-auto">
+                        {offer.offerId?.fullPrice && (
+                          <p className="text-sm text-gray-400 line-through">
+                            KWD {offer.offerId.fullPrice}
+                          </p>
+                        )}
+                        {offer.offerId?.fullPrice &&
+                          offer.offerId?.discountPercent && (
+                            <p className="text-lg font-bold text-gray-900">
+                              KWD{" "}
+                              {calculateDiscountedPrice(
+                                offer.offerId.fullPrice,
+                                offer.offerId.discountPercent
+                              )}
+                            </p>
+                          )}
+                        {offer.loyaltyPoints && offer.loyaltyPoints > 0 && (
+                          <p className="text-sm text-green-600 font-semibold">
+                            +{offer.loyaltyPoints} points
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Offer Code Section */}
+                    <div className="mt-4">
+                      <label className="text-sm text-gray-600 block mb-1">
+                        {t("offerCode")}:
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 bg-secondary/10 rounded-full px-4 py-2 relative">
+                          <input
+                            type={showCodes[offer._id] ? "text" : "password"}
+                            value={offer.claimCode}
+                            readOnly
+                            className="w-full bg-transparent border-none focus:outline-none text-sm font-mono pr-8"
+                          />
+                          <button
+                            onClick={() => toggleCode(offer._id)}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <button
+                          onClick={() => copyDiscountCode(offer.claimCode)}
+                          className="text-primary flex items-center gap-1 whitespace-nowrap"
+                        >
+                          <Copy className="w-4 h-4" />
+                          Copy
+                        </button>
+                      </div>
+                      {copiedDiscount && (
+                        <div className="text-xs text-green-600 mt-2">
+                          {t("copied")}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Contact & Location Info */}
+                    <div className="mt-3 flex items-center gap-4 text-xs text-primary flex-wrap">
+                      {offer.seller?.city && (
+                        <div className="flex items-center gap-1 whitespace-nowrap">
+                          <MapPin className="w-4 h-4 flex-shrink-0" />
+                          {offer.seller.city}
+                          {offer.seller.neighbourhood &&
+                            `, ${offer.seller.neighbourhood}`}
+                        </div>
+                      )}
+                      {offer.seller?.website && (
+                        <div className="flex items-center gap-1 whitespace-nowrap">
+                          <Globe className="w-4 h-4 flex-shrink-0" />
+                          {offer.seller.website}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Actions */}
+                    <div className="mt-3 flex flex-wrap justify-end gap-4 text-sm text-gray-600">
+                      <button
+                        onClick={() => handleShowQR(offer)}
+                        className="flex items-center gap-1 hover:text-primary rounded-full bg-gray-50 px-3 py-1 border border-gray-200"
+                      >
+                        <QrCode className="w-4 h-4" />
+                        {t("qrCode")}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Pagination */}
+                {pagination.totalPages > 1 && (
+                  <div className="mt-6 flex justify-center">
+                    <Pagination
+                      currentPage={pagination.currentPage}
+                      totalPages={pagination.totalPages}
+                      onPageChange={handlePageChange}
+                    />
+                  </div>
+                )}
+              </>
+            )}
           </div>
 
           {/* Sidebar */}
           <div className="w-full lg:w-72 space-y-6">
+            {/* Invite Friends Card */}
             <div className="bg-white rounded-xl p-4 border border-gray-200">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-primary">
                   👥
                 </div>
-                <h3 className="font-bold text-gray-900">{t("inviteFriends")}</h3>
+                <h3 className="font-bold text-gray-900">
+                  {t("inviteFriends")}
+                </h3>
               </div>
               <p className="text-sm text-gray-600 mb-4">{t("earn100Points")}</p>
               <div className="bg-gray-50 rounded-full px-4 py-2 flex justify-between items-center">
-                <span className="text-gray-800">WAFFERLI2024</span>
-                <button onClick={copyReferral} className="text-gray-600">
+                <span className="text-gray-800 font-mono">
+                  {userData?.referralCode || "Loading..."}
+                </span>
+                <button
+                  onClick={copyReferral}
+                  className="text-gray-600 hover:text-primary"
+                  disabled={!userData?.referralCode}
+                >
                   <Copy className="w-4 h-4" />
                 </button>
               </div>
-              {copiedReferral && <p className="text-xs text-green-600 mt-2">{t("copied")}</p>}
+              {copiedReferral && (
+                <p className="text-xs text-green-600 mt-2">{t("copied")}</p>
+              )}
             </div>
 
+            {/* Loyalty Tiers */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">{t("loyaltyTiers")}</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                {t("loyaltyTiers")}
+              </h3>
               <div className="space-y-3">
-                <div className="bg-orange-500 text-white rounded-xl p-3">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="font-bold">👑 {t("bronze")}</span>
+                {Object.entries(LOYALTY_TIERS).map(([key, tier]) => (
+                  <div
+                    key={key}
+                    className={`${
+                      tier.color
+                    } text-white rounded-xl p-3 relative ${
+                      membershipStatus.toLowerCase() === key
+                        ? "ring-2 ring-white ring-opacity-50"
+                        : ""
+                    }`}
+                  >
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="font-bold">👑 {tier.name}</span>
+                      {membershipStatus.toLowerCase() === key && (
+                        <span className="bg-white/20 px-2 py-1 rounded-full text-xs">
+                          {t("current")}
+                        </span>
+                      )}
+                    </div>
+                    <ul className="text-xs space-y-1">
+                      <li>
+                        • {tier.min} - {tier.max === Infinity ? "∞" : tier.max}{" "}
+                        points
+                      </li>
+                      <li>
+                        •{" "}
+                        {key === "bronze"
+                          ? "5%"
+                          : key === "silver"
+                          ? "10%"
+                          : key === "gold"
+                          ? "15%"
+                          : "20%"}{" "}
+                        cashback
+                      </li>
+                      <li>
+                        •{" "}
+                        {key === "bronze"
+                          ? "Basic"
+                          : key === "silver"
+                          ? "Exclusive"
+                          : key === "gold"
+                          ? "Premium"
+                          : "VIP"}{" "}
+                        deals
+                      </li>
+                    </ul>
                   </div>
-                  <ul className="text-xs space-y-1">
-                    <li>• 0 - 500 points</li>
-                    <li>• 5% cashback</li>
-                    <li>• Basic deals</li>
-                  </ul>
-                </div>
-                <div className="bg-gray-500 text-white rounded-xl p-3 relative">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="font-bold">👑 {t("silver")}</span>
-                    <span className="bg-white/20 px-2 py-1 rounded-full text-xs">{t("current")}</span>
-                  </div>
-                  <ul className="text-xs space-y-1">
-                    <li>• 501 - 2,000 points</li>
-                    <li>• 10% cashback</li>
-                    <li>• Exclusive deals</li>
-                  </ul>
-                </div>
-                <div className="bg-yellow-400 text-white rounded-xl p-3">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="font-bold">👑 {t("gold")}</span>
-                  </div>
-                  <ul className="text-xs space-y-1">
-                    <li>• 2,001 + points</li>
-                    <li>• 20% cashback</li>
-                    <li>• Premium perks</li>
-                  </ul>
-                </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      {/* SPIN MODAL */}
-      {showSpinModal && (
-        <div
-          ref={overlayRef}
-          onMouseDown={onOverlayClick}
-          className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/45"
-          role="dialog"
-          aria-modal="true"
-        >
-          <div className="relative bg-white rounded-xl max-w-sm w-full mx-4 border border-gray-200">
-            <div className="relative">
-              <div className="text-white text-center rounded-t-xl bg-gradient-to-r from-primary to-secondary pt-3 pb-3">
-                {spinState !== "opened" ? (
-                  <>
-                    <div className="text-xs leading-none">{t("congratulations")}</div>
-                    <div className="font-semibold text-sm mt-1">{t("youWonSpin")}</div>
-                  </>
-                ) : (
-                  <div className="font-semibold text-sm">{t("spinCompleted")}</div>
-                )}
-              </div>
-
-              <button
-                onClick={() => setShowSpinModal(false)}
-                aria-label="Close spin modal"
-                title="Close"
-                className="absolute -right-3 -top-3 w-7 h-7 rounded-full bg-secondary flex items-center justify-center text-white border border-white"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            <div className="p-4 sm:p-6">
-              {spinState === "congratulations" && (
-                <div className="text-center">
-                  <div className="mx-auto mb-6 w-36 h-28 flex items-center justify-center rounded-lg bg-primary/10">
-                    <div className="w-24 h-24 rounded-full bg-white flex items-center justify-center shadow-sm">
-                      <div style={{ transform: "rotate(-12deg)" }} className="w-16 h-16">
-                        <Image src="/spin-icon.png" alt="spin" width={64} height={64} className="object-contain" /> {/* Assume icon */}
-                      </div>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={handleSpinNow}
-                    className="w-full max-w-[200px] mx-auto block rounded-full px-6 py-3 bg-tertiary text-black font-semibold"
-                  >
-                    {t("spinNow")}
-                  </button>
-                </div>
-              )}
-
-              {spinState === "spinning" && (
-                <div className="text-center">
-                  <div className="mx-auto mb-6 w-36 h-28 flex items-center justify-center rounded-lg bg-primary/10 relative">
-                    <div className="w-24 h-24 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-sm">
-                      <div style={{ transform: "rotate(-12deg)" }} className="w-16 h-16 spin-anim">
-                        <Image src="/spin-icon.png" alt="spin" width={64} height={64} className="object-contain" /> {/* Assume icon */}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mx-auto inline-block">
-                    <div className="rounded-full bg-white text-gray-700 px-5 py-2 border border-gray-200 text-sm">
-                      {t("spinning")}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {spinState === "opened" && (
-                <div className="text-center">
-                  <div className="mx-auto mb-4 w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Gift className="w-6 h-6 text-primary" />
-                  </div>
-
-                  <div className="bg-gray-50 rounded-lg border border-gray-200 p-4 text-left mb-4">
-                    <div className="flex items-start gap-3">
-                      <div className="relative flex-shrink-0">
-                        <div className="w-16 h-16 rounded-lg bg-white border border-gray-100 flex items-center justify-center overflow-hidden">
-                          <Image
-                            src={won.img || "/placeholder.svg"}
-                            alt={won.vendor}
-                            width={48}
-                            height={48}
-                            className="object-cover rounded-md"
-                          />
-                        </div>
-                        <div className="absolute -top-1 -left-1 bg-gradient-to-r from-primary to-secondary text-white text-[10px] px-1.5 py-0.5 rounded font-semibold">
-                          {won.badge}
-                        </div>
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-sm text-gray-900 truncate">{won.title}</div>
-                        <div className="text-xs text-gray-600 mt-1">{won.vendor}</div>
-                        <div className="text-xs text-gray-400 mt-1">{won.valid}</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="text-left mb-4">
-                    <label className="text-xs text-gray-600 block mb-2">{t("discountCode")}</label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        className="flex-1 rounded-full bg-gray-50 px-4 py-2 font-mono text-sm border border-gray-200"
-                        readOnly
-                        value={won.code}
-                      />
-                      <button
-                        onClick={() => copyDiscountCode(won.code)}
-                        className="rounded-full border border-gray-200 p-2 hover:bg-gray-50 transition-colors"
-                      >
-                        <Copy className="w-4 h-4" />
-                      </button>
-                    </div>
-                    {copiedDiscount && <div className="text-xs text-green-600 mt-2">{t("copied")}</div>}
-                  </div>
-
-                  <div className="text-xs text-gray-500 mb-4 text-center">{t("keepCodeSafe")}</div>
-
-                  <button className="rounded-full w-full border border-gray-200 px-4 py-2 flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors">
-                    <Share2 className="w-4 h-4" />
-                    <span>{t("shareCode")}</span>
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
 
       {showQRModal && selectedOffer && (
         <ClaimQRModal
@@ -488,5 +564,5 @@ export default function MyWalletPage() {
         />
       )}
     </div>
-  )
+  );
 }

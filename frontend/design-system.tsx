@@ -2,21 +2,28 @@
 // only to view all the design system and interact with them nothing to do wi the original system. just representation  of the components and should be removed after deploying the system
 // ==================
 
-
-
-
-import { Card } from "@/components/common/card"
-import { TextField } from "@/components/common/text-field"
-import  {SearchBar}  from "@/components/common/nav-searchbar"
-import { Dropdown } from "@/components/common/dropdown"
-import { EnhancedCheckbox } from "@/components/common/enhanced-checkbox"
-import { EnhancedRadio } from "@/components/common/enhanced-radio"
-import { EnhancedSlider } from "@/components/common/enhanced-slider"
-import { EnhancedBreadcrumb, SimpleBreadcrumb } from "@/components/common/enhanced-breadcrumb"
-import { Button } from "@/components/common/button"
-import { ProductCard } from "@/components/cards/product-card"
-import { CardSlider } from "@/components/common/card-slider"
-import { Search, Mail, User, Lock, Settings, ShoppingCart, Download, Heart, Star } from "lucide-react"
+import { TextField } from "@/components/common/text-field";
+import { SearchBar } from "@/components/common/nav-searchbar";
+import { Dropdown } from "@/components/common/dropdown";
+import { EnhancedCheckbox } from "@/components/common/enhanced-checkbox";
+import { EnhancedRadio } from "@/components/common/enhanced-radio";
+import { EnhancedSlider } from "@/components/common/enhanced-slider";
+import { EnhancedBreadcrumb } from "@/components/common/enhanced-breadcrumb";
+import { Button } from "@/components/common/button";
+import { ProductCard } from "@/components/cards/product-card";
+import { CardSlider } from "@/components/common/sliders/card-slider";
+import {
+  Search,
+  Mail,
+  User,
+  Lock,
+  Settings,
+  ShoppingCart,
+  Download,
+  Heart,
+  Star,
+} from "lucide-react";
+import { Card } from "./components/common/shadecn-card";
 
 export default function HomePage() {
   const sampleProducts = [
@@ -80,7 +87,7 @@ export default function HomePage() {
       isFree: true,
       badge: "sponsored" as const,
     },
-  ]
+  ];
 
   const ColorCard = ({
     name,
@@ -89,17 +96,19 @@ export default function HomePage() {
     textColor = "text-white",
     border = "",
   }: {
-    name: string
-    hex: string
-    className: string
-    textColor?: string
-    border?: string
+    name: string;
+    hex: string;
+    className: string;
+    textColor?: string;
+    border?: string;
   }) => (
-    <div className={`${className} ${border} rounded-lg p-6 flex flex-col justify-between min-h-[120px]`}>
+    <div
+      className={`${className} ${border} rounded-lg p-6 flex flex-col justify-between min-h-[120px]`}
+    >
       <div className={`font-medium ${textColor}`}>{name}</div>
       <div className={`text-sm font-mono ${textColor}`}>{hex}</div>
     </div>
-  )
+  );
 
   const TypographyCard = ({
     name,
@@ -107,10 +116,10 @@ export default function HomePage() {
     lineHeight,
     className,
   }: {
-    name: string
-    fontSize: string
-    lineHeight: string
-    className: string
+    name: string;
+    fontSize: string;
+    lineHeight: string;
+    className: string;
   }) => (
     <div className="border border-border rounded-lg p-6 space-y-4">
       <div className="flex justify-between items-center text-sm text-muted-foreground">
@@ -120,48 +129,62 @@ export default function HomePage() {
           <span>Line Height: {lineHeight}</span>
         </div>
       </div>
-      <div className={className}>The quick brown fox jumps over the lazy dog</div>
+      <div className={className}>
+        The quick brown fox jumps over the lazy dog
+      </div>
     </div>
-  )
+  );
 
   const basicOptions = [
     { value: "option1", label: "Option 1" },
     { value: "option2", label: "Option 2" },
     { value: "option3", label: "Option 3" },
-  ]
+  ];
 
   const countryOptions = [
     { value: "us", label: "United States" },
     { value: "uk", label: "United Kingdom" },
     { value: "ca", label: "Canada" },
     { value: "au", label: "Australia" },
-  ]
+  ];
 
   const statusOptions = [
     { value: "active", label: "Active" },
     { value: "inactive", label: "Inactive" },
     { value: "pending", label: "Pending" },
     { value: "disabled", label: "Disabled", disabled: true },
-  ]
+  ];
 
   const genderOptions = [
     { value: "male", label: "Male" },
     { value: "female", label: "Female" },
     { value: "other", label: "Other" },
-  ]
+  ];
 
   const planOptions = [
-    { value: "basic", label: "Basic Plan", description: "$9/month - Essential features" },
-    { value: "pro", label: "Pro Plan", description: "$19/month - Advanced features" },
-    { value: "enterprise", label: "Enterprise Plan", description: "$49/month - All features" },
-  ]
+    {
+      value: "basic",
+      label: "Basic Plan",
+      description: "$9/month - Essential features",
+    },
+    {
+      value: "pro",
+      label: "Pro Plan",
+      description: "$19/month - Advanced features",
+    },
+    {
+      value: "enterprise",
+      label: "Enterprise Plan",
+      description: "$49/month - All features",
+    },
+  ];
 
   const notificationOptions = [
     { value: "email", label: "Email Only" },
     { value: "sms", label: "SMS Only" },
     { value: "both", label: "Email & SMS" },
     { value: "none", label: "No Notifications" },
-  ]
+  ];
 
   return (
     <div className="min-h-screen bg-background p-8">
@@ -172,22 +195,32 @@ export default function HomePage() {
             <span className="text-foreground">1. </span>
             <span className="text-secondary">Colors</span>
           </h1>
-          <p className="text-lg text-muted-foreground">Design System Color Palette</p>
+          <p className="text-lg text-muted-foreground">
+            Design System Color Palette
+          </p>
         </div>
 
         {/* Brand Colors */}
         <section className="space-y-6">
-          <h2 className="text-2xl font-semibold text-foreground">Brand Colors</h2>
+          <h2 className="text-2xl font-semibold text-foreground">
+            Brand Colors
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <ColorCard name="Primary" hex="#762C85" className="bg-primary" />
-            <ColorCard name="Secondary" hex="#E71E86" className="bg-secondary" />
+            <ColorCard
+              name="Secondary"
+              hex="#E71E86"
+              className="bg-secondary"
+            />
             <ColorCard name="Tertiary" hex="#FECD07" className="bg-tertiary" />
           </div>
         </section>
 
         {/* State Colors */}
         <section className="space-y-6">
-          <h2 className="text-2xl font-semibold text-foreground">State Colors</h2>
+          <h2 className="text-2xl font-semibold text-foreground">
+            State Colors
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <ColorCard name="Info" hex="#00B6F3" className="bg-info" />
             <ColorCard name="Success" hex="#09BA00" className="bg-success" />
@@ -198,11 +231,28 @@ export default function HomePage() {
 
         {/* Black Colors */}
         <section className="space-y-6">
-          <h2 className="text-2xl font-semibold text-foreground">Black Colors</h2>
+          <h2 className="text-2xl font-semibold text-foreground">
+            Black Colors
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <ColorCard name="1" hex="#000000" className="bg-black-1" textColor="text-white" />
-            <ColorCard name="2" hex="#1D1D1D" className="bg-black-2" textColor="text-white" />
-            <ColorCard name="3" hex="#282828" className="bg-black-3" textColor="text-white" />
+            <ColorCard
+              name="1"
+              hex="#000000"
+              className="bg-black-1"
+              textColor="text-white"
+            />
+            <ColorCard
+              name="2"
+              hex="#1D1D1D"
+              className="bg-black-2"
+              textColor="text-white"
+            />
+            <ColorCard
+              name="3"
+              hex="#282828"
+              className="bg-black-3"
+              textColor="text-white"
+            />
             <ColorCard
               name="White"
               hex="#FFFFFF"
@@ -215,13 +265,40 @@ export default function HomePage() {
 
         {/* Grey Colors */}
         <section className="space-y-6">
-          <h2 className="text-2xl font-semibold text-foreground">Grey Colors</h2>
+          <h2 className="text-2xl font-semibold text-foreground">
+            Grey Colors
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-            <ColorCard name="1" hex="#333333" className="bg-grey-1" textColor="text-white" />
-            <ColorCard name="2" hex="#4F4F4F" className="bg-grey-2" textColor="text-white" />
-            <ColorCard name="3" hex="#828282" className="bg-grey-3" textColor="text-white" />
-            <ColorCard name="4" hex="#BDBDBD" className="bg-grey-4" textColor="text-black" />
-            <ColorCard name="5" hex="#E0E0E0" className="bg-grey-5" textColor="text-black" />
+            <ColorCard
+              name="1"
+              hex="#333333"
+              className="bg-grey-1"
+              textColor="text-white"
+            />
+            <ColorCard
+              name="2"
+              hex="#4F4F4F"
+              className="bg-grey-2"
+              textColor="text-white"
+            />
+            <ColorCard
+              name="3"
+              hex="#828282"
+              className="bg-grey-3"
+              textColor="text-white"
+            />
+            <ColorCard
+              name="4"
+              hex="#BDBDBD"
+              className="bg-grey-4"
+              textColor="text-black"
+            />
+            <ColorCard
+              name="5"
+              hex="#E0E0E0"
+              className="bg-grey-5"
+              textColor="text-black"
+            />
           </div>
         </section>
 
@@ -362,13 +439,17 @@ export default function HomePage() {
               <span className="text-foreground">3. </span>
               <span className="text-secondary">Text Fields</span>
             </h1>
-            <p className="text-lg text-muted-foreground">Reusable Input Components</p>
+            <p className="text-lg text-muted-foreground">
+              Reusable Input Components
+            </p>
           </div>
 
           <div className="space-y-8">
             {/* Basic Text Fields */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Basic Text Fields</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Basic Text Fields
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <TextField label="Basic Field" placeholder="Enter text here" />
                 <TextField placeholder="No label field" />
@@ -377,18 +458,30 @@ export default function HomePage() {
 
             {/* Text Fields with Icons */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">With Icons</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                With Icons
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <TextField label="Search" placeholder="Search..." icon={<Search size={16} />} />
-                <TextField label="Email" placeholder="Enter your email" icon={<Mail size={16} />} type="email" />
+                <TextField
+                  label="Search"
+                  placeholder="Search..."
+                  icon={<Search size={16} />}
+                />
+                <TextField
+                  label="Email"
+                  placeholder="Enter your email"
+                  icon={<Mail size={16} />}
+                  type="email"
+                />
               </div>
             </div>
-      <h1 className="text-2xl font-bold mb-6">Kuwait Places Search</h1>
-      <SearchBar
-      />
+            <h1 className="text-2xl font-bold mb-6">Kuwait Places Search</h1>
+            <SearchBar />
             {/* Text Fields with Status */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">With Status Messages</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                With Status Messages
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <TextField
                   label="Username"
@@ -409,9 +502,15 @@ export default function HomePage() {
 
             {/* Disabled State */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Disabled State</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Disabled State
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <TextField label="Disabled Field" placeholder="This field is disabled" disabled />
+                <TextField
+                  label="Disabled Field"
+                  placeholder="This field is disabled"
+                  disabled
+                />
                 <TextField
                   label="Disabled with Icon"
                   placeholder="Disabled with icon"
@@ -424,12 +523,21 @@ export default function HomePage() {
 
             {/* Usage Examples */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Usage Examples</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Usage Examples
+              </h3>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <Card className="p-6 space-y-4">
-                  <h4 className="text-lg font-semibold text-primary">Login Form</h4>
+                  <h4 className="text-lg font-semibold text-primary">
+                    Login Form
+                  </h4>
                   <div className="space-y-4">
-                    <TextField label="Email" placeholder="Enter your email" icon={<Mail size={16} />} type="email" />
+                    <TextField
+                      label="Email"
+                      placeholder="Enter your email"
+                      icon={<Mail size={16} />}
+                      type="email"
+                    />
                     <TextField
                       label="Password"
                       placeholder="Enter your password"
@@ -440,9 +548,15 @@ export default function HomePage() {
                 </Card>
 
                 <Card className="p-6 space-y-4">
-                  <h4 className="text-lg font-semibold text-success">Contact Form</h4>
+                  <h4 className="text-lg font-semibold text-success">
+                    Contact Form
+                  </h4>
                   <div className="space-y-4">
-                    <TextField label="Full Name" placeholder="Enter your full name" icon={<User size={16} />} />
+                    <TextField
+                      label="Full Name"
+                      placeholder="Enter your full name"
+                      icon={<User size={16} />}
+                    />
                     <TextField
                       label="Email Address"
                       placeholder="Enter your email"
@@ -464,22 +578,35 @@ export default function HomePage() {
               <span className="text-foreground">4. </span>
               <span className="text-secondary">Dropdowns</span>
             </h1>
-            <p className="text-lg text-muted-foreground">Reusable Dropdown Components</p>
+            <p className="text-lg text-muted-foreground">
+              Reusable Dropdown Components
+            </p>
           </div>
 
           <div className="space-y-8">
             {/* Basic Dropdowns */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Basic Dropdowns</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Basic Dropdowns
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Dropdown label="Basic Dropdown" placeholder="Select an option" options={basicOptions} />
-                <Dropdown placeholder="No label dropdown" options={basicOptions} />
+                <Dropdown
+                  label="Basic Dropdown"
+                  placeholder="Select an option"
+                  options={basicOptions}
+                />
+                <Dropdown
+                  placeholder="No label dropdown"
+                  options={basicOptions}
+                />
               </div>
             </div>
 
             {/* Variant Styles */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Variant Styles</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Variant Styles
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Dropdown
                   label="Rounded Dropdown"
@@ -498,7 +625,9 @@ export default function HomePage() {
 
             {/* With Status Messages */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">With Status Messages</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                With Status Messages
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Dropdown
                   label="Country"
@@ -518,7 +647,9 @@ export default function HomePage() {
 
             {/* Disabled State */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Disabled State</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Disabled State
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Dropdown
                   label="Disabled Dropdown"
@@ -538,12 +669,20 @@ export default function HomePage() {
 
             {/* Usage Examples */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Usage Examples</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Usage Examples
+              </h3>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <Card className="p-6 space-y-4">
-                  <h4 className="text-lg font-semibold text-primary">User Profile Form</h4>
+                  <h4 className="text-lg font-semibold text-primary">
+                    User Profile Form
+                  </h4>
                   <div className="space-y-4">
-                    <TextField label="Full Name" placeholder="Enter your name" icon={<User size={16} />} />
+                    <TextField
+                      label="Full Name"
+                      placeholder="Enter your name"
+                      icon={<User size={16} />}
+                    />
                     <Dropdown
                       label="Country"
                       placeholder="Select your country"
@@ -560,9 +699,16 @@ export default function HomePage() {
                 </Card>
 
                 <Card className="p-6 space-y-4">
-                  <h4 className="text-lg font-semibold text-success">Settings Panel</h4>
+                  <h4 className="text-lg font-semibold text-success">
+                    Settings Panel
+                  </h4>
                   <div className="space-y-4">
-                    <TextField label="Email" placeholder="Enter email" icon={<Mail size={16} />} type="email" />
+                    <TextField
+                      label="Email"
+                      placeholder="Enter email"
+                      icon={<Mail size={16} />}
+                      type="email"
+                    />
                     <Dropdown
                       label="Notification Preference"
                       placeholder="Select preference"
@@ -588,13 +734,17 @@ export default function HomePage() {
               <span className="text-foreground">5. </span>
               <span className="text-secondary">Checkboxes</span>
             </h1>
-            <p className="text-lg text-muted-foreground">Reusable Checkbox Components</p>
+            <p className="text-lg text-muted-foreground">
+              Reusable Checkbox Components
+            </p>
           </div>
 
           <div className="space-y-8">
             {/* Basic Checkboxes */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Basic Checkboxes</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Basic Checkboxes
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <EnhancedCheckbox label="Basic Checkbox" />
                 <EnhancedCheckbox label="Pre-checked Checkbox" defaultChecked />
@@ -603,18 +753,26 @@ export default function HomePage() {
 
             {/* Checkbox States */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Different States</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Different States
+              </h3>
               <div className="space-y-4">
                 <EnhancedCheckbox label="Normal Checkbox" />
                 <EnhancedCheckbox label="Checked Checkbox" defaultChecked />
                 <EnhancedCheckbox label="Disabled Checkbox" disabled />
-                <EnhancedCheckbox label="Disabled Checked" disabled defaultChecked />
+                <EnhancedCheckbox
+                  label="Disabled Checked"
+                  disabled
+                  defaultChecked
+                />
               </div>
             </div>
 
             {/* With Descriptions */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">With Descriptions</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                With Descriptions
+              </h3>
               <div className="space-y-4">
                 <EnhancedCheckbox
                   label="Terms and Conditions"
@@ -635,7 +793,9 @@ export default function HomePage() {
 
             {/* Without Labels */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Without Labels</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Without Labels
+              </h3>
               <div className="flex gap-4 items-center">
                 <EnhancedCheckbox />
                 <EnhancedCheckbox defaultChecked />
@@ -645,12 +805,21 @@ export default function HomePage() {
 
             {/* Usage Examples */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Usage Examples</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Usage Examples
+              </h3>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <Card className="p-6 space-y-4">
-                  <h4 className="text-lg font-semibold text-primary">Registration Form</h4>
+                  <h4 className="text-lg font-semibold text-primary">
+                    Registration Form
+                  </h4>
                   <div className="space-y-4">
-                    <TextField label="Email" placeholder="Enter your email" icon={<Mail size={16} />} type="email" />
+                    <TextField
+                      label="Email"
+                      placeholder="Enter your email"
+                      icon={<Mail size={16} />}
+                      type="email"
+                    />
                     <TextField
                       label="Password"
                       placeholder="Enter password"
@@ -670,7 +839,9 @@ export default function HomePage() {
                 </Card>
 
                 <Card className="p-6 space-y-4">
-                  <h4 className="text-lg font-semibold text-success">Preferences Settings</h4>
+                  <h4 className="text-lg font-semibold text-success">
+                    Preferences Settings
+                  </h4>
                   <div className="space-y-4">
                     <EnhancedCheckbox
                       label="Email Notifications"
@@ -681,7 +852,11 @@ export default function HomePage() {
                       label="Push Notifications"
                       description="Receive push notifications on your device"
                     />
-                    <EnhancedCheckbox label="SMS Notifications" description="Receive notifications via SMS" disabled />
+                    <EnhancedCheckbox
+                      label="SMS Notifications"
+                      description="Receive notifications via SMS"
+                      disabled
+                    />
                     <EnhancedCheckbox
                       label="Marketing Communications"
                       description="Receive promotional emails and offers"
@@ -701,15 +876,23 @@ export default function HomePage() {
               <span className="text-foreground">6. </span>
               <span className="text-secondary">Radio Buttons</span>
             </h1>
-            <p className="text-lg text-muted-foreground">Reusable Radio Button Components</p>
+            <p className="text-lg text-muted-foreground">
+              Reusable Radio Button Components
+            </p>
           </div>
 
           <div className="space-y-8">
             {/* Basic Radio Buttons */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Basic Radio Buttons</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Basic Radio Buttons
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <EnhancedRadio label="Gender (Horizontal)" options={genderOptions} orientation="horizontal" />
+                <EnhancedRadio
+                  label="Gender (Horizontal)"
+                  options={genderOptions}
+                  orientation="horizontal"
+                />
                 <EnhancedRadio
                   label="Notification Method"
                   options={notificationOptions}
@@ -721,14 +904,31 @@ export default function HomePage() {
 
             {/* Usage Examples */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Usage Examples</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Usage Examples
+              </h3>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <Card className="p-6 space-y-4">
-                  <h4 className="text-lg font-semibold text-primary">User Profile Form</h4>
+                  <h4 className="text-lg font-semibold text-primary">
+                    User Profile Form
+                  </h4>
                   <div className="space-y-4">
-                    <TextField label="Full Name" placeholder="Enter your name" icon={<User size={16} />} />
-                    <TextField label="Email" placeholder="Enter your email" icon={<Mail size={16} />} type="email" />
-                    <EnhancedRadio label="Gender" options={genderOptions} orientation="horizontal" />
+                    <TextField
+                      label="Full Name"
+                      placeholder="Enter your name"
+                      icon={<User size={16} />}
+                    />
+                    <TextField
+                      label="Email"
+                      placeholder="Enter your email"
+                      icon={<Mail size={16} />}
+                      type="email"
+                    />
+                    <EnhancedRadio
+                      label="Gender"
+                      options={genderOptions}
+                      orientation="horizontal"
+                    />
                     <EnhancedRadio
                       label="Notification Preferences"
                       description="How would you like to receive updates?"
@@ -739,7 +939,9 @@ export default function HomePage() {
                 </Card>
 
                 <Card className="p-6 space-y-4">
-                  <h4 className="text-lg font-semibold text-success">Subscription Settings</h4>
+                  <h4 className="text-lg font-semibold text-success">
+                    Subscription Settings
+                  </h4>
                   <div className="space-y-4">
                     <EnhancedRadio
                       label="Billing Plan"
@@ -772,22 +974,32 @@ export default function HomePage() {
               <span className="text-foreground">7. </span>
               <span className="text-secondary">Sliders</span>
             </h1>
-            <p className="text-lg text-muted-foreground">Reusable Slider Components</p>
+            <p className="text-lg text-muted-foreground">
+              Reusable Slider Components
+            </p>
           </div>
 
           <div className="space-y-8">
             {/* Basic Sliders */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Basic Sliders</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Basic Sliders
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <EnhancedSlider label="Basic Slider" variant="single" defaultValue={[30]} />
+                <EnhancedSlider
+                  label="Basic Slider"
+                  variant="single"
+                  defaultValue={[30]}
+                />
                 <EnhancedSlider variant="single" defaultValue={[50]} />
               </div>
             </div>
 
             {/* Range Sliders */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Range Sliders</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Range Sliders
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <EnhancedSlider
                   label="Price Range"
@@ -808,7 +1020,9 @@ export default function HomePage() {
 
             {/* With Value Display */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">With Value Display</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                With Value Display
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <EnhancedSlider
                   label="Volume"
@@ -829,7 +1043,9 @@ export default function HomePage() {
 
             {/* With Descriptions */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">With Descriptions</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                With Descriptions
+              </h3>
               <div className="space-y-6">
                 <EnhancedSlider
                   label="Brightness"
@@ -852,7 +1068,9 @@ export default function HomePage() {
 
             {/* Disabled State */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Disabled State</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Disabled State
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <EnhancedSlider
                   label="Disabled Single"
@@ -873,10 +1091,14 @@ export default function HomePage() {
 
             {/* Usage Examples */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Usage Examples</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Usage Examples
+              </h3>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <Card className="p-6 space-y-4">
-                  <h4 className="text-lg font-semibold text-primary">E-commerce Filters</h4>
+                  <h4 className="text-lg font-semibold text-primary">
+                    E-commerce Filters
+                  </h4>
                   <div className="space-y-4">
                     <EnhancedSlider
                       label="Price Range"
@@ -900,7 +1122,9 @@ export default function HomePage() {
                 </Card>
 
                 <Card className="p-6 space-y-4">
-                  <h4 className="text-lg font-semibold text-success">System Settings</h4>
+                  <h4 className="text-lg font-semibold text-success">
+                    System Settings
+                  </h4>
                   <div className="space-y-4">
                     <EnhancedSlider
                       label="Volume"
@@ -916,7 +1140,10 @@ export default function HomePage() {
                       defaultValue={[60]}
                       showValue
                     />
-                    <EnhancedCheckbox label="Auto-adjust brightness" defaultChecked />
+                    <EnhancedCheckbox
+                      label="Auto-adjust brightness"
+                      defaultChecked
+                    />
                     <EnhancedCheckbox label="Mute notifications" />
                   </div>
                 </Card>
@@ -932,13 +1159,17 @@ export default function HomePage() {
               <span className="text-foreground">8. </span>
               <span className="text-secondary">Breadcrumbs</span>
             </h1>
-            <p className="text-lg text-muted-foreground">Navigation Breadcrumb Components</p>
+            <p className="text-lg text-muted-foreground">
+              Navigation Breadcrumb Components
+            </p>
           </div>
 
           <div className="space-y-8">
             {/* Basic Breadcrumbs */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Basic Breadcrumbs</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Basic Breadcrumbs
+              </h3>
               <div className="space-y-4">
                 <SimpleBreadcrumb path={["Home", "Detail", "Pricing"]} />
                 <SimpleBreadcrumb path={["Dashboard", "Settings", "Profile"]} />
@@ -947,28 +1178,46 @@ export default function HomePage() {
 
             {/* Without Home Icon */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Without Home Icon</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Without Home Icon
+              </h3>
               <div className="space-y-4">
-                <SimpleBreadcrumb path={["Home", "Products", "Electronics"]} homeIcon={false} />
-                <SimpleBreadcrumb path={["Admin", "Users", "Permissions"]} homeIcon={false} />
+                <SimpleBreadcrumb
+                  path={["Home", "Products", "Electronics"]}
+                  homeIcon={false}
+                />
+                <SimpleBreadcrumb
+                  path={["Admin", "Users", "Permissions"]}
+                  homeIcon={false}
+                />
               </div>
             </div>
 
             {/* Custom Breadcrumbs with Icons */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Custom Breadcrumbs with Icons</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Custom Breadcrumbs with Icons
+              </h3>
               <div className="space-y-4">
                 <EnhancedBreadcrumb
                   items={[
                     { label: "Home", href: "/" },
-                    { label: "Settings", href: "/settings", icon: <Settings className="w-4 h-4" /> },
+                    {
+                      label: "Settings",
+                      href: "/settings",
+                      icon: <Settings className="w-4 h-4" />,
+                    },
                     { label: "Profile" },
                   ]}
                 />
                 <EnhancedBreadcrumb
                   items={[
                     { label: "Home", href: "/" },
-                    { label: "Shop", href: "/shop", icon: <ShoppingCart className="w-4 h-4" /> },
+                    {
+                      label: "Shop",
+                      href: "/shop",
+                      icon: <ShoppingCart className="w-4 h-4" />,
+                    },
                     { label: "Electronics", href: "/shop/electronics" },
                     { label: "Laptops" },
                   ]}
@@ -978,10 +1227,20 @@ export default function HomePage() {
 
             {/* Long Breadcrumb Paths */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Long Breadcrumb Paths</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Long Breadcrumb Paths
+              </h3>
               <div className="space-y-4">
                 <SimpleBreadcrumb
-                  path={["Home", "Categories", "Electronics", "Computers", "Laptops", "Gaming", "Product Details"]}
+                  path={[
+                    "Home",
+                    "Categories",
+                    "Electronics",
+                    "Computers",
+                    "Laptops",
+                    "Gaming",
+                    "Product Details",
+                  ]}
                 />
                 <EnhancedBreadcrumb
                   items={[
@@ -989,7 +1248,10 @@ export default function HomePage() {
                     { label: "Projects", href: "/projects" },
                     { label: "Web Development", href: "/projects/web" },
                     { label: "E-commerce", href: "/projects/web/ecommerce" },
-                    { label: "Product Catalog", href: "/projects/web/ecommerce/catalog" },
+                    {
+                      label: "Product Catalog",
+                      href: "/projects/web/ecommerce/catalog",
+                    },
                     { label: "Item Details" },
                   ]}
                 />
@@ -998,28 +1260,41 @@ export default function HomePage() {
 
             {/* Usage Examples */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Usage Examples</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Usage Examples
+              </h3>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <Card className="p-6 space-y-4">
-                  <h4 className="text-lg font-semibold text-primary">E-commerce Navigation</h4>
+                  <h4 className="text-lg font-semibold text-primary">
+                    E-commerce Navigation
+                  </h4>
                   <div className="space-y-4">
-                    <SimpleBreadcrumb path={["Home", "Electronics", "Smartphones", "iPhone 15"]} />
+                    <SimpleBreadcrumb
+                      path={["Home", "Electronics", "Smartphones", "iPhone 15"]}
+                    />
                     <div className="border-t pt-4">
                       <h5 className="font-medium mb-2">Product Details</h5>
                       <p className="text-sm text-muted-foreground">
-                        Navigate through product categories with clear breadcrumb trails
+                        Navigate through product categories with clear
+                        breadcrumb trails
                       </p>
                     </div>
                   </div>
                 </Card>
 
                 <Card className="p-6 space-y-4">
-                  <h4 className="text-lg font-semibold text-success">Admin Dashboard</h4>
+                  <h4 className="text-lg font-semibold text-success">
+                    Admin Dashboard
+                  </h4>
                   <div className="space-y-4">
                     <EnhancedBreadcrumb
                       items={[
                         { label: "Dashboard", href: "/admin" },
-                        { label: "Users", href: "/admin/users", icon: <User className="w-4 h-4" /> },
+                        {
+                          label: "Users",
+                          href: "/admin/users",
+                          icon: <User className="w-4 h-4" />,
+                        },
                         { label: "User Profile" },
                       ]}
                     />
@@ -1036,14 +1311,18 @@ export default function HomePage() {
 
             {/* Implementation Examples */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Implementation Examples</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Implementation Examples
+              </h3>
               <div className="bg-muted/30 rounded-lg p-6 space-y-4">
                 <h4 className="font-semibold text-foreground">Simple Usage:</h4>
                 <pre className="text-sm bg-background p-4 rounded border overflow-x-auto">
                   <code>{`<SimpleBreadcrumb path={["Home", "Products", "Details"]} />`}</code>
                 </pre>
 
-                <h4 className="font-semibold text-foreground">Advanced Usage:</h4>
+                <h4 className="font-semibold text-foreground">
+                  Advanced Usage:
+                </h4>
                 <pre className="text-sm bg-background p-4 rounded border overflow-x-auto">
                   <code>{`<EnhancedBreadcrumb
   items={[
@@ -1065,13 +1344,17 @@ export default function HomePage() {
               <span className="text-foreground">9. </span>
               <span className="text-secondary">Buttons</span>
             </h1>
-            <p className="text-lg text-muted-foreground">Reusable Button Components</p>
+            <p className="text-lg text-muted-foreground">
+              Reusable Button Components
+            </p>
           </div>
 
           <div className="space-y-8">
             {/* Button Variants */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Button Variants</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Button Variants
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <Card className="p-6 space-y-4">
                   <h4 className="font-semibold text-foreground">Default</h4>
@@ -1137,7 +1420,9 @@ export default function HomePage() {
 
             {/* Button Sizes */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Button Sizes</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Button Sizes
+              </h3>
               <div className="flex flex-wrap gap-4 items-center">
                 <Button variant="primary" size="sm">
                   Small
@@ -1153,7 +1438,9 @@ export default function HomePage() {
 
             {/* Buttons with Icons */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Buttons with Icons</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Buttons with Icons
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <Card className="p-6 space-y-4">
                   <h4 className="font-semibold text-foreground">Icon Left</h4>
@@ -1199,15 +1486,21 @@ export default function HomePage() {
 
             {/* Interactive States */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Interactive States</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Interactive States
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <Card className="p-6 space-y-4">
-                  <h4 className="font-semibold text-foreground">Default State</h4>
+                  <h4 className="font-semibold text-foreground">
+                    Default State
+                  </h4>
                   <Button variant="primary">Hover Me</Button>
                 </Card>
 
                 <Card className="p-6 space-y-4">
-                  <h4 className="font-semibold text-foreground">Loading State</h4>
+                  <h4 className="font-semibold text-foreground">
+                    Loading State
+                  </h4>
                   <Button variant="primary" disabled>
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
                     Loading...
@@ -1215,14 +1508,18 @@ export default function HomePage() {
                 </Card>
 
                 <Card className="p-6 space-y-4">
-                  <h4 className="font-semibold text-foreground">Disabled State</h4>
+                  <h4 className="font-semibold text-foreground">
+                    Disabled State
+                  </h4>
                   <Button variant="primary" disabled>
                     Disabled
                   </Button>
                 </Card>
 
                 <Card className="p-6 space-y-4">
-                  <h4 className="font-semibold text-foreground">Gradient Animation</h4>
+                  <h4 className="font-semibold text-foreground">
+                    Gradient Animation
+                  </h4>
                   <Button variant="gradient">Animated</Button>
                 </Card>
               </div>
@@ -1230,10 +1527,14 @@ export default function HomePage() {
 
             {/* Usage Examples */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Usage Examples</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Usage Examples
+              </h3>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <Card className="p-6 space-y-4">
-                  <h4 className="text-lg font-semibold text-primary">Call-to-Action Section</h4>
+                  <h4 className="text-lg font-semibold text-primary">
+                    Call-to-Action Section
+                  </h4>
                   <div className="space-y-4">
                     <Button variant="primary" size="lg" className="w-full">
                       <Download className="w-4 h-4 mr-2" />
@@ -1251,7 +1552,9 @@ export default function HomePage() {
                 </Card>
 
                 <Card className="p-6 space-y-4">
-                  <h4 className="text-lg font-semibold text-success">Action Buttons</h4>
+                  <h4 className="text-lg font-semibold text-success">
+                    Action Buttons
+                  </h4>
                   <div className="space-y-4">
                     <div className="flex gap-3">
                       <Button variant="primary">
@@ -1281,13 +1584,17 @@ export default function HomePage() {
               <span className="text-foreground">10. </span>
               <span className="text-secondary">Product Cards & Sliders</span>
             </h1>
-            <p className="text-lg text-muted-foreground">Interactive Product Card Components with Slider</p>
+            <p className="text-lg text-muted-foreground">
+              Interactive Product Card Components with Slider
+            </p>
           </div>
 
           <div className="space-y-8">
             {/* Individual Product Cards */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Individual Product Cards</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Individual Product Cards
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <ProductCard
                   id="demo-1"
@@ -1329,7 +1636,9 @@ export default function HomePage() {
 
             {/* Card Slider */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Card Slider</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Card Slider
+              </h3>
               <CardSlider
                 title="Featured in Explore"
                 subtitle="Discover Kuwait's most popular spots with exclusive deals"
@@ -1342,7 +1651,9 @@ export default function HomePage() {
 
             {/* Auto-play Slider */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Auto-play Slider</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Auto-play Slider
+              </h3>
               <CardSlider
                 title="Trending Now"
                 subtitle="Popular destinations updated every hour"
@@ -1355,7 +1666,9 @@ export default function HomePage() {
 
             {/* Different Categories */}
             <div className="space-y-6">
-              <h3 className="text-xl font-semibold text-foreground">Different Categories</h3>
+              <h3 className="text-xl font-semibold text-foreground">
+                Different Categories
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <ProductCard
                   id="cat-1"
@@ -1405,9 +1718,9 @@ export default function HomePage() {
                 />
               </div>
             </div>
-            </div>
-</section>
+          </div>
+        </section>
       </div>
     </div>
-  )
+  );
 }

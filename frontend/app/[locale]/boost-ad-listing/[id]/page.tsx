@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useMemo, useState } from "react"
-import { useParams, useRouter } from "next/navigation"
-import Link from "next/link"
-import { CalendarDays, ChevronLeft } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
-import type { AdItem } from "@/components/my-ads/ads-list"
-import { Card, CardContent } from "@/components/common/shadecn-card"
-import { Button } from "@/components/common/button"
+import { useMemo, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
+import { CalendarDays, ChevronLeft } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import type { AdItem } from "@/components/my-ads/ads-list";
+import { Card, CardContent } from "@/components/common/shadecn-card";
+import { Button } from "@/components/common/button";
 
 const ADS: AdItem[] = [
   {
@@ -51,18 +51,20 @@ const ADS: AdItem[] = [
     clicks: 19,
     views: 160,
   },
-]
+];
 
 export default function BoostAdDetailsPage() {
-  const params = useParams<{ id: string }>()
-  const { toast } = useToast()
-  const router = useRouter()
-  const ad = useMemo(() => ADS.find((a) => a.id === params.id), [params.id])
+  const params = useParams<{ id: string }>();
+  const { toast } = useToast();
+  const router = useRouter();
+  const ad = useMemo(() => ADS.find((a) => a.id === params.id), [params.id]);
 
-  const basePrice = 8
-  const [selected, setSelected] = useState<"featured" | "sponsored">("sponsored")
-  const selectedPrice = selected === "featured" ? 10 : 25
-  const total = basePrice + selectedPrice
+  const basePrice = 8;
+  const [selected, setSelected] = useState<"featured" | "sponsored">(
+    "sponsored"
+  );
+  const selectedPrice = selected === "featured" ? 10 : 25;
+  const total = basePrice + selectedPrice;
 
   if (!ad) {
     return (
@@ -74,7 +76,7 @@ export default function BoostAdDetailsPage() {
           </Link>
         </p>
       </main>
-    )
+    );
   }
 
   return (
@@ -89,9 +91,7 @@ export default function BoostAdDetailsPage() {
         } as React.CSSProperties
       }
     >
-      <div
-        className="mx-auto w-full max-w-[1440px] py-6"
-      >
+      <div className="mx-auto w-full max-w-[1440px] py-6">
         <div className="mb-4 flex items-center gap-2">
           <button
             onClick={() => router.back()}
@@ -102,7 +102,9 @@ export default function BoostAdDetailsPage() {
           </button>
         </div>
 
-        <h1 className="text-center text-2xl font-bold text-[var(--primary)]">Boost Ad Listing</h1>
+        <h1 className="text-center text-2xl font-bold text-[var(--primary)]">
+          Boost Ad Listing
+        </h1>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_420px]">
           {/* Left Column */}
@@ -119,11 +121,18 @@ export default function BoostAdDetailsPage() {
                     />
                   </div>
                   <div>
-                    <div className="text-sm font-semibold leading-tight">Selected Ad</div>
-                    <div className="text-sm text-muted-foreground">{ad.title}</div>
+                    <div className="text-sm font-semibold leading-tight">
+                      Selected Ad
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {ad.title}
+                    </div>
                   </div>
                 </div>
-                <Link href="/boost-ads" className="text-sm font-medium text-[var(--primary)] hover:underline">
+                <Link
+                  href="/boost-ads"
+                  className="text-sm font-medium text-[var(--primary)] hover:underline"
+                >
                   Change
                 </Link>
               </CardContent>
@@ -131,7 +140,9 @@ export default function BoostAdDetailsPage() {
 
             {/* Choose Boost Options */}
             <section>
-              <h2 className="mb-3 text-xl font-semibold">Choose Boost Options</h2>
+              <h2 className="mb-3 text-xl font-semibold">
+                Choose Boost Options
+              </h2>
               <div className="flex flex-wrap gap-3">
                 <button
                   onClick={() => setSelected("featured")}
@@ -142,7 +153,9 @@ export default function BoostAdDetailsPage() {
                     Featured
                   </span>
                   <div className="text-[var(--secondary)]">+10 KD</div>
-                  <div className="text-xs text-muted-foreground">Next 2 rows placement</div>
+                  <div className="text-xs text-muted-foreground">
+                    Next 2 rows placement
+                  </div>
                 </button>
 
                 <button
@@ -154,7 +167,9 @@ export default function BoostAdDetailsPage() {
                     Sponsored
                   </span>
                   <div className="text-[var(--secondary)]">+25 KD</div>
-                  <div className="text-xs text-muted-foreground">Top 3-4 positions</div>
+                  <div className="text-xs text-muted-foreground">
+                    Top 3-4 positions
+                  </div>
                 </button>
               </div>
             </section>
@@ -165,14 +180,19 @@ export default function BoostAdDetailsPage() {
               <Card className="border-0 shadow-none ring-1 ring-border">
                 <CardContent className="space-y-4 p-5">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Base Price</span>
+                    <span className="text-sm text-muted-foreground">
+                      Base Price
+                    </span>
                     <span className="text-sm font-medium">{basePrice} KD</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">
-                      {selected === "featured" ? "Featured" : "Sponsored"} Pricing
+                      {selected === "featured" ? "Featured" : "Sponsored"}{" "}
+                      Pricing
                     </span>
-                    <span className="text-sm font-medium text-[var(--secondary)]">+{selectedPrice} KD</span>
+                    <span className="text-sm font-medium text-[var(--secondary)]">
+                      +{selectedPrice} KD
+                    </span>
                   </div>
                   <hr className="border-border" />
                   <div className="flex items-center justify-between">
@@ -200,8 +220,11 @@ export default function BoostAdDetailsPage() {
                     <Button
                       className="rounded-full bg-amber-500 text-black hover:bg-amber-500/90"
                       onClick={() => {
-                        toast({ title: "Boost applied", description: `Your ad is now ${selected}.` })
-                        router.push("/boost-ad-listing")
+                        toast({
+                          title: "Boost applied",
+                          description: `Your ad is now ${selected}.`,
+                        });
+                        router.push("/boost-ad-listing");
                       }}
                     >
                       ⚡ Boost Ad
@@ -228,12 +251,14 @@ export default function BoostAdDetailsPage() {
         </div>
       </div>
     </main>
-  )
+  );
 }
 
 function cnOption(active: boolean) {
   return [
     "w-[220px] rounded-2xl border px-4 py-3 text-left",
-    active ? "border-[var(--secondary)] ring-1 ring-[var(--secondary)]" : "border-border",
-  ].join(" ")
+    active
+      ? "border-[var(--secondary)] ring-1 ring-[var(--secondary)]"
+      : "border-border",
+  ].join(" ");
 }

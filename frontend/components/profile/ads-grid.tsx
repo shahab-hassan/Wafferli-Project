@@ -1,93 +1,111 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useTranslations } from "next-intl"
-import MarketplaceCompactProductCard from "../profile/compact-product-card"
-import MarketplaceCompactServiceCard from "../profile/compact-service-card"
+import { useState } from "react";
+import { useTranslations } from "next-intl";
+import AdCard from "@/components/common/ad-card";
 
-const mockAds = [
-  { type: "product", id: "1", rating: 4.6, badges: ["Product", "Apple", "Brand New"], title: "iPhone 15 Pro Max", desc: "256GB, Titanium Blue, Unlocked", stock: "In Stock", price: 450, originalPrice: 520 },
-  { type: "service", id: "2", rating: 4.6, badges: ["Service", "Home & Personal Services"], title: "AC Repair & Maintenance", desc: "24/7 emergency AC repair service" },
-  { type: "product", id: "3", rating: 4.5, badges: ["Product", "Apple", "Brand New"], title: "MacBook Pro 16\"", desc: "M3 Pro, 18GB RAM, 512GB SSD", stock: "In Stock", price: 1200, originalPrice: 1350 },
-  { type: "product", id: "4", rating: 4.6, badges: ["Product", "Apple", "Brand New"], title: "iPhone 15 Pro Max", desc: "256GB, Titanium Blue, Unlocked", stock: "In Stock", price: 450, originalPrice: 520 },
-  { type: "service", id: "5", rating: 4.6, badges: ["Service", "Home & Personal Services"], title: "AC Repair & Maintenance", desc: "24/7 emergency AC repair service" },
-  { type: "product", id: "6", rating: 4.5, badges: ["Product", "Apple", "Brand New"], title: "MacBook Pro 16\"", desc: "M3 Pro, 18GB RAM, 512GB SSD", stock: "In Stock", price: 1200, originalPrice: 1350 },
-  { type: "product", id: "7", rating: 4.6, badges: ["Product", "Apple", "Brand New"], title: "iPhone 15 Pro Max", desc: "256GB, Titanium Blue, Unlocked", stock: "In Stock", price: 450, originalPrice: 520 },
-  { type: "service", id: "8", rating: 4.6, badges: ["Service", "Home & Personal Services"], title: "AC Repair & Maintenance", desc: "24/7 emergency AC repair service" },
-  { type: "product", id: "9", rating: 4.5, badges: ["Product", "Apple", "Brand New"], title: "MacBook Pro 16\"", desc: "M3 Pro, 18GB RAM, 512GB SSD", stock: "In Stock", price: 1200, originalPrice: 1350 },
-  { type: "product", id: "10", rating: 4.5, badges: ["Product", "Apple", "Brand New"], title: "MacBook Pro 16\"", desc: "M3 Pro, 18GB RAM, 512GB SSD", stock: "In Stock", price: 1200, originalPrice: 1350 },
-  { type: "service", id: "11", rating: 4.6, badges: ["Service", "Home & Personal Services"], title: "AC Repair & Maintenance", desc: "24/7 emergency AC repair service" },
-  { type: "product", id: "12", rating: 4.5, badges: ["Product", "Apple", "Brand New"], title: "MacBook Pro 16\"", desc: "M3 Pro, 18GB RAM, 512GB SSD", stock: "In Stock", price: 1200, originalPrice: 1350 },
-]
+export default function AdsGrid({ business }: any) {
+  const t = useTranslations("profile");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-interface AdsGridProps {
-  business: any
-}
-
-export default function AdsGrid({ business }: AdsGridProps) {
-  const t = useTranslations('profile')
-  const [currentPage, setCurrentPage] = useState(1)
-  const adsPerPage = 9
-  const totalPages = Math.ceil(mockAds.length / adsPerPage)
-  const showingFrom = (currentPage - 1) * adsPerPage + 1
-  const showingTo = Math.min(currentPage * adsPerPage, mockAds.length)
-  const currentAds = mockAds.slice((currentPage - 1) * adsPerPage, currentPage * adsPerPage)
+  // If business is an array of ads, use it directly
+  const ads = Array.isArray(business) ? business : [];
 
   return (
     <div>
       <div className="flex flex-wrap justify-between items-center mb-4 text-sm gap-2">
-        <div className="flex items-center">
-          <select className="bg-primary/10 text-primary rounded-full px-3 py-1 mr-2">
-            <option>{t("ads")}</option>
-            <option>{t("all")}</option>
-          </select>
-          <span className="text-muted-foreground">({t("showingResults", { count: `${showingFrom}-${showingTo}` })})</span>
-        </div>
-        <div className="flex items-center">
-          <select className="bg-background border border-border rounded-full px-3 py-1 mr-2">
-            <option>{t("newestFirst")}</option>
-          </select>
-        
-        </div>
+        {/* You can add header content here if needed */}
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {currentAds.map((ad) => (
-          ad.type === "product" ? (
-            <MarketplaceCompactProductCard key={ad.id} {...ad} />
-          ) : (
-            <MarketplaceCompactServiceCard key={ad.id} {...ad} />
-          )
-        ))}
-      </div>
-      <div className="mt-6 flex justify-center items-center space-x-2 text-sm">
-        <button 
-          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-          className="text-primary disabled:text-muted-foreground"
-        >
-          &lt;
-        </button>
-        <button 
-          className={`${currentPage === 1 ? 'bg-primary text-white' : 'bg-background border border-border'} px-3 py-1 rounded`}
-          onClick={() => setCurrentPage(1)}
-        >
-          1
-        </button>
-        <span className="text-muted-foreground">...</span>
-        <button 
-          className={`${currentPage === 2 ? 'bg-primary text-white' : 'bg-background border border-border'} px-3 py-1 rounded`}
-          onClick={() => setCurrentPage(2)}
-        >
-          2
-        </button>
-        <button 
-          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-          disabled={currentPage === totalPages}
-          className="text-primary disabled:text-muted-foreground"
-        >
-          &gt;
-        </button>
-      </div>
+
+      {ads.length === 0 ? (
+        <div className="text-center py-8 text-gray-500">No ads found</div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {ads.map((item: any, index: number) => (
+              <AdCard
+                key={item._id || index}
+                id={item._id}
+                type={item.adType} // This will show the badge
+                title={item.title}
+                subtitle={item.description}
+                image={item.images?.[0] || "/placeholder.svg"}
+                category={item.category}
+                rating={item.rating}
+                reviewCount={item.reviewsCount}
+                fullPrice={item.fullPrice}
+                discount={item.discountDeal}
+                discountPercent={item.discountPercent}
+                location={item.city}
+                isFavorited={false}
+                favoritesCount={item.favoritesCount}
+                myAds={true}
+                showBadge={true} // Control badge visibility
+                onEdit={() => console.log("Edit", item._id)}
+                onDelete={() => console.log("Delete", item._id)}
+                deleting={false}
+              />
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="mt-6 flex justify-center items-center space-x-2 text-sm">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              >
+                &lt;
+              </button>
+
+              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                const pageNum = i + 1;
+                return (
+                  <button
+                    key={pageNum}
+                    className={`px-3 py-1 border rounded ${
+                      currentPage === pageNum
+                        ? "bg-primary text-white border-primary"
+                        : "bg-white border-gray-300 hover:bg-gray-50"
+                    }`}
+                    onClick={() => setCurrentPage(pageNum)}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+
+              {totalPages > 5 && (
+                <>
+                  <span className="text-gray-500">...</span>
+                  <button
+                    className={`px-3 py-1 border rounded ${
+                      currentPage === totalPages
+                        ? "bg-primary text-white border-primary"
+                        : "bg-white border-gray-300 hover:bg-gray-50"
+                    }`}
+                    onClick={() => setCurrentPage(totalPages)}
+                  >
+                    {totalPages}
+                  </button>
+                </>
+              )}
+
+              <button
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                disabled={currentPage === totalPages}
+                className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              >
+                &gt;
+              </button>
+            </div>
+          )}
+        </>
+      )}
     </div>
-  )
+  );
 }

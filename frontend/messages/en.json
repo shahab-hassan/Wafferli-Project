@@ -51,7 +51,7 @@
     "privacy": "Privacy Policy",
     "terms": "Terms & Conditions",
     "giftcenter": "Gift Center",
-    
+
     "profile": "Profile",
     "settings": "Settings",
     "logout": "Logout",
@@ -59,15 +59,14 @@
     "viewAllNotifications": "View all notifications",
     "postAd": "+ Post Ad",
 
-  "viewPublicProfile": "View public profile",
-  "loyaltyPoints": "Loyalty Points",
-  "switchToSeller": "Switch to seller",
+    "viewPublicProfile": "View public profile",
+    "loyaltyPoints": "Loyalty Points",
+    "switchToSeller": "Switch to seller",
     "switchToUser": "Switch to User",
-  "myAds": "My Ads",
-  "myWallet": "My Wallet",
-  "favourites": "Favourites",
-  "blogs": "Blogs"
-
+    "myAds": "My Ads",
+    "myWallet": "My Wallet",
+    "favourites": "Favourites",
+    "blogs": "Blogs"
   },
   "carousel": {
     "slide1": {
@@ -292,13 +291,45 @@
       "haveAccount": "Already have an account?",
       "signIn": "Sign In",
       "referral": {
-      "title": "You’re Almost there!",
-      "subtitle": "Enter Referral Code (if any)",
-      "placeholder": "e.g. WAFFLE2024",
-      "discount": "Get 15% off for any first offer you avail."
+        "title": "You're Almost there!",
+        "subtitle": "Enter Referral Code (if any)",
+        "placeholder": "e.g. WAFFLE2024",
+        "enterCode": "I have a referral code",
+        "discount": "Get 15% off for any first offer you avail."
+      },
+      "nextStep": "Next",
+      "withoutReferralCode": "Without Referral Code",
+      "finish": "Finish",
+      "back": "Back",
+      "continue": "Continue",
+      "sendOtp": "Send OTP",
+      "verifyOtpTitle": "Verify Your Email",
+      "verifyOtpSubtitle": "We've sent a 6-digit code to your email",
+      "enterOtp": "Enter 6-digit OTP",
+      "verifyOtp": "Verify OTP",
+      "resendText": "Didn't receive the code?",
+      "resendBtn": "Resend OTP"
     },
-    "nextStep": "Next",
-    "finish": "Finish"
+    "forgot": {
+      "title": "Forgot Your Password?",
+      "subtitle": "Enter your registered emailnumber to receive an OTP",
+      "emailPlaceholder": "Enter your email",
+      "sendOtp": "Send OTP",
+      "sending": "Sending...",
+      "otpTitle": "Enter OTP",
+      "otpSubtitle": "Check your email  for the OTP code.",
+      "otpPlaceholder": "Enter 6-digit OTP",
+      "verifyOtp": "Verify OTP",
+      "verifying": "Verifying...",
+      "resendText": "Didn’t receive code?",
+      "resendBtn": "Resend OTP",
+      "resetTitle": "Reset Password",
+      "resetSubtitle": "Enter your new password below",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password",
+      "resetBtn": "Reset Password",
+      "successMsg": "Your password has been reset successfully!",
+      "backToLogin": "Back to Login"
     }
   },
   "Sidebar": {
@@ -480,9 +511,12 @@
   "explore": {
     "hero": {
       "badge": "Explore Kuwait",
-      "title": "Discover the Heart of Kuwait",
-      "subtitle": "From iconic landmarks to hidden gems, explore the best destinations Kuwait has to offer",
-      "searchPlaceholder": "Find places, attractions, experiences..."
+      "title": "Discover Amazing Places",
+      "subtitle": "Find the best places to visit, eat, and explore in your city",
+      "searchPlaceholder": "Search for places, restaurants, activities...",
+      "search": "Search",
+      "nearMe": "Places near me",
+      "useMyLocation": "Use my current location"
     },
     "sections": {
       "trending_this_week": "Trending This Week",
@@ -560,7 +594,7 @@
     "verified_reviews": "Verified Reviews",
     "trending": "Trending",
     "apply_filters": "Apply Filters",
-    "explore_categories" : "Categories",
+    "explore_categories": "Categories",
     "sortOptions": {
       "newest_first": "Newest First",
       "rating_high_low": "Rating: High to Low",
@@ -570,15 +604,31 @@
     }
   },
 
-
+  "Productpage": {
+    "hero": {
+      "badge": "Products",
+      "title": "Discover <highlight>Products </highlight> in Kuwait",
+      "subtitle": "From cultural festivals to live concerts, find exciting events happening around Kuwait and never miss out on the fun",
+      "searchLabel": "Find amazing Products",
+      "searchPlaceholder": "Find amazing products.",
+      "useLocation": "Use current location",
+      "treesAlt": "Stylized yellow trees and fireworks illustration"
+    }
+  },
+  "ServicePage": {
+    "hero": {
+      "badge": "Service",
+      "title": "Discover <highlight>Service </highlight> in Kuwait",
+      "subtitle": "From cultural festivals to live concerts, find exciting events happening around Kuwait and never miss out on the fun",
+      "searchLabel": "Find amazing Service",
+      "searchPlaceholder": "Find amazing service.",
+      "useLocation": "Use current location",
+      "treesAlt": "Stylized yellow trees and fireworks illustration"
+    }
+  },
   "TextField": "TextField",
 
-
-
-
-
-
-"categories": {
+  "categories": {
     "all": "All Posts",
     "food": "Food & Restaurants",
     "lifestyle": "Lifestyle",
@@ -722,8 +772,6 @@
   },
   "reply": "Reply",
   "yourAvatar": "Your Avatar",
-
-
 
   "events": {
     "filters": "Filters",
@@ -874,9 +922,7 @@
       "searchPlaceholder": "Search places, restaurants, landmarks..."
     }
   },
- 
 
-  
   "restaurants": "Restaurants",
   "hotels": "Hotels",
   "cafes": "Cafes",
@@ -895,9 +941,6 @@
   "minimum_rating": "Minimum Rating",
   "apply_filters": "Apply Filters",
 
-
-
-  
   "FAQ": {
     "breadcrumb": {
       "home": "Home",
@@ -934,8 +977,8 @@
     "liveChat": "Live Chat",
     "callUs": "Call Us"
   },
-     "marketplace": {
-      "allAds": "All Ads",
+  "marketplace": {
+    "allAds": "All Ads",
 
     "hero": {
       "badge": "Marketplace",
@@ -944,7 +987,7 @@
       "titleSuffix": "from Kuwait Businesses",
       "subtitle": "Kuwait's trusted local marketplace for everything you need",
       "searchPlaceholder": "Search products, services, or shops...",
-  "activeAds": "Active Ads"
+      "activeAds": "Active Ads"
     },
     "tabs": {
       "shopProducts": "Shop Products",
@@ -1110,7 +1153,7 @@
       "getSignedReceipt": "Make sure to obtain a signed receipt from the seller."
     }
   },
-   "giftCards": {
+  "giftCards": {
     "title": "Gift Card Center",
     "scratchCard": "Scratch Card",
     "dailyReward": "Daily Reward: 10 points",
@@ -1139,7 +1182,7 @@
     "traditionalKuwaitiFeast": "Traditional Kuwaiti Feast",
     "alBoomRestaurant": "Al Boom Restaurant"
   },
-  
+
   "ForBusinesses": {
     "hero": {
       "badge": "For Local Businesses",
@@ -1333,7 +1376,7 @@
     }
   },
 
-    "Eventpage": {
+  "Eventpage": {
     "hero": {
       "badge": "Events",
       "title": "Discover <highlight>Unforgettable Moments</highlight> in Kuwait",
@@ -1353,6 +1396,7 @@
       "offer": "Offers",
       "product": "Products",
       "event": "Events",
+      "service": "Service",
       "explore": "Explore Places",
       "marketplace-product": "Marketplace Products",
       "marketplace-service": "Marketplace Services"
@@ -1394,20 +1438,15 @@
     "spinCompleted": "Spin Completed",
     "discountCode": "Discount Code"
   },
- "profile": {
-  "memberSince": "Member since",
-  "activeAds": "Active ads",
-  "chat": "Chat",
-  "directions": "Directions",
-  "ads": "Ads",
-  "all": "All",
-  "showingResults": "Showing {count} results",
-  "newestFirst": "Newest First",
-  "instock": "In Stock"
+  "profile": {
+    "memberSince": "Member since",
+    "activeAds": "Active ads",
+    "chat": "Chat",
+    "directions": "Directions",
+    "ads": "Ads",
+    "all": "All",
+    "showingResults": "Showing {count} results",
+    "newestFirst": "Newest First",
+    "instock": "In Stock"
+  }
 }
- 
-  
-}
-
-
-

@@ -1,96 +1,89 @@
-"use client"
-import MarketplaceProductHero from "@/components/marketplace/product/marketplace-product-hero"
-import MarketplaceProductDetails from "@/components/marketplace/product/marketplace-product-detail"
-import BusinessSidebar from "@/components/marketplace/business-sidebar"
-import LocationSection from "@/components/marketplace/location-section"
-import ReviewsSection from "@/components/marketplace/reviews-section"
-import RelatedOffers from "@/components/marketplace/related-items"
+"use client";
+import { use, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/features/store/store";
+import { GetFeaturedProductDetails } from "@/features/slicer/AdSlice";
+import { MapPin, Star, Phone, Globe } from "lucide-react";
+import WishlistButton from "@/components/common/wishlist-button";
+import ShareAdButton from "@/components/common/ShareAdButton";
+import { Badge } from "@/components/common/badge";
+import { Card, CardContent } from "@/components/common/shadecn-card";
+import Image from "next/image";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/common/tabs";
+import BusinessSidebar from "@/components/marketplace/business-sidebar";
+import LocationSection from "@/components/marketplace/location-section";
+import ReviewsSection from "@/components/marketplace/reviews-section";
+import RelatedOffers from "@/components/marketplace/related-items";
 
+export default function ProductDetailPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const resolvedParams = use(params) as { id: string };
+  const adId = resolvedParams.id;
+  const [loading, setLoading] = useState(true);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-// Mock data - in real app, this would come from API based on the ID
-const getProductData = (id: string) => ({
-  id,
-  name: "iPhone 15 Pro Max",
-  brand: "Apple",
-  image: "/placeholder.svg?height=400&width=600",
-  rating: 4.6,
-  reviewCount: 234,
-  price: 450,
-  originalPrice: 520,
-  discount: 13,
-  description: "256GB, Titanium Blue, Unlocked",
-  condition: "brand_new",
-  seller: "TechZone Kuwait",
-  inStock: true,
-  location: "kuwait-city",
-  category: "Electronics & Technology",
-  subcategory: "mobile",
-  images: [
-    "/placeholder.svg?height=400&width=600",
-    "/placeholder.svg?height=400&width=600",
-    "/placeholder.svg?height=400&width=600",
-  ],
-})
+  const dispatch = useDispatch();
 
-const mockReviews = [
-  {
-    id: 1,
-    name: "Ahmed Hassan",
-    avatar: "/placeholder.svg?height=40&width=40",
-    rating: 5,
-    date: "2 days ago",
-    comment:
-      "Amazing product! The phone was perfectly packaged and the service was excellent. Definitely worth the deal!",
-    verified: true,
-    helpful: 12,
-  },
-  {
-    id: 2,
-    name: "Sarah Al-Kuwait",
-    avatar: "/placeholder.svg?height=40&width=40",
-    rating: 4,
-    date: "1 week ago",
-    comment: "Great value for money. The phone condition was exactly as described and the seller was very responsive.",
-    verified: true,
-    helpful: 8,
-  },
-]
+  const fetchProductDetails = async () => {
+    setLoading(true);
+    try {
+      await dispatch(GetFeaturedProductDetails(adId) as any).unwrap();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-const mockRelatedProducts = [
-  {
-    id: 2,
-    business: "Apple Store Kuwait",
-    title: 'MacBook Pro 16"',
-    image: "/placeholder.svg?height=200&width=300",
-    discount: "11% OFF",
-    originalPrice: 1350,
-    salePrice: 1200,
-    rating: 4.5,
-  },
-  {
-    id: 3,
-    business: "Samsung Store Kuwait",
-    title: "Galaxy S24 Ultra",
-    image: "/placeholder.svg?height=200&width=300",
-    discount: "10% OFF",
-    originalPrice: 420,
-    salePrice: 380,
-    rating: 4.4,
-  },
-  {
-    id: 4,
-    business: "Audio Pro Kuwait",
-    title: "Sony WH-1000XM5",
-    image: "/placeholder.svg?height=200&width=300",
-    discount: "20% OFF",
-    originalPrice: 150,
-    salePrice: 120,
-    rating: 4.7,
-  },
-]
+  useEffect(() => {
+    if (adId) {
+      fetchProductDetails();
+    }
+  }, [adId]);
 
-export default function ProductDetailPage({ params }: { params: { id: string } }) {
-  const product = getProductData(params.id)
+  const featuredProductDetails = useSelector(
+    (state: RootState) => state.ad.featuredProductDetails
+  );
+
+  console.log("featuredProductDetails", featuredProductDetails);
+
+  const responseData = featuredProductDetails as any;
+
+  const productData = responseData?.product || {};
+  const sellerData = responseData?.seller || {};
+  const relatedProducts = responseData?.relatedProducts || [];
+  const ratingDistribution = responseData?.ratingDistribution || {};
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+      </div>
+    );
+  }
+
+  if (!productData._id) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Product Not Found
+          </h2>
+          <p className="text-gray-600">
+            The product you're looking for doesn't exist.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -98,58 +91,311 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            <MarketplaceProductHero product={product} />
-            <MarketplaceProductDetails product={product} />
+            {/* Image Gallery */}
+            <Card className="overflow-hidden rounded-3xl shadow-sm">
+              <div className="relative h-80 md:h-96">
+                {productData.images?.[0] ? (
+                  <Image
+                    src={
+                      productData.images[currentImageIndex] ||
+                      productData.images[0]
+                    }
+                    alt={productData.title || "Product"}
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                    <p className="text-gray-500">No Image Available</p>
+                  </div>
+                )}
+
+                {/* Image Navigation */}
+                {productData.images && productData.images.length > 1 && (
+                  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+                    {productData.images.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentImageIndex(index)}
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          index === currentImageIndex
+                            ? "bg-white"
+                            : "bg-white/50"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                {/* Top Badges and Actions */}
+                <div className="absolute top-4 left-4 flex gap-2">
+                  <Badge className="bg-purple-100 text-purple-700 backdrop-blur-sm">
+                    {productData.category || "Product"}
+                  </Badge>
+                </div>
+
+                <div className="absolute top-4 right-4 flex gap-2">
+                  <WishlistButton adId={adId} />
+                  <ShareAdButton
+                    adId={adId}
+                    title={productData.title}
+                    className="hover:scale-110"
+                  />
+                </div>
+              </div>
+            </Card>
+
+            {/* Product Info */}
+            <Card className="rounded-3xl shadow-sm">
+              <CardContent className="p-6">
+                <div className="mb-6">
+                  <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+                    {productData.title || "Product Title"}
+                  </h1>
+
+                  <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-4">
+                    <div className="flex items-center gap-1">
+                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      <span className="font-medium">
+                        {productData.rating?.toFixed(1) || "0.0"}
+                      </span>
+                      <span>({productData.reviewsCount || 0} reviews)</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <MapPin className="w-4 h-4" />
+                      <span>
+                        {productData.city || "N/A"},{" "}
+                        {productData.neighbourhood || "N/A"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="text-gray-600 leading-relaxed">
+                    {productData.description || "No description available"}
+                  </p>
+                </div>
+                {/* Price Information */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <div>
+                    <span className="text-sm text-gray-600">Price:</span>
+                    <p className="text-2xl font-bold text-gray-900">
+                      ${productData.askingPrice || "0"}
+                    </p>
+                    {productData.discount && (
+                      <p className="text-sm text-green-600">
+                        Discount: {productData.discountPercent}% OFF
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-4 h-4 text-purple-600" />
+                    <span className="text-sm">
+                      {productData.showPhone
+                        ? productData.phone || "N/A"
+                        : "Phone not shown"}
+                    </span>
+                  </div>
+                  {sellerData?.website && (
+                    <div className="flex items-center gap-2">
+                      <Globe className="w-4 h-4 text-purple-600" />
+                      <a
+                        href={`https://${sellerData.website}`}
+                        className="text-sm text-blue-600 hover:underline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {sellerData.website}
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Location Section */}
             <LocationSection
               business={{
-                name: product.seller,
-                address: "Gulf Road, Kuwait City, Kuwait",
-                coordinates: { lat: 29.3759, lng: 47.9774 },
+                name: productData?.name || "Seller",
+                address: `${productData.city || "N/A"}, ${
+                  productData.neighbourhood || "N/A"
+                }`,
+                coordinates: { lat: 29.3759, lng: 47.9774 }, // Kuwait City default
               }}
             />
-            <ReviewsSection
-              reviews={mockReviews}
-              offer={{
-                rating: product.rating,
-                reviewCount: product.reviewCount,
-              }}
-            />
+
+            {/* Details Tabs */}
+            <Card className="rounded-3xl shadow-sm">
+              <CardContent className="p-6">
+                <Tabs defaultValue="details" className="w-full">
+                  <TabsList className="grid w-full grid-cols-3 rounded-2xl bg-gray-100 p-1">
+                    <TabsTrigger
+                      value="details"
+                      className="rounded-xl data-[state=active]:bg-white"
+                    >
+                      Product Details
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="reviews"
+                      className="rounded-xl data-[state=active]:bg-white"
+                    >
+                      Reviews
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="photos"
+                      className="rounded-xl data-[state=active]:bg-white"
+                    >
+                      Photos
+                    </TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="details" className="mt-6">
+                    <div className="space-y-6">
+                      <div>
+                        <h4 className="font-semibold mb-3 text-lg">
+                          Product Information
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                          <div className="space-y-3">
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Category:</span>
+                              <span className="font-medium">
+                                {productData.category || "N/A"}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">
+                                Sub Category:
+                              </span>
+                              <span className="font-medium">
+                                {productData.subCategory || "N/A"}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Quantity:</span>
+                              <span className="font-medium">
+                                {productData.quantity}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="space-y-3">
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Location:</span>
+                              <span className="font-medium text-right">
+                                {productData.city || "N/A"},{" "}
+                                {productData.neighbourhood || "N/A"}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Contact:</span>
+                              <span className="font-medium">
+                                {productData.showPhone
+                                  ? productData.phone || "N/A"
+                                  : "Not available"}
+                              </span>
+                            </div>
+                            {productData.paymentMode && (
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Payment:</span>
+                                <span className="font-medium capitalize">
+                                  {productData.paymentMode}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Rating Distribution */}
+                      {Object.keys(ratingDistribution).length > 0 && (
+                        <div className="border-t pt-6">
+                          <h4 className="font-semibold mb-3 text-lg">
+                            Rating Breakdown
+                          </h4>
+                          <div className="space-y-2">
+                            {[5, 4, 3, 2, 1].map((rating) => (
+                              <div
+                                key={rating}
+                                className="flex items-center gap-3"
+                              >
+                                <div className="flex items-center gap-1 w-16">
+                                  <span className="text-sm text-gray-600">
+                                    {rating}
+                                  </span>
+                                  <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                                </div>
+                                <div className="flex-1 bg-gray-200 rounded-full h-2">
+                                  <div
+                                    className="bg-yellow-400 h-2 rounded-full"
+                                    style={{
+                                      width: `${
+                                        ((ratingDistribution[rating] || 0) /
+                                          (productData.reviewsCount || 1)) *
+                                        100
+                                      }%`,
+                                    }}
+                                  />
+                                </div>
+                                <span className="text-sm text-gray-600 w-8">
+                                  {ratingDistribution[rating] || 0}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="reviews" className="mt-6">
+                    <ReviewsSection adId={adId} />
+                  </TabsContent>
+
+                  <TabsContent value="photos" className="mt-6">
+                    {productData.images && productData.images.length > 0 ? (
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {productData.images.map(
+                          (img: string, index: number) => (
+                            <div
+                              key={index}
+                              className="relative h-32 rounded-lg overflow-hidden"
+                            >
+                              <Image
+                                src={img}
+                                alt={`${productData.title} photo ${index + 1}`}
+                                fill
+                                className="object-cover hover:scale-105 transition-transform cursor-pointer"
+                                onClick={() => setCurrentImageIndex(index)}
+                              />
+                            </div>
+                          )
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-gray-600 text-center py-8">
+                        No photos available
+                      </p>
+                    )}
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Sidebar */}
-          <div className="lg:block mt-4">
-            <BusinessSidebar
-              business={{
-                name: product.seller,
-                logo: "/placeholder.svg?height=80&width=80",
-                address: "Gulf Road, Kuwait City, Kuwait",
-                phone: "+965 2222 3333",
-                website: "www.techzone-kuwait.com",
-                yearsInBusiness: 5,
-                totalOffers: 12,
-                satisfaction: 95,
-                socialMedia: {
-                  facebook: "https://facebook.com/techzonekuwait",
-                  instagram: "https://instagram.com/techzonekuwait",
-                  twitter: "https://twitter.com/techzonekuwait",
-                },
-              }}
-              offer={{
-                rating: product.rating,
-                reviewCount: product.reviewCount,
-                isVerified: true,
-                isOpen: true,
-                openHours: "9:00 AM - 10:00 PM",
-              }}
-            />
+          <div className="lg:block">
+            <BusinessSidebar seller={sellerData} adData={productData} />
           </div>
         </div>
 
         {/* Related Products */}
         <div className="mt-12">
-          <RelatedOffers isProduct={true} />
+          <RelatedOffers relatedProducts={relatedProducts} adType="product" />
         </div>
       </div>
     </div>
-  )
+  );
 }

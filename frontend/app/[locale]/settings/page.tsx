@@ -1,17 +1,22 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/common/shadecn-card';
-import AccountDetailsSection from '@/components/settings/account-detail';
-import { ChangePasswordSection } from '@/components/settings/change-password';
-import BillingDetailsSection from '@/components/settings/billing-detail';
-import MembershipTypeSection from '@/components/settings/membership-type';
-import AdSettingsSection from '@/components/settings/ad-setting';
-import { useRole } from '@/contexts/roleContext'; // import role context
+import React from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/common/shadecn-card";
+import AccountDetailsSection from "@/components/settings/account-detail";
+import { ChangePasswordSection } from "@/components/settings/change-password";
+import BillingDetailsSection from "@/components/settings/billing-detail";
+import MembershipTypeSection from "@/components/settings/membership-type";
+import AdSettingsSection from "@/components/settings/ad-setting";
+import { useSelector } from "react-redux";
 
 // Main Settings Page
 const SettingsPage: React.FC = () => {
-  const { role } = useRole(); // get current role
+  const role = useSelector((state: any) => state.auth.role);
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8">
@@ -27,7 +32,9 @@ const SettingsPage: React.FC = () => {
           <>
             <Card>
               <CardHeader>
-                <CardTitle className="text-xl font-semibold">Seller Details</CardTitle>
+                <CardTitle className="text-xl font-semibold">
+                  Seller Details
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <BillingDetailsSection />

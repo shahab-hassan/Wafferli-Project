@@ -3,7 +3,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { IsLoginProvider } from "@/contexts/isLoginContext"; // Import provider
 import "./globals.css";
-
+import { Providers } from "@/features/store/provider";
+import { Toaster } from "react-hot-toast";
+import AuthWrapper from "@/components/authWrapper";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -26,10 +28,30 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <IsLoginProvider> {/* Wrap all content */}
-          {children}
-        </IsLoginProvider>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <Providers>
+          <AuthWrapper>
+            <IsLoginProvider>
+              {/* <Toaster /> */}
+              <Toaster
+                position="top-right"
+                toastOptions={{
+                  duration: 4000,
+                  style: {
+                    background:
+                      "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                    color: "#fff",
+                    borderRadius: "12px",
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                  },
+                }}
+              />
+              {children}
+            </IsLoginProvider>
+          </AuthWrapper>
+        </Providers>
       </body>
     </html>
   );

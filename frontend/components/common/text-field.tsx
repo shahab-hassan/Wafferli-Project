@@ -36,7 +36,7 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
               icon && "pl-10",
               className,
             )}
-            placeholder={props.placeholder ? t(props.placeholder) : undefined} // placeholder translation
+            placeholder={props.placeholder} 
             {...props}
           />
         </div>

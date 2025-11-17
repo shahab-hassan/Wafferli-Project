@@ -1,49 +1,53 @@
-import { Button } from "@/components/common/button"
-import { useLocale, useTranslations } from "next-intl"
-import Link from "next/link"
+"use client";
+import { Button } from "@/components/common/button";
+import { GetFeaturedExplore } from "@/features/slicer/AdSlice";
+import { useLocale, useTranslations } from "next-intl";
+import Link from "next/link";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 interface Slide {
-    id: number
-    titleKey: string
-    subtitleKey: string
-    image: string
-    alt: string
+  id: number;
+  titleKey: string;
+  subtitleKey: string;
+  image: string;
+  alt: string;
 }
 
 const BusinessDiscoveryCarousel: React.FC = () => {
-    const locale = useLocale()
-    const t = useTranslations('carousel')
-    const isRTL = locale === 'ar'
+  const locale = useLocale();
+  const t = useTranslations("carousel");
+  const isRTL = locale === "ar";
 
-    const slides: Slide[] = [
-        {
-            id: 1,
-            titleKey: "slide1.title",
-            subtitleKey: "slide1.subtitle",
-            image: "/hero1.png",
-            alt: t('slide1.alt'),
-        },
-        {
-            id: 2,
-            titleKey: "slide2.title",
-            subtitleKey: "slide2.subtitle",
-            image: "/hero2.png",
-            alt: t('slide2.alt'),
-        },
-        {
-            id: 3,
-            titleKey: "slide3.title",
-            subtitleKey: "slide3.subtitle",
-            image: "/hero3.png",
-            alt: t('slide3.alt'),
-        },
-    ]
+  const slides: Slide[] = [
+    {
+      id: 1,
+      titleKey: "slide1.title",
+      subtitleKey: "slide1.subtitle",
+      image: "/hero1.png",
+      alt: t("slide1.alt"),
+    },
+    {
+      id: 2,
+      titleKey: "slide2.title",
+      subtitleKey: "slide2.subtitle",
+      image: "/hero2.png",
+      alt: t("slide2.alt"),
+    },
+    {
+      id: 3,
+      titleKey: "slide3.title",
+      subtitleKey: "slide3.subtitle",
+      image: "/hero3.png",
+      alt: t("slide3.alt"),
+    },
+  ];
 
-    return (
-        <div className="max-w-[1440px] w-full bg-white border-b border-grey-5">
-            <style
-                dangerouslySetInnerHTML={{
-                    __html: `
+  return (
+    <div className="max-w-[1440px] w-full bg-white border-b border-grey-5">
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         .carousel-container {
           min-height: 400px;
           max-height: 550px;
@@ -89,7 +93,7 @@ const BusinessDiscoveryCarousel: React.FC = () => {
           width: 100%;
           font-family: 'Inter';
           color: #111;
-          direction: ${isRTL ? 'rtl' : 'ltr'};
+          direction: ${isRTL ? "rtl" : "ltr"};
           gap: 1rem;
           align-items: center;
           justify-content: center;
@@ -149,7 +153,7 @@ const BusinessDiscoveryCarousel: React.FC = () => {
         @media (min-width: 768px) {
           .carousel-content {
             grid-area: 1 / 1 / 2 / 2;
-            text-align: ${isRTL ? 'right' : 'left'};
+            text-align: ${isRTL ? "right" : "left"};
             justify-content: flex-start;
             align-items: flex-start;
             min-height: auto;
@@ -224,7 +228,9 @@ const BusinessDiscoveryCarousel: React.FC = () => {
           color: #374151;
           line-height: 1.6;
           margin-bottom: 1.5rem;
-          font-family: ${isRTL ? "'Cairo', 'Inter', sans-serif" : "'Inter', sans-serif"};
+          font-family: ${
+            isRTL ? "'Cairo', 'Inter', sans-serif" : "'Inter', sans-serif"
+          };
         }
 
         @media (min-width: 480px) {
@@ -311,7 +317,7 @@ const BusinessDiscoveryCarousel: React.FC = () => {
             grid-area: 1 / 2 / 2 / 3;
             max-width: 400px;
             height: 240px;
-            margin: ${isRTL ? '0 auto 0 0' : '0 0 0 auto'};
+            margin: ${isRTL ? "0 auto 0 0" : "0 0 0 auto"};
           }
         }
 
@@ -394,7 +400,11 @@ const BusinessDiscoveryCarousel: React.FC = () => {
         @media (min-width: 768px) {
           .dot-indicators {
             bottom: -40px;
-            ${isRTL ? 'right: 10%; left: auto; transform: translateX(50%);' : 'left: 10%; transform: translateX(-50%);'}
+            ${
+              isRTL
+                ? "right: 10%; left: auto; transform: translateX(50%);"
+                : "left: 10%; transform: translateX(-50%);"
+            }
           }
         }
         
@@ -446,12 +456,16 @@ const BusinessDiscoveryCarousel: React.FC = () => {
             filter: brightness(1.1) saturate(1.2);
           }
           35%, 65% {
-            transform: rotateY(${isRTL ? '15deg' : '-15deg'}) translateX(${isRTL ? '-8%' : '8%'}) translateY(-10px) scale(0.95);
+            transform: rotateY(${isRTL ? "15deg" : "-15deg"}) translateX(${
+            isRTL ? "-8%" : "8%"
+          }) translateY(-10px) scale(0.95);
             z-index: 5;
             filter: brightness(0.9) saturate(0.8);
           }
           70%, 100% {
-            transform: rotateY(${isRTL ? '20deg' : '-20deg'}) translateX(${isRTL ? '-15%' : '15%'}) translateY(-20px) scale(0.9);
+            transform: rotateY(${isRTL ? "20deg" : "-20deg"}) translateX(${
+            isRTL ? "-15%" : "15%"
+          }) translateY(-20px) scale(0.9);
             z-index: 1;
             filter: brightness(0.7) saturate(0.6);
           }
@@ -522,83 +536,78 @@ const BusinessDiscoveryCarousel: React.FC = () => {
           }
         }
         `,
-                }}
-            />
+        }}
+      />
 
-            <div className="carousel-container">
-                <section className="carousel-section">
-                    {/* Text Content */}
-                    <div className="carousel-content">
-                        <div className="text-wrapper">
-                            {slides.map((slide) => (
-                                <div key={slide.id} className="content-item">
-                                    <h1 className="carousel-title">{t(slide.titleKey)}</h1>
-                                    <p className="carousel-description">{t(slide.subtitleKey)}</p>
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* Desktop Buttons - Hidden on mobile */}
-                        <div className="carousel-buttons">
-                                                <Link href="/offers">
-
-                            <Button variant="tertiary" size="lg">
-                                {t('buttons.exploreDeal')} {isRTL ? '←' : '→'}
-                            </Button>
-                            </Link>
-                            <Link href="/for-businesses">
-
-                            <Button variant="normal">
-                                {t('buttons.forBusinesses')}
-                            </Button>
-                            </Link>
-                        </div>
-                    </div>
-
-                    {/* Images */}
-                    <div className="carousel-images">
-                        {slides.map((slide) => (
-                            <article key={slide.id} className="carousel-article">
-                                <img 
-                                    className="carousel-image" 
-                                    src={slide.image || "/placeholder.svg"} 
-                                    alt={slide.alt} 
-                                />
-                            </article>
-                        ))}
-
-                        {/* Dot indicators */}
-                        <div className="dot-indicators">
-                            {slides.map((_, index) => (
-                                <div
-                                    key={index}
-                                    className="dot"
-                                    role="button"
-                                    tabIndex={0}
-                                    aria-label={t('dotIndicator', { index: index + 1 })}
-                                />
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Mobile Buttons - Only visible on mobile */}
-                    <div className="mobile-buttons md:hidden">
-                      <Link href="/offers">
-                        <Button variant="tertiary" size="lg">
-                            {t('buttons.exploreDeal')} {isRTL ? '←' : '→'}
-                        </Button>
-                        </Link>
-
-                        <Link href="/for-businesses">
-                        <Button variant="normal">
-                            {t('buttons.forBusinesses')}
-                        </Button>
-                        </Link>
-                    </div>
-                </section>
+      <div className="carousel-container">
+        <section className="carousel-section">
+          {/* Text Content */}
+          <div className="carousel-content">
+            <div className="text-wrapper">
+              {slides.map((slide) => (
+                <div key={slide.id} className="content-item">
+                  <h1 className="carousel-title">{t(slide.titleKey)}</h1>
+                  <p className="carousel-description">{t(slide.subtitleKey)}</p>
+                </div>
+              ))}
             </div>
-        </div>
-    )
-}
 
-export default BusinessDiscoveryCarousel
+            {/* Desktop Buttons - Hidden on mobile */}
+            <div className="carousel-buttons">
+              <Link href="/offers">
+                <Button variant="tertiary" size="lg">
+                  {t("buttons.exploreDeal")} {isRTL ? "←" : "→"}
+                </Button>
+              </Link>
+
+              <Link href="/products">
+                <Button variant="normal">Explore Products</Button>
+              </Link>
+            </div>
+          </div>
+
+          {/* Images */}
+          <div className="carousel-images">
+            {slides.map((slide) => (
+              <article key={slide.id} className="carousel-article">
+                <img
+                  className="carousel-image"
+                  src={slide.image || "/placeholder.svg"}
+                  alt={slide.alt}
+                />
+              </article>
+            ))}
+
+            {/* Dot indicators */}
+            <div className="dot-indicators">
+              {slides.map((_, index) => (
+                <div
+                  key={index}
+                  className="dot"
+                  role="button"
+                  tabIndex={0}
+                  aria-label={t("dotIndicator", { index: index + 1 })}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile Buttons - Only visible on mobile */}
+          <div className="mobile-buttons md:hidden">
+            <Link href="/offers">
+              <Button variant="tertiary" size="lg">
+                {t("buttons.exploreDeal")} {isRTL ? "←" : "→"}
+              </Button>
+            </Link>
+
+            <Link href="/products">
+              <Button variant="normal">Explore Products</Button>
+            </Link>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+};
+
+export default BusinessDiscoveryCarousel;

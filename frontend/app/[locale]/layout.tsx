@@ -40,19 +40,20 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider locale={locale}>
-      <RoleProvider> {/* new: wrap with RoleProvider */}
-        <WishlistProvider>
-          <OnboardingProvider>
-        <div lang={locale} dir={dir} className={`${inter.variable} flex flex-col min-h-screen`}>
-          <NavbarAuth />
-          <Breadcrumb />
-          <main className="flex-grow">{children}</main>
-          <Footer />
-        </div>
-        </OnboardingProvider>
-        </WishlistProvider>
-      </RoleProvider>
-      
+      {" "}
+      {/* new: wrap with RoleProvider */}
+      <WishlistProvider>
+          <div
+            lang={locale}
+            dir={dir}
+            className={`${inter.variable} flex flex-col min-h-screen`}
+          >
+            <NavbarAuth />
+            <Breadcrumb />
+            <main className="flex-grow">{children}</main>
+            <Footer />
+          </div>
+      </WishlistProvider>
     </NextIntlClientProvider>
   );
 }

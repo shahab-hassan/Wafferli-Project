@@ -1,21 +1,23 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useLocale, useTranslations } from "next-intl"
-import { cn } from "@/lib/utils"
-import { AuthLayout } from "./auth-layout"
-import { LoginForm } from "./login-form"
-import { SignupForm } from "./signup-form"
-import { IsLoginProvider } from "@/contexts/isLoginContext"
+import { useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
+import { AuthLayout } from "./auth-layout";
+import { LoginForm } from "./login-form";
+import { SignupForm } from "./signup-form";
+import { IsLoginProvider } from "@/contexts/isLoginContext";
 
 export function AuthPageContent() {
-  const [activeTab, setActiveTab] = useState<"signin" | "signup">("signin")
-  const locale = useLocale()
-  const isRTL = locale === "ar"
-  const t = useTranslations()
+  const [activeTab, setActiveTab] = useState<"signin" | "signup">("signin");
+  const locale = useLocale();
+  const isRTL = locale === "ar";
+  const t = useTranslations();
 
   return (
-    <IsLoginProvider> {/* Manually wrap the provider here */}
+    <IsLoginProvider>
+      {" "}
+      {/* Manually wrap the provider here */}
       <AuthLayout>
         <div className="bg-white rounded-lg border border-grey-5 w-full max-w-sm sm:max-w-md mx-auto overflow-hidden">
           <div className="relative h-10 sm:h-12">
@@ -31,7 +33,7 @@ export function AuthPageContent() {
                   activeTab === "signin"
                     ? "bg-white text-primary border-b border-gray-200 relative z-10"
                     : "text-gray-600 hover:text-gray-800 bg-transparent",
-                  isRTL ? "rounded-tr-lg rounded-tl-none" : "",
+                  isRTL ? "rounded-tr-lg rounded-tl-none" : ""
                 )}
               >
                 {t("Auth.login.signIn")}
@@ -43,16 +45,17 @@ export function AuthPageContent() {
                   activeTab === "signup"
                     ? "bg-white text-primary border-b border-gray-200 relative z-10"
                     : "text-gray-600 hover:text-gray-800 bg-transparent",
-                  isRTL ? "rounded-tl-lg rounded-tr-none" : "",
+                  isRTL ? "rounded-tl-lg rounded-tr-none" : ""
                 )}
               >
                 {t("Auth.login.createAccount")}
               </button>
             </div>
           </div>
-
           {/* Form Content */}
-          <div className="p-4 sm:p-6 lg:p-8">{activeTab === "signin" ? <LoginForm /> : <SignupForm />}</div>
+          <div className="p-4 sm:p-6 lg:p-8">
+            {activeTab === "signin" ? <LoginForm /> : <SignupForm />}
+          </div>
         </div>
       </AuthLayout>
     </IsLoginProvider>

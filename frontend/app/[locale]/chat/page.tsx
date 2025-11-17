@@ -1,119 +1,489 @@
-"use client"
+"use client";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { Send, Image as ImageIcon } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  GetAdDetailsForChat,
+  GetUsersForSidebar,
+  GetChatRoomMessages,
+  MarkAsRead,
+  GetOrCreateChatRoom,
+} from "@/features/slicer/ChatSlice";
+import io from "socket.io-client";
+import { cn } from "@/lib/utils";
+import toast, { Toaster } from "react-hot-toast";
+import { ChatHeader } from "@/components/chat/chat-header";
+import { MessageBubble } from "@/components/chat/message-bubble";
+import { MessageInput } from "@/components/chat/message-input";
+import { Sidebar } from "@/components/chat/sidebar";
 
-import { useState, useMemo, useCallback } from "react"
-import Sidebar from "@/components/chat/sidebar"
-import MessageList from "@/components/chat/message-list"
-import MessageInput from "@/components/chat/message-input"
-import type { ChatMessage } from "@/types/chat"
-import { ArrowLeft } from "lucide-react"
-import { Button } from "@/components/common/button"
+// ✅ Main Chat Page Component - WITHOUT AD ID DEPENDENCY
+export default function ChatPage() {
+  const dispatch: any = useDispatch();
+  const { user } = useSelector((state: any) => state.auth);
+  const { chatUsers } = useSelector((state: any) => state.chat);
+  const router = useRouter();
 
-export default function Page() {
-  const [selectedChatId, setSelectedChatId] = useState<string | null>("c1")
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    { id: "m1", author: "them", type: "text", text: "Hi 👋", createdAt: new Date() },
-    { id: "m2", author: "me", type: "text", text: "Hello.", createdAt: new Date() },
-    {
-      id: "m3",
-      author: "them",
-      type: "text",
-      text: "I'm interested in the IPhone, is it still available",
-      createdAt: new Date(),
-    },
-    { id: "m4", author: "me", type: "text", text: "Yes, It is.", createdAt: new Date() },
-    {
-      id: "m5",
-      author: "them",
-      type: "text",
-      text: "I saw you have it listed for 450 KD, is there any leeway possible? Something like 350 KD?",
-      createdAt: new Date(),
-    },
-    { id: "m6", author: "me", type: "text", text: "No, the least I could do is 400 KD.", createdAt: new Date() },
-    {
-      id: "m7",
-      author: "them",
-      type: "text",
-      text: "Okay, sounds good. The location you have set is 15-20 minutes drive for me. Could we meet in the middle?",
-      createdAt: new Date(),
-    },
-  ])
+  const [socket, setSocket] = useState<any>(null);
+  const [selectedChat, setSelectedChat] = useState<any>(null);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [onlineUsers, setOnlineUsers] = useState<any[]>([]);
+  const [isTyping, setIsTyping] = useState(false);
+  const [typingUser, setTypingUser] = useState<any>(null);
+  const [connectionStatus, setConnectionStatus] = useState("disconnected");
+  const [replyingTo, setReplyingTo] = useState<any>(null);
+  const [highlightedMessage, setHighlightedMessage] = useState<string | null>(
+    null
+  );
 
-  const handleSendText = useCallback((text: string) => {
-    setMessages((prev) =>
-      prev.concat({
-        id: crypto.randomUUID(),
-        author: "me",
-        type: "text",
-        text,
-        createdAt: new Date(),
-      }),
-    )
-  }, [])
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const messageRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
-  const handleSendLocation = useCallback(
-    (payload: {
-      lat: number
-      lng: number
-      label?: string
-      address?: string
-      mapImageUrl: string
-      mapsLink: string
-    }) => {
+  // Enhanced scroll to bottom - only scrolls chat container
+  const scrollToBottom = useCallback(() => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, []);
+
+  // Scroll to specific message (for reply feature)
+  const scrollToMessage = useCallback((messageId: string) => {
+    const messageElement = messageRefs.current.get(messageId);
+    if (messageElement && messagesContainerRef.current) {
+      // Highlight the message
+      setHighlightedMessage(messageId);
+
+      // Scroll to the message
+      messageElement.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+
+      // Remove highlight after 3 seconds
+      setTimeout(() => {
+        setHighlightedMessage(null);
+      }, 3000);
+    }
+  }, []);
+
+  // Auto-scroll when new messages arrive
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isTyping, scrollToBottom]);
+
+  // ✅ Fixed Socket Connection
+  useEffect(() => {
+    if (!user) return;
+
+    console.log("🔄 Initializing socket connection for user:", user._id);
+
+    const socketInstance = io("http://localhost:5000", {
+      query: { userId: user._id },
+    });
+
+    socketInstance.on("connect", () => {
+      console.log("✅ Connected to server");
+      setConnectionStatus("connected");
+      setSocket(socketInstance);
+      toast.success("Connected to chat");
+    });
+
+    socketInstance.on("disconnect", () => {
+      console.log("❌ Disconnected from server");
+      setConnectionStatus("disconnected");
+      toast.error("Disconnected from chat");
+    });
+
+    socketInstance.on("connection_success", (data) => {
+      console.log("✅ Socket authenticated:", data);
+    });
+
+    // Handle incoming messages
+    socketInstance.on("new_message", (message) => {
+      console.log("📨 New message received:", message);
+
+      setMessages((prev) => {
+        const exists = prev.find((m) => m._id === message._id);
+        if (exists) return prev;
+        return [...prev, message];
+      });
+
+      // Show notification if not viewing this chat
+      const isViewingThisChat = selectedChat?.chatRoomId === message.chatRoomId;
+      if (!isViewingThisChat) {
+        toast.success(
+          `💬 ${message.user.fullName}: ${message.message || "Sent a message"}`,
+          {
+            duration: 4000,
+            position: "top-right",
+          }
+        );
+      }
+    });
+
+    // Handle message sent confirmation
+    socketInstance.on("message_sent", (message) => {
+      console.log("✅ Message sent successfully:", message);
+      setMessages((prev) => {
+        const exists = prev.find((m) => m._id === message._id);
+        if (exists) return prev;
+        return [...prev, message];
+      });
+      toast.success("Message sent");
+    });
+
+    // Handle message delivered
+    socketInstance.on("message_delivered", (data) => {
+      console.log("✅ Message delivered:", data);
       setMessages((prev) =>
-        prev.concat({
-          id: crypto.randomUUID(),
-          author: "me",
-          type: "location",
-          location: payload,
-          createdAt: new Date(),
-        }),
-      )
+        prev.map((msg) =>
+          msg._id === data.messageId ? { ...msg, deliveredAt: new Date() } : msg
+        )
+      );
+    });
+
+    // Handle message edited
+    socketInstance.on("message_edited", (data) => {
+      console.log("✏️ Message edited:", data);
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg._id === data.messageId
+            ? { ...msg, message: data.message, isEdited: true }
+            : msg
+        )
+      );
+      toast.success("Message updated");
+    });
+
+    // Handle message deleted with animation
+    socketInstance.on("message_deleted", (data) => {
+      console.log("🗑️ Message deleted:", data);
+      setMessages((prev) => prev.filter((msg) => msg._id !== data.messageId));
+      toast.success("Message deleted");
+    });
+
+    // Handle chat room updates
+    socketInstance.on("chat_room_updated", (chatRoom) => {
+      console.log("🔄 Chat room updated");
+      dispatch(GetUsersForSidebar());
+    });
+
+    // Handle online users
+    socketInstance.on("online_users_updated", (users) => {
+      console.log("👥 Online users updated:", users.length);
+      setOnlineUsers(users);
+    });
+
+    // Handle typing indicators
+    socketInstance.on("user_typing", (data) => {
+      console.log("⌨️ Typing:", data);
+      setIsTyping(data.isTyping);
+      setTypingUser(data.userId);
+    });
+
+    // Handle messages read
+    socketInstance.on("messages_read", (data) => {
+      console.log("📖 Messages read:", data);
+      dispatch(GetUsersForSidebar());
+    });
+
+    socketInstance.on("error", (error) => {
+      console.error("Socket error:", error);
+      toast.error(error.message || "Socket error occurred");
+    });
+
+    setSocket(socketInstance);
+
+    // Cleanup
+    return () => {
+      console.log("🧹 Cleaning up socket connection");
+      socketInstance.disconnect();
+    };
+  }, [user, dispatch]);
+
+  // ✅ Fetch sidebar users
+  useEffect(() => {
+    if (user) {
+      dispatch(GetUsersForSidebar());
+    }
+  }, [user, dispatch]);
+
+  // ✅ Select chat manually from sidebar
+  const handleSelectChat = async (chat: any) => {
+    // Prevent self-chat
+    if (chat.user._id === user._id) {
+      toast.error("Cannot chat with yourself");
+      return;
+    }
+
+    if (!socket || connectionStatus !== "connected") {
+      toast.error("Please wait for connection");
+      return;
+    }
+
+    setSelectedChat(chat);
+    setReplyingTo(null);
+
+    // Join the chat room
+    socket.emit("join_chat_room", chat.chatRoomId);
+
+    try {
+      const messagesResult = await dispatch(
+        GetChatRoomMessages(chat.chatRoomId)
+      ).unwrap();
+      setMessages(messagesResult.messages || []);
+
+      // Mark as read via API and socket for real-time update
+      await dispatch(MarkAsRead(chat.chatRoomId));
+      socket.emit("mark_messages_read", {
+        chatRoomId: chat.chatRoomId,
+        userId: user._id,
+      });
+
+      toast.success(`Chatting with ${chat.user.fullName}`);
+    } catch (err) {
+      console.error("❌ Error loading chat messages:", err);
+      toast.error("Failed to load messages");
+    }
+  };
+
+  // ✅ Enhanced Send Message Handler with self-chat prevention
+  const handleSend = useCallback(
+    ({ message, images, location, replyTo, productReference }: any) => {
+      if (!selectedChat || !socket || connectionStatus !== "connected") {
+        toast.error("Cannot send message - not connected");
+        return;
+      }
+
+      // Prevent self-chat
+      if (selectedChat.user._id === user._id) {
+        toast.error("Cannot send message to yourself");
+        return;
+      }
+
+      const messageData = {
+        senderId: user._id,
+        receiverId: selectedChat.user._id,
+        message: message || "",
+        images: images || [],
+        location: location || null,
+        replyTo: replyTo || null,
+        productReference: productReference || null,
+      };
+
+      console.log("📤 Sending message:", messageData);
+      socket.emit("send_message", messageData);
+
+      // Clear reply after sending
+      if (replyTo) {
+        setReplyingTo(null);
+      }
     },
-    [],
-  )
+    [selectedChat, socket, connectionStatus, user]
+  );
 
-  const selected = useMemo(
-    () => ({
-      id: "c1",
-      name: "Mohid",
-      preview: "Hello, I am interested in...",
-    }),
-    [],
-  )
+  // ✅ Enhanced Message Actions
+  const handleReply = (message: any) => {
+    setReplyingTo(message);
+  };
 
-  const showChatList = selectedChatId === null
-  const showConversation = selectedChatId !== null
+  const handleEdit = (message: any, newMessage: string) => {
+    if (newMessage && newMessage !== message.message) {
+      socket.emit("edit_message", {
+        chatRoomId: selectedChat.chatRoomId,
+        messageId: message._id,
+        message: newMessage,
+      });
+    }
+  };
+
+  const handleDelete = (message: any) => {
+    if (window.confirm("Are you sure you want to delete this message?")) {
+      socket.emit("delete_message", {
+        chatRoomId: selectedChat.chatRoomId,
+        messageId: message._id,
+      });
+    }
+  };
+
+  const handleBackToChats = () => {
+    setSelectedChat(null);
+    setMessages([]);
+    setReplyingTo(null);
+  };
+
+  const showChatList = !selectedChat;
+  const showConversation = !!selectedChat;
+
+  // Function to set message refs
+  const setMessageRef = useCallback(
+    (messageId: string, element: HTMLDivElement | null) => {
+      if (element) {
+        messageRefs.current.set(messageId, element);
+      } else {
+        messageRefs.current.delete(messageId);
+      }
+    },
+    []
+  );
 
   return (
-    <main className="min-h-[90dvh] h-[90dvh] md:h-[90vh] w-full overflow-hidden">
-      <div className="mx-auto w-full max-w-[1220px] h-full flex">
-        <aside className={`w-full md:w-[320px] border-r h-full ${showConversation ? "hidden md:block" : "block"}`}>
-          <Sidebar selected={selected} onSelectChat={(id) => setSelectedChatId(id)} />
-        </aside>
+    <>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            color: "#fff",
+            borderRadius: "12px",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+          },
+        }}
+      />
 
-        <section className={`flex-1 relative h-full ${showChatList ? "hidden md:flex" : "flex"} flex-col`}>
-          <div className="md:hidden border-b px-4 py-3 flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setSelectedChatId(null)}
-              aria-label="Back to chats"
-              className="size-8"
-            >
-              <ArrowLeft className="size-5" />
-            </Button>
-            <h2 className="font-semibold">{selected.name}</h2>
+      <main className="h-screen flex flex-col bg-gray-50 overflow-hidden">
+        {/* Connection Status Bar */}
+
+        <div className="flex-1 flex min-h-0">
+          {/* Sidebar */}
+          <div
+            className={cn(
+              "w-full md:w-80 bg-white flex flex-col",
+              showConversation && "hidden md:flex"
+            )}
+          >
+            <Sidebar
+              chatUsers={chatUsers}
+              onSelectChat={handleSelectChat}
+              selectedChatId={selectedChat?.chatRoomId}
+              onlineUsers={onlineUsers}
+              connectionStatus={connectionStatus}
+              user={user} // Add this line to pass the user prop
+            />
           </div>
 
-          <div className="flex-1 px-4 md:px-8 pt-4 md:pt-6 pb-2 overflow-y-auto">
-            <MessageList messages={messages} />
-          </div>
+          {/* Conversation Area */}
+          <div
+            className={cn(
+              "flex-1 flex flex-col min-w-0 bg-white",
+              showChatList && "hidden md:flex"
+            )}
+          >
+            {selectedChat ? (
+              <>
+                <ChatHeader
+                  selected={selectedChat}
+                  onlineUsers={onlineUsers}
+                  onBack={handleBackToChats}
+                />
 
-          <div className="border-t bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <MessageInput onSendText={handleSendText} onSendLocation={handleSendLocation} />
+                {/* Messages Area with proper scroll container */}
+                <div
+                  ref={messagesContainerRef}
+                  className="flex-1 overflow-y-auto p-4 bg-gradient-to-b from-gray-50 to-white"
+                >
+                  {/* Messages List */}
+                  {messages.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-full text-gray-500">
+                      <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-full p-6 mb-4">
+                        <Send className="h-12 w-12 text-purple-400" />
+                      </div>
+                      <p className="text-lg font-medium text-gray-600 mb-2">
+                        No messages yet
+                      </p>
+                      <p className="text-sm text-gray-500 text-center max-w-sm">
+                        Start a conversation by sending a message below
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-1">
+                      {messages.map((message) => (
+                        <div
+                          key={message._id}
+                          ref={(el) => setMessageRef(message._id, el)}
+                          className={cn(
+                            "transition-all duration-300",
+                            highlightedMessage === message._id &&
+                              "bg-yellow-100 rounded-lg p-2 -mx-2"
+                          )}
+                        >
+                          <MessageBubble
+                            message={message}
+                            align={
+                              message.user._id === user._id ? "right" : "left"
+                            }
+                            currentUserId={user._id}
+                            onReply={handleReply}
+                            onEdit={handleEdit}
+                            onDelete={handleDelete}
+                            onScrollToMessage={scrollToMessage}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Typing Indicator */}
+                  {isTyping && (
+                    <div className="flex justify-start">
+                      <div className="bg-gray-100 rounded-2xl rounded-tl-sm px-4 py-3 max-w-xs flex items-center gap-2">
+                        <div className="flex space-x-1">
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                          <div
+                            className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                            style={{ animationDelay: "0.2s" }}
+                          ></div>
+                          <div
+                            className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                            style={{ animationDelay: "0.4s" }}
+                          ></div>
+                        </div>
+                        <span className="text-xs text-gray-600">typing...</span>
+                      </div>
+                    </div>
+                  )}
+
+                  <div ref={messagesEndRef} />
+                </div>
+
+                {/* Message Input */}
+                <MessageInput
+                  onSend={handleSend}
+                  socket={socket}
+                  selectedChat={selectedChat}
+                  currentUser={user}
+                  replyingTo={replyingTo}
+                  onCancelReply={() => setReplyingTo(null)}
+                  connectionStatus={connectionStatus}
+                />
+              </>
+            ) : (
+              // No Chat Selected State
+              <div className="flex-1 flex flex-col items-center justify-center text-gray-500 p-8">
+                <div className="text-center max-w-sm">
+                  <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-full p-6 w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                    <Send className="h-10 w-10 text-purple-500" />
+                  </div>
+                  <h3 className="font-semibold text-xl text-gray-700 mb-3">
+                    Welcome to Messages
+                  </h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    Choose a conversation from the sidebar to start messaging or
+                    continue your existing conversations. All your chats are
+                    securely stored and synced across devices.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
-        </section>
-      </div>
-    </main>
-  )
+        </div>
+      </main>
+    </>
+  );
 }

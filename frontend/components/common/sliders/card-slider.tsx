@@ -1,249 +1,264 @@
-"use client"
+"use client";
 
-import { useState, useRef, useEffect, useCallback } from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { useState, useRef, useEffect, useCallback } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-import Link from 'next/link'
-import { ProductCard } from "@/components/cards/product-card"
-import type { ProductCardProps } from "@/components/cards/product-card"
+import Link from "next/link";
+import { ProductCard } from "@/components/cards/product-card";
 
 export interface CardSliderProps {
-  items: ProductCardProps[]
-  type?: 'products' | 'services' | 'explore'
-  className?: string
-  cardWidth?: number
-  gap?: number
-  showDots?: boolean
-  showViewAll?: boolean
+  items: any[];
+  type?: "products" | "services" | "explore" | "events";
+  className?: string;
+  cardWidth?: number;
+  gap?: number;
+  showDots?: boolean;
+  showViewAll?: boolean;
 }
 
 export function CardSlider({
   items = [],
-  type = 'products',
+  type = "products",
   className,
   cardWidth = 260,
   gap = 16,
   showDots = true,
   showViewAll = false,
 }: CardSliderProps) {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [visibleCards, setVisibleCards] = useState<number>(1)
-  const [isRTL, setIsRTL] = useState(false)
-  const [touchStart, setTouchStart] = useState<number | null>(null)
-  const [touchEnd, setTouchEnd] = useState<number | null>(null)
-  const [isTransitioning, setIsTransitioning] = useState(false)
-  const [canScrollLeft, setCanScrollLeft] = useState(false)
-  const [canScrollRight, setCanScrollRight] = useState(true)
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [visibleCards, setVisibleCards] = useState<number>(1);
+  const [isRTL, setIsRTL] = useState(false);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
 
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null)
-  const transitionTimeoutRef = useRef<number | null>(null)
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const transitionTimeoutRef = useRef<number | null>(null);
 
-  const totalItems = items.length
-  const maxIndex = Math.max(0, totalItems - visibleCards)
+  const totalItems = items.length;
+  const maxIndex = Math.max(0, totalItems - visibleCards);
 
-  const getItemLink = useCallback((itemId: string) => {
-    switch (type) {
-      case 'services':
-        return `/marketplace/service/${itemId}`
-      case 'explore':
-        return `/explore/${itemId}`
-      case 'products':
-      default:
-        return `/marketplace/product/${itemId}`
-    }
-  }, [type])
+  const getItemLink = useCallback(
+    (itemId: string) => {
+      switch (type) {
+        case "services":
+          return `/marketplace/service/${itemId}`;
+        case "explore":
+          return `/explore/${itemId}`;
+        case "events":
+          return `/events/${itemId}`;
+        case "products":
+        default:
+          return `/marketplace/product/${itemId}`;
+      }
+    },
+    [type]
+  );
 
   const getViewAllLink = useCallback(() => {
     switch (type) {
-      case 'services':
-        return '/maketplace'
-      case 'explore':
-        return '/explore'
-      case 'products':
+      case "services":
+        return "/marketplace";
+      case "explore":
+        return "/explore";
+      case "events":
+        return "/events";
+      case "products":
       default:
-        return '/marketplace'
+        return "/marketplace";
     }
-  }, [type])
+  }, [type]);
 
   // Detect RTL
   useEffect(() => {
     const detectRTL = () => {
-      const dir = document.documentElement.dir ||
-                  getComputedStyle(document.documentElement).direction ||
-                  'ltr'
-      setIsRTL(dir === 'rtl')
-    }
-    detectRTL()
-    const observer = new MutationObserver(detectRTL)
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['dir'] })
-    return () => observer.disconnect()
-  }, [])
+      const dir =
+        document.documentElement.dir ||
+        getComputedStyle(document.documentElement).direction ||
+        "ltr";
+      setIsRTL(dir === "rtl");
+    };
+    detectRTL();
+    const observer = new MutationObserver(detectRTL);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["dir"],
+    });
+    return () => observer.disconnect();
+  }, []);
 
   // Update visible cards based on screen size
   useEffect(() => {
     const updateVisibleCards = () => {
-      const width = window.innerWidth
-      let cards = 1
+      const width = window.innerWidth;
+      let cards = 1;
 
-      if (width >= 1536) cards = 5
-      else if (width >= 1280) cards = 4
-      else if (width >= 1024) cards = 3
-      else if (width >= 768) cards = 2
-      else cards = 1
+      if (width >= 1536) cards = 5;
+      else if (width >= 1280) cards = 4;
+      else if (width >= 1024) cards = 3;
+      else if (width >= 768) cards = 2;
+      else cards = 1;
 
-      setVisibleCards(Math.min(cards, totalItems))
-    }
+      setVisibleCards(Math.min(cards, totalItems));
+    };
 
-    updateVisibleCards()
-    window.addEventListener("resize", updateVisibleCards)
-    return () => window.removeEventListener("resize", updateVisibleCards)
-  }, [cardWidth, gap, totalItems])
+    updateVisibleCards();
+    window.addEventListener("resize", updateVisibleCards);
+    return () => window.removeEventListener("resize", updateVisibleCards);
+  }, [cardWidth, gap, totalItems]);
 
   // Helper: update currentIndex and arrow states based on visible children
   const updatePositionFromScroll = useCallback(() => {
-    const container = scrollContainerRef.current
-    if (!container) return
+    const container = scrollContainerRef.current;
+    if (!container) return;
 
-    const containerRect = container.getBoundingClientRect()
-    const children = Array.from(container.children) as HTMLElement[]
-    if (children.length === 0) return
+    const containerRect = container.getBoundingClientRect();
+    const children = Array.from(container.children) as HTMLElement[];
+    if (children.length === 0) return;
 
-    const alignmentEdge = isRTL ? 'right' : 'left'
+    const alignmentEdge = isRTL ? "right" : "left";
 
     // Find the child whose alignment edge is nearest to the container's alignment edge
-    let nearestIndex = 0
-    let nearestDistance = Infinity
+    let nearestIndex = 0;
+    let nearestDistance = Infinity;
     for (let i = 0; i < children.length; i++) {
-      const childRect = children[i].getBoundingClientRect()
-      const distance = Math.abs(childRect[alignmentEdge] - containerRect[alignmentEdge])
+      const childRect = children[i].getBoundingClientRect();
+      const distance = Math.abs(
+        childRect[alignmentEdge] - containerRect[alignmentEdge]
+      );
       if (distance < nearestDistance) {
-        nearestDistance = distance
-        nearestIndex = i
+        nearestDistance = distance;
+        nearestIndex = i;
       }
     }
 
-    const clampedIndex = Math.max(0, Math.min(nearestIndex, maxIndex))
-    setCurrentIndex(clampedIndex)
-    setCanScrollLeft(isRTL ? clampedIndex < maxIndex : clampedIndex > 0)
-    setCanScrollRight(isRTL ? clampedIndex > 0 : clampedIndex < maxIndex)
-  }, [isRTL, maxIndex])
+    const clampedIndex = Math.max(0, Math.min(nearestIndex, maxIndex));
+    setCurrentIndex(clampedIndex);
+    setCanScrollLeft(isRTL ? clampedIndex < maxIndex : clampedIndex > 0);
+    setCanScrollRight(isRTL ? clampedIndex > 0 : clampedIndex < maxIndex);
+  }, [isRTL, maxIndex]);
 
   // Scroll handler (throttled via rAF)
   useEffect(() => {
-    const container = scrollContainerRef.current
-    if (!container) return
+    const container = scrollContainerRef.current;
+    if (!container) return;
 
-    let ticking = false
+    let ticking = false;
     const handleScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
-          updatePositionFromScroll()
-          ticking = false
-        })
-        ticking = true
+          updatePositionFromScroll();
+          ticking = false;
+        });
+        ticking = true;
       }
-    }
+    };
 
-    container.addEventListener("scroll", handleScroll, { passive: true })
+    container.addEventListener("scroll", handleScroll, { passive: true });
     // initialize states
-    updatePositionFromScroll()
+    updatePositionFromScroll();
 
-    return () => container.removeEventListener("scroll", handleScroll)
-  }, [updatePositionFromScroll])
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [updatePositionFromScroll]);
 
   // Scroll to given index (no wrap-around). Uses scrollIntoView for accuracy across padding/RTL.
-  const scrollToIndex = useCallback((index: number) => {
-    const container = scrollContainerRef.current
-    if (!container || isTransitioning) return
+  const scrollToIndex = useCallback(
+    (index: number) => {
+      const container = scrollContainerRef.current;
+      if (!container || isTransitioning) return;
 
-    const clampedIndex = Math.max(0, Math.min(index, maxIndex))
-    const child = container.children[clampedIndex] as HTMLElement | undefined
-    if (!child) return
+      const clampedIndex = Math.max(0, Math.min(index, maxIndex));
+      const child = container.children[clampedIndex] as HTMLElement | undefined;
+      if (!child) return;
 
-    // Clear any existing timeout
-    if (transitionTimeoutRef.current) {
-      clearTimeout(transitionTimeoutRef.current)
-      transitionTimeoutRef.current = null
-    }
+      // Clear any existing timeout
+      if (transitionTimeoutRef.current) {
+        clearTimeout(transitionTimeoutRef.current);
+        transitionTimeoutRef.current = null;
+      }
 
-    setIsTransitioning(true)
+      setIsTransitioning(true);
 
-    child.scrollIntoView({
-      behavior: 'smooth',
-      inline: 'start',
-      block: 'nearest'
-    })
+      child.scrollIntoView({
+        behavior: "smooth",
+        inline: "start",
+        block: "nearest",
+      });
 
-    setCurrentIndex(clampedIndex)
-    setCanScrollLeft(isRTL ? clampedIndex < maxIndex : clampedIndex > 0)
-    setCanScrollRight(isRTL ? clampedIndex > 0 : clampedIndex < maxIndex)
+      setCurrentIndex(clampedIndex);
+      setCanScrollLeft(isRTL ? clampedIndex < maxIndex : clampedIndex > 0);
+      setCanScrollRight(isRTL ? clampedIndex > 0 : clampedIndex < maxIndex);
 
-    // Allow interactions again after animation (adjust if your CSS transition is longer)
-    transitionTimeoutRef.current = window.setTimeout(() => {
-      setIsTransitioning(false)
-      transitionTimeoutRef.current = null
-    }, 450)
-  }, [isRTL, isTransitioning, maxIndex])
+      // Allow interactions again after animation (adjust if your CSS transition is longer)
+      transitionTimeoutRef.current = window.setTimeout(() => {
+        setIsTransitioning(false);
+        transitionTimeoutRef.current = null;
+      }, 450);
+    },
+    [isRTL, isTransitioning, maxIndex]
+  );
 
   const moveToNext = useCallback(() => {
-    const nextIndex = Math.min(currentIndex + 1, maxIndex)
-    if (nextIndex !== currentIndex) scrollToIndex(nextIndex)
-    return nextIndex
-  }, [currentIndex, maxIndex, scrollToIndex])
+    const nextIndex = Math.min(currentIndex + 1, maxIndex);
+    if (nextIndex !== currentIndex) scrollToIndex(nextIndex);
+    return nextIndex;
+  }, [currentIndex, maxIndex, scrollToIndex]);
 
   const moveToPrev = useCallback(() => {
-    const prevIndex = Math.max(currentIndex - 1, 0)
-    if (prevIndex !== currentIndex) scrollToIndex(prevIndex)
-    return prevIndex
-  }, [currentIndex, scrollToIndex])
+    const prevIndex = Math.max(currentIndex - 1, 0);
+    if (prevIndex !== currentIndex) scrollToIndex(prevIndex);
+    return prevIndex;
+  }, [currentIndex, scrollToIndex]);
 
   const scrollLeft = useCallback(() => {
-    if (isTransitioning) return
-    return isRTL ? moveToNext() : moveToPrev()
-  }, [isRTL, moveToNext, moveToPrev, isTransitioning])
+    if (isTransitioning) return;
+    return isRTL ? moveToNext() : moveToPrev();
+  }, [isRTL, moveToNext, moveToPrev, isTransitioning]);
 
   const scrollRight = useCallback(() => {
-    if (isTransitioning) return
-    return isRTL ? moveToPrev() : moveToNext()
-  }, [isRTL, moveToNext, moveToPrev, isTransitioning])
+    if (isTransitioning) return;
+    return isRTL ? moveToPrev() : moveToNext();
+  }, [isRTL, moveToNext, moveToPrev, isTransitioning]);
 
   // Touch handling for mobile swipe
-  const minSwipeDistance = 50
+  const minSwipeDistance = 50;
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    setTouchEnd(null)
-    setTouchStart(e.targetTouches[0].clientX)
-  }, [])
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  }, []);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX)
-  }, [])
+    setTouchEnd(e.targetTouches[0].clientX);
+  }, []);
 
   const handleTouchEnd = useCallback(() => {
-    if (touchStart == null || touchEnd == null || isTransitioning) return
+    if (touchStart == null || touchEnd == null || isTransitioning) return;
 
-    const distance = touchStart - touchEnd
-    const isLeftSwipe = distance > minSwipeDistance
-    const isRightSwipe = distance < -minSwipeDistance
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
 
     if (isLeftSwipe) {
-      isRTL ? scrollLeft() : scrollRight()
+      isRTL ? scrollLeft() : scrollRight();
     } else if (isRightSwipe) {
-      isRTL ? scrollRight() : scrollLeft()
+      isRTL ? scrollRight() : scrollLeft();
     }
-  }, [touchStart, touchEnd, isRTL, scrollLeft, scrollRight, isTransitioning])
+  }, [touchStart, touchEnd, isRTL, scrollLeft, scrollRight, isTransitioning]);
 
   useEffect(() => {
     // Cleanup any pending timeout when component unmounts
     return () => {
       if (transitionTimeoutRef.current) {
-        clearTimeout(transitionTimeoutRef.current)
+        clearTimeout(transitionTimeoutRef.current);
       }
-    }
-  }, [])
+    };
+  }, []);
 
-  if (items.length === 0) return null
+  if (items.length === 0) return null;
 
   return (
     <div className={cn("w-full", className)}>
@@ -303,9 +318,9 @@ export function CardSlider({
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
-            direction: isRTL ? 'rtl' : 'ltr',
-            willChange: 'scroll-position',
-            transform: 'translateZ(0)'
+            direction: isRTL ? "rtl" : "ltr",
+            willChange: "scroll-position",
+            transform: "translateZ(0)",
           }}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
@@ -321,7 +336,7 @@ export function CardSlider({
               )}
               style={{
                 minWidth: `${cardWidth}px`,
-                transform: 'translateZ(0)'
+                transform: "translateZ(0)",
               }}
             >
               <Link
@@ -356,5 +371,5 @@ export function CardSlider({
         )}
       </div>
     </div>
-  )
+  );
 }

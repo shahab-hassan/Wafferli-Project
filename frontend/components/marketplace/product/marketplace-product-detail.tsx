@@ -1,105 +1,156 @@
-"use client"
-import { Card, CardContent } from "@/components/common/shadecn-card"
-import { Badge } from "@/components/common/badge"
-import { useTranslations } from "next-intl"
+"use client";
+
+import { Card, CardContent } from "@/components/common/shadecn-card";
+import { Badge } from "@/components/common/badge";
+import { Star, MapPin, Clock, Shield, Truck } from "lucide-react";
 
 interface MarketplaceProductDetailsProps {
   product: {
-    id: string
-    name: string
-    brand: string
-    description: string
-    price: number
-    originalPrice?: number
-    discount?: number
-    condition: string
-    category: string
-    subcategory: string
-    inStock: boolean
-    seller: string
-  }
+    _id: string;
+    title: string;
+    description: string;
+    category?: string;
+    subCategory?: string;
+    askingPrice?: number;
+    discountedPrice?: number;
+    originalPrice?: number;
+    discount?: boolean;
+    discountPercent?: number;
+    rating?: number;
+    reviewsCount?: number;
+    quantity?: number;
+    recurring?: boolean;
+    paymentMode?: string;
+    condition?: string;
+    city?: string;
+    neighbourhood?: string;
+    phone?: string;
+    showPhone?: boolean;
+  };
 }
 
-export default function MarketplaceProductDetails({ product }: MarketplaceProductDetailsProps) {
-  const t = useTranslations()
+export default function MarketplaceProductDetails({
+  product,
+}: MarketplaceProductDetailsProps) {
+  const displayPrice = product.discountedPrice || product.askingPrice || 0;
+  const originalPrice = product.originalPrice || product.askingPrice || 0;
+  const hasDiscount = product.discount && product.discountPercent;
 
   return (
-    <div className="space-y-6">
-      <Card className="bg-white border rounded-xl">
-        <CardContent className="p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">{t("marketplace.details.description")}</h2>
-          <p className="text-gray-600 leading-relaxed">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque in quam nisl. Suspendisse suscipit
-            venenatis turpis, non ullamcorper nisl laoreet vitae. Cras ornare ex convallis nisl faucibus vehicula. Fusce
-            quis molestie magna, eget tempus felis. In hac habitasse platea dictumst. Pellentesque ut dui nec purus
-            pulvinar fringilla feugiat eget mi. Donec non sapien quam. Ut molestie dui non risus accumsan, nec blandit
-            nulla facilisis. Sed metus urna, commodo ut turpis at, congue molestie justo. Aliquam nisl elit, tincidunt
-            lacinia volutpat ac, finibus ut eros. Quisque volutpat mi quam, eu luctus est porta ut. Sed turpis est,
-            sagittis vel turpis non, facilisis fermentum orci. Etiam sed imperdiet dui.
-          </p>
-        </CardContent>
-      </Card>
+    <Card className="rounded-2xl lg:rounded-3xl">
+      <CardContent className="p-6">
+        {/* Price Section */}
+        <div className="mb-6">
+          <div className="flex items-center gap-4 mb-2">
+            <span className="text-3xl font-bold text-foreground">
+              Price : {displayPrice.toFixed(2)}
+            </span>
+            {hasDiscount && (
+              <>
+                <span className="text-xl text-muted-foreground line-through">
+                  Price : {originalPrice.toFixed(2)}
+                </span>
+                <Badge className="bg-green-100 text-green-700 rounded-full px-3 py-1 text-sm font-bold">
+                  Save {product.discountPercent}%
+                </Badge>
+              </>
+            )}
+          </div>
 
-      <Card className="bg-transparent !rounded-md">
-        <CardContent className="p-4 sm:p-6 lg:p-8">
-          <div className="space-y-4 lg:space-y-6">
-            {/* Product Summary */}
-            <div>
-              <div className="flex flex-wrap gap-2 mb-3 lg:mb-4">
-                <Badge className="bg-blue-100 text-blue-700 rounded-full px-2 sm:px-3 py-1 text-xs sm:text-sm">
-                  {t("marketplace.badges.product")}
-                </Badge>
-                <Badge className="bg-primary/10 text-primary rounded-full px-2 sm:px-3 py-1 text-xs sm:text-sm">
-                  {product.brand}
-                </Badge>
-                <Badge className="bg-purple-100 text-purple-700 rounded-full px-2 sm:px-3 py-1 text-xs sm:text-sm">
-                  {product.condition}
-                </Badge>
-              </div>
-
-              {/* Pricing */}
-              <div className="bg-white rounded-xl border lg:rounded-2xl p-4 lg:p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="flex items-center space-x-2 lg:space-x-3 mb-1 lg:mb-2">
-                      <span className="text-2xl lg:text-3xl font-bold text-primary">{product.price} KD</span>
-                      {product.originalPrice && (
-                        <span className="text-lg lg:text-xl text-gray-400 line-through">
-                          {product.originalPrice} KD
-                        </span>
-                      )}
-                    </div>
-                    {product.discount && product.originalPrice && (
-                      <div className="text-yellow-600 font-semibold text-sm lg:text-base">
-                        You save {product.originalPrice - product.price} KD ({product.discount}% off)
-                      </div>
-                    )}
-                  </div>
-                  {product.discount && (
-                    <div className="text-right">
-                      <div className="text-xl lg:text-2xl font-bold text-green-600">{product.discount}%</div>
-                      <div className="text-xs lg:text-sm text-gray-600">Discount</div>
-                    </div>
-                  )}
-                </div>
-              </div>
+          {/* Rating */}
+          <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-1">
+              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+              <span className="font-medium">{product.rating || 0}</span>
             </div>
+            <span className="text-sm text-muted-foreground">
+              ({product.reviewsCount || 0} reviews)
+            </span>
+          </div>
+        </div>
 
-            {/* Stock Status */}
-            <div className="bg-white border rounded-xl lg:rounded-2xl p-4 lg:p-6">
-              <h3 className="font-bold text-gray-900 mb-3 lg:mb-4 text-base lg:text-lg">
-                {t("marketplace.details.availability")}
-              </h3>
-              <div className="flex items-center space-x-3">
-                <div className={`w-3 h-3 rounded-full ${product.inStock ? "bg-green-500" : "bg-red-500"}`} />
-                <span className={`font-medium ${product.inStock ? "text-green-600" : "text-red-600"}`}>
-                  {product.inStock ? t("marketplace.inStock") : t("marketplace.outOfStock")}
+        {/* Product Info */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <h3 className="font-semibold mb-3">Product Details</h3>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Category:</span>
+                <span className="font-medium">{product.category || "N/A"}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Subcategory:</span>
+                <span className="font-medium">
+                  {product.subCategory || "N/A"}
                 </span>
               </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Condition:</span>
+                <span className="font-medium">
+                  {product.condition || "New"}
+                </span>
+              </div>
+              {product.quantity && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Quantity:</span>
+                  <span className="font-medium">
+                    {product.quantity} available
+                  </span>
+                </div>
+              )}
             </div>
           </div>
-        </CardContent>
-      </Card>
-    </div>
-  )
+
+          <div>
+            <h3 className="font-semibold mb-3">Seller Information</h3>
+            <div className="space-y-2 text-sm">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-muted-foreground" />
+                <span>
+                  {product.city || "N/A"}, {product.neighbourhood || "N/A"}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-muted-foreground" />
+                <span>Posted recently</span>
+              </div>
+              {product.showPhone && product.phone && (
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground">Phone:</span>
+                  <span className="font-medium">{product.phone}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Features */}
+        <div className="border-t pt-6">
+          <h3 className="font-semibold mb-3">Features</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="flex items-center gap-2 text-sm">
+              <Shield className="w-4 h-4 text-green-600" />
+              <span>Secure Payment</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm">
+              <Truck className="w-4 h-4 text-blue-600" />
+              <span>Fast Delivery</span>
+            </div>
+            {product.recurring && (
+              <div className="flex items-center gap-2 text-sm">
+                <span className="w-2 h-2 bg-purple-600 rounded-full"></span>
+                <span>Recurring</span>
+              </div>
+            )}
+            {product.paymentMode && (
+              <div className="flex items-center gap-2 text-sm">
+                <span className="w-2 h-2 bg-orange-600 rounded-full"></span>
+                <span>{product.paymentMode} Payment</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
 }

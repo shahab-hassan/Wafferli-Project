@@ -52,23 +52,21 @@
     "privacy": "سياسة الخصوصية",
     "terms": "الشروط والأحكام",
     "giftcenter": "مركز الهدايا",
-        "profile": "الملف الشخصي",
+    "profile": "الملف الشخصي",
     "settings": "الإعدادات",
     "logout": "تسجيل الخروج",
     "notifications": "الإشعارات",
     "viewAllNotifications": "عرض جميع الإشعارات",
     "postAd": "+ أضف إعلان",
 
-      "viewPublicProfile": "عرض الملف العام",
-  "loyaltyPoints": "نقاط الولاء",
-  "switchToSeller": "التبديل إلى البائع",
-    "switchToUser": "التبديل إلى المستخدم"
-,
-  "myAds": "إعلاناتي",
-  "myWallet": "محفظتي",
-  "favourites": "المفضلة",
-  "blogs": "المدونات"
-
+    "viewPublicProfile": "عرض الملف العام",
+    "loyaltyPoints": "نقاط الولاء",
+    "switchToSeller": "التبديل إلى البائع",
+    "switchToUser": "التبديل إلى المستخدم",
+    "myAds": "إعلاناتي",
+    "myWallet": "محفظتي",
+    "favourites": "المفضلة",
+    "blogs": "المدونات"
   },
   "carousel": {
     "slide1": {
@@ -274,32 +272,64 @@
       "noAccount": "ليس لديك حساب؟",
       "createAccount": "إنشاء حساب"
     },
-    "signup": {
-      "title": "انضم إلى وفرلي اليوم!",
-      "subtitle": "أنشئ حسابك وابدأ في التوفير",
-      "fullName": "الاسم الكامل",
-      "emailAddress": "عنوان البريد الإلكتروني",
-      "phoneNumber": "رقم الهاتف",
-      "password": "كلمة المرور",
+   "signup": {
+  "title": "انضم إلى وفرلي اليوم!",
+  "subtitle": "أنشئ حسابك وابدأ في التوفير",
+  "fullName": "الاسم الكامل",
+  "emailAddress": "عنوان البريد الإلكتروني",
+  "phoneNumber": "رقم الهاتف",
+  "password": "كلمة المرور",
+  "confirmPassword": "تأكيد كلمة المرور",
+  "agreeToTerms": "أوافق على",
+  "termsOfService": "شروط الخدمة",
+  "and": "و",
+  "privacyPolicy": "سياسة الخصوصية",
+  "createAccount": "إنشاء حساب",
+  "orSignUpWith": "أو سجل مع",
+  "signUpWithGoogle": "التسجيل مع جوجل",
+  "signUpWithApple": "التسجيل مع آبل",
+  "haveAccount": "لديك حساب بالفعل؟",
+  "signIn": "تسجيل الدخول",
+  "referral": {
+    "title": "أنت على وشك الوصول!",
+    "subtitle": "أدخل رمز الإحاله (إن وجد)",
+    "enterCode": "لدي رمز إحالة",
+    "placeholder": "مثال: WAFFLE2024",
+    "discount": "احصل على 15% خصم على أي عرض أولي تستفيد منه."
+  },
+  "nextStep": "الخطوة التالية",
+  "withoutReferralCode": "بدون رمز الإحالة",
+  "finish": "إنهاء",
+  "back": "رجوع",
+  "continue": "متابعة",
+  "sendOtp": "إرسال الرمز",
+  "verifyOtpTitle": "تحقق من بريدك الإلكتروني",
+  "verifyOtpSubtitle": "لقد أرسلنا رمز مكون من 6 أرقام إلى بريدك الإلكتروني",
+  "enterOtp": "أدخل الرمز المكون من 6 أرقام",
+  "verifyOtp": "تحقق من الرمز",
+  "resendText": "لم تستلم الرمز؟",
+  "resendBtn": "إعادة إرسال الرمز"
+},
+    "forgot": {
+      "title": "هل نسيت كلمة المرور؟",
+      "subtitle": "أدخل بريدك الإلكتروني المسجل لتلقي رمز التحقق (OTP)",
+      "emailPlaceholder": "أدخل بريدك الإلكتروني",
+      "sendOtp": "إرسال رمز التحقق",
+      "sending": "جاري الإرسال...",
+      "otpTitle": "أدخل رمز التحقق",
+      "otpSubtitle": "تحقق من بريدك الإلكتروني للحصول على رمز التحقق.",
+      "otpPlaceholder": "أدخل رمز التحقق المكون من 6 أرقام",
+      "verifyOtp": "تحقق من الرمز",
+      "verifying": "جاري التحقق...",
+      "resendText": "لم تستلم الرمز؟",
+      "resendBtn": "إعادة إرسال الرمز",
+      "resetTitle": "إعادة تعيين كلمة المرور",
+      "resetSubtitle": "أدخل كلمة المرور الجديدة أدناه",
+      "newPassword": "كلمة المرور الجديدة",
       "confirmPassword": "تأكيد كلمة المرور",
-      "agreeToTerms": "أوافق على",
-      "termsOfService": "شروط الخدمة",
-      "and": "و",
-      "privacyPolicy": "سياسة الخصوصية",
-      "createAccount": "إنشاء حساب",
-      "orSignUpWith": "أو سجل مع",
-      "signUpWithGoogle": "التسجيل مع جوجل",
-      "signUpWithApple": "التسجيل مع آبل",
-      "haveAccount": "لديك حساب بالفعل؟",
-      "signIn": "تسجيل الدخول",
-      "referral": {
-      "title": "أنت على وشك الوصول!",
-      "subtitle": "أدخل رمز الإحاله (إن وجد)",
-      "placeholder": "مثال: WAFFLE2024",
-      "discount": "احصل على 15% خصم على أي عرض أولي تستفيد منه."
-    },
-    "nextStep": "الخطوة التالية",
-    "finish": "إنهاء"
+      "resetBtn": "إعادة تعيين كلمة المرور",
+      "successMsg": "تمت إعادة تعيين كلمة المرور بنجاح!",
+      "backToLogin": "العودة إلى تسجيل الدخول"
     }
   },
   "Sidebar": {
@@ -561,7 +591,7 @@
     "verified_reviews": "مراجعات مؤكدة",
     "trending": "رائج",
     "apply_filters": "تطبيق الفلاتر",
-    "explore_categories" : "فئات",
+    "explore_categories": "فئات",
     "sortOptions": {
       "newest_first": "الأحدث أولاً",
       "rating_high_low": "التقييم: من الأعلى إلى الأقل",
@@ -571,14 +601,9 @@
     }
   },
 
-
-
-
   "TextField": "TextField",
 
-  
-
- "categories": {
+  "categories": {
     "all": "جميع المنشورات",
     "food": "الطعام والمطاعم",
     "lifestyle": "نمط الحياة",
@@ -723,8 +748,6 @@
   "reply": "رد",
   "yourAvatar": "صورة ملفك الشخصي",
 
-
-
   "events": {
     "filters": "المرشحات",
     "clear_all": "مسح الكل",
@@ -805,8 +828,6 @@
     }
   },
 
-
-  
   "filters": "المرشحات",
   "newest_first": "الأحدث أولاً",
   "ending_soon": "ينتهي قريباً",
@@ -877,8 +898,7 @@
     }
   },
 
-
- "restaurants": "مطاعم",
+  "restaurants": "مطاعم",
   "hotels": "فنادق",
   "cafes": "مقاهي",
   "salons": "صالونات",
@@ -897,8 +917,7 @@
   "minimum_rating": "الحد الأدنى للتقييم",
   "apply_filters": "تطبيق الفلاتر",
 
-
-   "FAQ": {
+  "FAQ": {
     "breadcrumb": {
       "home": "الرئيسية",
       "faq": "الأسئلة الشائعة"
@@ -934,8 +953,8 @@
     "liveChat": "دردشة مباشرة",
     "callUs": "اتصل بنا"
   },
-   "marketplace": {
-      "allAds": "جميع الإعلانات",
+  "marketplace": {
+    "allAds": "جميع الإعلانات",
     "hero": {
       "badge": "السوق",
       "title": "اكتشف",
@@ -943,8 +962,7 @@
       "titleSuffix": "من الشركات الكويتية",
       "subtitle": "السوق المحلي الموثوق في الكويت لكل ما تحتاجه",
       "searchPlaceholder": "ابحث عن المنتجات أو الخدمات أو المتاجر...",
-        "activeAds": "الإعلانات النشطة"
-
+      "activeAds": "الإعلانات النشطة"
     },
     "tabs": {
       "shopProducts": "تسوق المنتجات",
@@ -1139,7 +1157,7 @@
     "traditionalKuwaitiFeast": "وليمة كويتية تقليدية",
     "alBoomRestaurant": "مطعم البوم"
   },
-  
+
   "ForBusinesses": {
     "hero": {
       "badge": "للشركات المحلية",
@@ -1332,7 +1350,7 @@
       ]
     }
   },
-   "Eventpage": {
+  "Eventpage": {
     "hero": {
       "badge": "الفعاليات",
       "title": "اكتشف <highlight>لحظات لا تُنسى</highlight> في الكويت",
@@ -1343,7 +1361,7 @@
       "treesAlt": "أشجار صفراء وألعاب نارية مرسومة بشكل زخرفي"
     }
   },
-    "wishlist": {
+  "wishlist": {
     "title": "قائمة رغباتي",
     "empty": "قائمة رغباتك فارغة.",
     "sections": {
@@ -1392,19 +1410,16 @@
     "spinCompleted": "تم الدوران",
     "discountCode": "رمز الخصم"
   },
-  
- "profile": {
-  "memberSince": "عضو منذ",
-  "activeAds": "إعلانات نشطة",
-  "chat": "دردشة",
-  "directions": "الاتجاهات",
-  "ads": "إعلانات",
-  "all": "الكل",
-  "showingResults": "عرض {count} نتائج",
-  "newestFirst": "الأحدث أولاً",
-  "instock": "متوفر في المخزون"
-}
-}
- 
 
-  
+  "profile": {
+    "memberSince": "عضو منذ",
+    "activeAds": "إعلانات نشطة",
+    "chat": "دردشة",
+    "directions": "الاتجاهات",
+    "ads": "إعلانات",
+    "all": "الكل",
+    "showingResults": "عرض {count} نتائج",
+    "newestFirst": "الأحدث أولاً",
+    "instock": "متوفر في المخزون"
+  }
+}

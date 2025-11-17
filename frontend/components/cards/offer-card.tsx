@@ -1,188 +1,294 @@
-// Updated OfferCard component
-"use client"
-import { Calendar } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/common/button"
-import { Star, MapPin } from "lucide-react"
-import { WishlistButton } from "@/components/common/wishlist-button" // New import
-import { useWishlist, type WishlistItem } from "@/contexts/wishListContext" // New import
-import Link from "next/link"
-
-export interface OfferCardProps {
-  id: string
-  title: string
-  subtitle: string
-  image: string
-  location: string
-  rating: number
-  reviewCount?: number
-  originalPrice: string
-  discountedPrice: string
-  discountPercentage: number
-  expiryDate: string | Date
-  badge?: "trending" | "sponsored" | "new_arrival" | "expiring_soon" | null
-  className?: string
-  isResponsive?: boolean      // New prop for responsiveness
-}
+"use client";
+import { Calendar, Star, MapPin, Clock } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/common/button";
+import Link from "next/link";
+import WishlistButton from "../common/wishlist-button";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
 
 const getBadgeStyles = (badge: NonNullable<OfferCardProps["badge"]>) => {
   switch (badge) {
     case "sponsored":
-      return "bg-tertiary text-black"
+      return "bg-tertiary text-black";
     case "new_arrival":
-      return "bg-green-100 text-green-700"
+      return "bg-green-100 text-green-700";
     case "expiring_soon":
-      return "bg-red-100 text-red-600"
+      return "bg-red-100 text-red-600";
     default:
-      return "bg-grey-200 text-grey-700"
+      return "bg-grey-200 text-grey-700";
   }
+};
+
+interface OfferCardProps {
+  id: string;
+  title: string;
+  description: string;
+  images: string[];
+  offerDetail?: string;
+  city: string;
+  neighbourhood: string;
+  rating: number;
+  reviewsCount: number;
+  originalPrice?: number;
+  discountedPrice?: number;
+  discountPercentage?: number;
+  expiryDate: string;
+  category: string;
+  badge?: "new_arrival" | "sponsored" | "trending" | "expiring_soon" | null;
+  flashDeal?: boolean;
+  adType?: string;
+  className?: string;
+  isFavorited: boolean;
+  isClaimed?: boolean;
+  isResponsive?: boolean;
+  onClaim?: () => void;
 }
 
 export function OfferCard({
   id,
   title,
-  subtitle,
-  image,
-  location,
+  description,
+  images,
+  city,
+  neighbourhood,
+  category,
   rating,
-  reviewCount,
+  reviewsCount,
   originalPrice,
   discountedPrice,
-  discountPercentage,
+  offerDetail,
+  discountPercentage = 0,
   expiryDate,
-  badge = null,
+  badge,
+  flashDeal = false,
   className,
+  isFavorited,
+  isClaimed = false,
   isResponsive = false,
+  onClaim,
 }: OfferCardProps) {
-  // Create wishlist item
-  const wishlistItem: WishlistItem = { type: 'offer', props: { id, title, subtitle, image, location, rating, reviewCount, originalPrice, discountedPrice, discountPercentage, expiryDate, badge, className, isResponsive } }
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
+  const [isExpired, setIsExpired] = useState(false);
+  const router = useRouter();
+  const { isAuthenticated } = useSelector((state: any) => state.auth);
 
-  const handleClaimDeal = () => {
-    console.log(`Claiming deal for card ID: ${id}`)
-  }
+  // Helper function to truncate text
+  const truncateText = (text: string, maxLength: number): string => {
+    if (!text) return "";
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + "...";
+  };
 
-  const expiry = new Date(expiryDate)
-  const isExpired = expiry.getTime() < new Date().getTime()
+  const handleClaimDeal = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isAuthenticated) {
+      toast.error("You must be logged in to claim deals");
+      return;
+    }
+    if (onClaim) {
+      onClaim();
+    }
+  };
+
+  // Timer countdown
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const targetTime = new Date(expiryDate).getTime();
+      const now = new Date().getTime();
+      const difference = targetTime - now;
+
+      if (difference <= 0) {
+        setIsExpired(true);
+        return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+      }
+
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+      return { days, hours, minutes, seconds };
+    };
+
+    // Initial calculation
+    setTimeLeft(calculateTimeLeft());
+    setIsExpired(new Date(expiryDate).getTime() <= new Date().getTime());
+
+    const timer = setInterval(() => {
+      const newTimeLeft = calculateTimeLeft();
+      setTimeLeft(newTimeLeft);
+
+      // Check if expired on each interval
+      if (new Date(expiryDate).getTime() <= new Date().getTime()) {
+        setIsExpired(true);
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [expiryDate]);
+
+  const formatTime = (time: number) => time.toString().padStart(2, "0");
+
+  const expiry = new Date(expiryDate);
+
+  // Calculate discount percentage if not provided
+  const calculatedDiscount =
+    discountPercentage ||
+    (originalPrice && discountedPrice
+      ? Math.round(((originalPrice - discountedPrice) / originalPrice) * 100)
+      : 0);
+
+  // Use first image or placeholder
+  const imageUrl =
+    images?.[0] ||
+    "/placeholder.svg?height=145&width=320&query=restaurant food";
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't navigate if clicking on wishlist button or claim button
+    if (
+      (e.target as HTMLElement).closest("button") ||
+      (e.target as HTMLElement).closest("a")
+    ) {
+      return;
+    }
+    router.push(`/offers/${id}`);
+  };
 
   return (
     <div
       className={cn(
-        "group relative bg-white rounded-[16px] overflow-hidden border border-grey-5 hover:shadow-lg transition-all duration-300 hover:-translate-y-1",
-        isResponsive ? "w-full h-auto" : "w-[320px] h-[360px]",
-        className,
+        "group relative bg-white rounded-[16px] overflow-hidden border border-grey-5 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col",
+        isResponsive ? "w-full" : "w-[320px]",
+        "min-h-[450px] max-h-[480px]" // Flexible height with limits
       )}
+      onClick={handleCardClick}
     >
-      {/* Image Section */}
-      <div className="relative h-[150px] overflow-hidden bg-grey-5">
+      {/* Image Section - Fixed Height */}
+      <div className="relative h-[180px] overflow-hidden bg-grey-5 flex-shrink-0">
         <img
-          src={image || "/placeholder.svg?height=145&width=320&query=restaurant food"}
+          src={imageUrl}
           alt={title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
 
+        {/* Flash Deal Timer */}
+        {flashDeal && !isExpired && (
+          <div className="absolute bottom-3 left-3 bg-warning text-black-2 px-2 py-1 rounded-[100px] flex items-center gap-1 h-[25px]">
+            <Clock className="w-3 h-3" />
+            <span className="text-smaller-semibold">
+              {timeLeft.days > 0 ? `${timeLeft.days}d ` : ""}
+              {formatTime(timeLeft.hours)}h {formatTime(timeLeft.minutes)}m
+            </span>
+          </div>
+        )}
+
         {/* Discount Badge */}
-        <div className="absolute top-4 left-4 bg-primary text-white px-2 py-1 rounded-[100px] text-smaller-semibold h-[25px] flex items-center">
-          {discountPercentage}% OFF
-        </div>
+        {calculatedDiscount > 0 && (
+          <div className="absolute top-3 left-3 bg-primary text-white px-2 py-1 rounded-[100px] text-smaller-semibold h-[25px] flex items-center">
+            {calculatedDiscount}% OFF
+          </div>
+        )}
 
         {/* Rating Badge */}
-        <div className="absolute bottom-3 right-3 bg-white/95 backdrop-blur-sm px-2 py-1 rounded-[100px] flex items-center gap-1">
-          <Star className="w-5 h-5 fill-warning text-warning" />
-          <span className="text-normal-semibold text-black-1">{rating}</span>
-        </div>
+        {rating > 0 && (
+          <div className="absolute bottom-3 right-3 bg-white/95 backdrop-blur-sm px-2 py-1 rounded-[100px] flex items-center gap-1 min-w-[60px]">
+            <Star className="w-3 h-3 fill-warning text-warning" />
+            <span className="text-smaller-semibold text-black-1">
+              {rating.toFixed(1)}
+            </span>
+          </div>
+        )}
 
         {/* Wishlist Button */}
-        <WishlistButton item={wishlistItem} />
+        <div className="absolute top-2 right-2">
+          <WishlistButton adId={id} isFavorited={isFavorited} />
+        </div>
 
-        {/* Badge (Bottom Left) */}
-        {badge && (
-          <div
-            className={cn(
-              "absolute bottom-3 left-3 h-[25px] px-3 rounded-full text-xs font-semibold flex items-center shadow-sm",
-              badge === "trending" ? "text-white" : getBadgeStyles(badge),
-            )}
-            style={badge === "trending" ? { backgroundColor: "#D08700" } : {}}
-          >
-            {badge === "trending" ? (
-              <>
-                <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.28 2.67-.2 3.73-.74 1.67-2.23 2.72-4.01 2.72z" />
-                </svg>
-                Trending
-              </>
-            ) : badge === "sponsored" ? (
-              <>
-                <svg className="pt-1 w-6 h-6" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M10.3178 8.59338L11.3278 14.2774C11.3391 14.3443 11.3298 14.4131 11.3009 14.4746C11.2721 14.536 11.2252 14.5872 11.1665 14.6212C11.1077 14.6553 11.04 14.6706 10.9724 14.6652C10.9047 14.6597 10.8403 14.6338 10.7878 14.5907L8.40117 12.7994C8.28595 12.7133 8.14599 12.6668 8.00217 12.6668C7.85835 12.6668 7.71838 12.7133 7.60317 12.7994L5.2125 14.5901C5.16005 14.633 5.09574 14.6589 5.02816 14.6644C4.96059 14.6699 4.89295 14.6546 4.83428 14.6206C4.7756 14.5867 4.72868 14.5356 4.69978 14.4743C4.67088 14.4129 4.66136 14.3443 4.6725 14.2774L5.68183 8.59338"
-                    stroke="#282828"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M8 9.33337C10.2091 9.33337 12 7.54251 12 5.33337C12 3.12424 10.2091 1.33337 8 1.33337C5.79086 1.33337 4 3.12424 4 5.33337C4 7.54251 5.79086 9.33337 8 9.33337Z"
-                    stroke="#282828"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                Sponsored
-              </>
-            ) : badge === "new_arrival" ? (
-              <>
-                <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-                </svg>
-                New Arrival
-              </>
-            ) : badge === "expiring_soon" ? (
-              <>
-                <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 1a11 11 0 1 0 11 11A11 11 0 0 0 12 1Zm0 19.9A8.9 8.9 0 1 1 20.9 12 8.91 8.91 0 0 1 12 20.9ZM12.5 7h-1v6l5.2 3.1.5-.8-4.7-2.8Z" />
-                </svg>
-                Expiring Soon
-              </>
-            ) : null}
+        {/* Flash Deal Badge */}
+        {flashDeal && (
+          <div className="absolute top-3 right-3 bg-red-500 text-white px-2 py-1 rounded-[100px] text-smaller-semibold">
+            Flash Deal
+          </div>
+        )}
+
+        {/* Expired Overlay */}
+        {isExpired && (
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+            <div className="bg-white px-4 py-2 rounded-lg text-red-600 font-semibold text-sm">
+              Expired
+            </div>
           </div>
         )}
       </div>
 
-      {/* Content Section */}
-      <div className="p-4 h-[210px] flex flex-col justify-between">
+      {/* Content Section - Dynamic height */}
+      <div className="p-4 flex flex-col flex-1">
         {/* Category and Location Row */}
-        <div className="flex items-center justify-between">
-          <span className="inline-block px-2 py-1 rounded-[100px] text-smaller-semibold bg-primary/10 text-primary h-[25px] flex items-center">
-            Restaurants
+        <div className="flex items-center justify-between mb-3">
+          <span className="px-2 py-1 rounded-[100px] text-smaller-semibold bg-primary/10 text-primary h-[25px] flex items-center max-w-[120px] truncate">
+            {truncateText(category, 15)}
           </span>
-          <div className="flex items-center gap-1 text-grey-2">
-            <MapPin className="w-3 h-3" />
-            <span className="text-smaller-regular">{location}</span>
+          <div className="flex items-center gap-1 text-grey-2 flex-shrink-0">
+            <MapPin className="w-3 h-3 flex-shrink-0" />
+            <span className="text-smaller-regular truncate max-w-[80px]">
+              {truncateText(city, 12)}
+            </span>
           </div>
         </div>
 
-        {/* Title & Subtitle */}
-        <div className="space-y-1 pt-2 pb-1">
-          <h3 className="text-normal-semibold text-black-1 line-clamp-1 leading-tight">
-            {title}
+        {/* Title & Description - Dynamic height based on content */}
+        <div className="space-y-2 mb-3">
+          {/* Title - Flexible height */}
+          <h3 className="text-normal-semibold text-black-1 line-clamp-2 leading-tight">
+            {truncateText(title, 60)}
           </h3>
-          <p className="text-small-regular text-grey-2 line-clamp-1 leading-relaxed">
-            {subtitle}
+
+          {/* Description - Flexible height */}
+          <p className="text-small-regular text-grey-2 line-clamp-3 leading-relaxed">
+            {truncateText(description, 100)}
           </p>
         </div>
 
-        {/* Pricing */}
-        <div className="flex items-center gap-2">
-          <span className="text-medium-semibold text-primary">{discountedPrice}</span>
-          <span className="text-smaller-regular text-grey-3 line-through">
-            {originalPrice}
-          </span>
+        {/* Pricing Section */}
+        <div className="flex items-center gap-2 mb-3">
+          {discountedPrice ? (
+            <>
+              <span className="text-medium-semibold text-primary">
+                KD {discountedPrice}
+              </span>
+              {originalPrice && originalPrice > discountedPrice && (
+                <span className="text-smaller-regular text-grey-3 line-through">
+                  KD {originalPrice}
+                </span>
+              )}
+            </>
+          ) : originalPrice ? (
+            <span className="text-medium-semibold text-primary">
+              KD {originalPrice}
+            </span>
+          ) : (
+            <span className="text-small-regular text-grey-2">
+              Price on request
+            </span>
+          )}
         </div>
 
         {/* Expiry Date Row */}
-        <div className="flex items-center gap-2 text-grey-2 text-small-regular pt-2">
-          <Calendar className="w-3 h-3" />
-          <span>
-            Expires:{" "}
+        <div className="flex items-center gap-2 text-grey-2 text-small-regular mb-3">
+          <Calendar className="w-3 h-3 flex-shrink-0" />
+          <span className="truncate">
+            {isExpired ? "Expired" : "Expires"}:{" "}
             {expiry.toLocaleDateString(undefined, {
               year: "numeric",
               month: "short",
@@ -191,24 +297,31 @@ export function OfferCard({
           </span>
         </div>
 
-
-        <Link href={`/offers/${id}`}>
-
-        {/* Claim Deal Button */}
-        <Button
-          variant="primary"
-          size="lg"
-          onClick={handleClaimDeal}
-          disabled={isExpired}
-          className={cn(
-            "w-full !text-white text-normal-regular mt-2",
-            isExpired && "opacity-50 cursor-not-allowed",
-          )}
-        >
-          {isExpired ? "Offer Expired" : "View Offer"}
-        </Button>
-        </Link>
+        {/* Claim Button - Always at bottom */}
+        <div className="mt-auto">
+          <Button
+            variant={flashDeal ? "tertiary" : "primary"}
+            size="lg"
+            onClick={handleClaimDeal}
+            disabled={isExpired || isClaimed}
+            className={cn(
+              "w-full text-normal-regular",
+              (isExpired || isClaimed) && "opacity-50 cursor-not-allowed",
+              flashDeal
+                ? "!bg-warning !text-black-2 hover:!bg-warning/90"
+                : "!text-white"
+            )}
+          >
+            {isExpired
+              ? "Offer Expired"
+              : isClaimed
+              ? "Already Claimed"
+              : flashDeal
+              ? "Claim Deal Now"
+              : "View Offer Details"}
+          </Button>
+        </div>
       </div>
     </div>
-  )
+  );
 }

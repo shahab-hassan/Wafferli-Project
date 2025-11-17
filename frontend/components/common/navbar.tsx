@@ -3,9 +3,10 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { ChevronDown, Menu, X, Download, } from "lucide-react";
+import { ChevronDown, Menu, X, Download } from "lucide-react";
 import { Button } from "./button";
-import { SearchBar } from "./nav-searchbar";
+// import { SearchBar } from "./nav-searchbar";
+import SearchBar from "../searchbar";
 import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -32,7 +33,7 @@ export default function Navbar() {
   const moreItems = [
     { label: t("about"), href: "/about" },
     { label: t("contact"), href: "/contact" },
-    { label: t("for_businesses"), href: "/for-businesses" },
+    // { label: t("for_businesses"), href: "/for-businesses" },
     { label: t("privacy"), href: "/privacy-policy" },
     { label: t("terms"), href: "/terms" },
   ];
@@ -40,10 +41,16 @@ export default function Navbar() {
   // Close dropdowns on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (desktopLangRef.current && !desktopLangRef.current.contains(event.target as Node)) {
+      if (
+        desktopLangRef.current &&
+        !desktopLangRef.current.contains(event.target as Node)
+      ) {
         setDesktopLangOpen(false);
       }
-      if (mobileLangRef.current && !mobileLangRef.current.contains(event.target as Node)) {
+      if (
+        mobileLangRef.current &&
+        !mobileLangRef.current.contains(event.target as Node)
+      ) {
         setMobileLangOpen(false);
       }
       if (moreRef.current && !moreRef.current.contains(event.target as Node)) {
@@ -90,9 +97,11 @@ export default function Navbar() {
     measure();
 
     // update on resize and when the navbar element resizes
-    const ro = new (window as any).ResizeObserver((entries: ResizeObserverEntry[]) => {
-      measure();
-    });
+    const ro = new (window as any).ResizeObserver(
+      (entries: ResizeObserverEntry[]) => {
+        measure();
+      }
+    );
     if (navbarRef.current) ro.observe(navbarRef.current);
 
     window.addEventListener("resize", measure);
@@ -108,12 +117,22 @@ export default function Navbar() {
 
   return (
     <>
-      <div ref={navbarRef} id="main-navbar" className="relative z-[100] w-full bg-background">
+      <div
+        ref={navbarRef}
+        id="main-navbar"
+        className="relative z-[100] w-full bg-background"
+      >
         <div className="flex justify-center border border-b box-border border-grey-5">
           <div className="flex max-w-[1440px] w-full h-[65px] items-center justify-between px-[32px] py-[12px] min-w-0">
             {/* Left Section: Logo */}
             <div className="flex items-center">
-              <Image src="/Logo.png" alt="Offerly Logo" width={85} height={40} className="object-contain" />
+              <Image
+                src="/Logo.png"
+                alt="Offerly Logo"
+                width={85}
+                height={40}
+                className="object-contain"
+              />
             </div>
 
             {/* Integrated Search Bar (hidden on mobile) */}
@@ -130,14 +149,26 @@ export default function Navbar() {
                 >
                   {currentLocale === "en" ? (
                     <>
-                      <span role="img" aria-label="english-flag">🇬🇧</span> English
+                      <span role="img" aria-label="english-flag">
+                        🇬🇧
+                      </span>{" "}
+                      English
                     </>
                   ) : (
                     <>
-                      <span role="img" aria-label="arabic-flag">🇰🇼</span> العربية
+                      <span role="img" aria-label="arabic-flag">
+                        🇰🇼
+                      </span>{" "}
+                      العربية
                     </>
                   )}
-                  <ChevronDown size={16} className={cn("transition-transform", desktopLangOpen && "rotate-180")} />
+                  <ChevronDown
+                    size={16}
+                    className={cn(
+                      "transition-transform",
+                      desktopLangOpen && "rotate-180"
+                    )}
+                  />
                 </button>
 
                 {desktopLangOpen && (
@@ -146,7 +177,8 @@ export default function Navbar() {
                       onClick={() => switchLocale("en")}
                       className={cn(
                         "w-full text-left px-4 py-2 text-sm transition-colors hover:bg-primary hover:text-white flex items-center gap-2 rounded-t-lg",
-                        currentLocale === "en" && "bg-primary text-white font-medium"
+                        currentLocale === "en" &&
+                          "bg-primary text-white font-medium"
                       )}
                     >
                       🇬🇧 English
@@ -155,7 +187,8 @@ export default function Navbar() {
                       onClick={() => switchLocale("ar")}
                       className={cn(
                         "w-full text-left px-4 py-2 text-sm transition-colors hover:bg-primary hover:text-white flex items-center gap-2 rounded-b-lg",
-                        currentLocale === "ar" && "bg-primary text-white font-medium"
+                        currentLocale === "ar" &&
+                          "bg-primary text-white font-medium"
                       )}
                     >
                       🇰🇼 العربية
@@ -164,20 +197,28 @@ export default function Navbar() {
                 )}
               </div>
 
-              <Button variant="outline" size="sm" className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2"
+              >
                 <Download size={16} />
                 {t("app")}
               </Button>
 
               <Link href={`/${currentLocale}/auth`}>
-              <Button variant="normal" size="sm" className="px-6">
-                {t("login")}
-              </Button>
+                <Button variant="normal" size="sm" className="px-6">
+                  {t("login")}
+                </Button>
               </Link>
               <Link href={`/${currentLocale}/auth`}>
-              <Button variant="gradient" size="sm" className="text-white px-6">
-                {t("signup")}
-              </Button>
+                <Button
+                  variant="gradient"
+                  size="sm"
+                  className="text-white px-6"
+                >
+                  {t("signup")}
+                </Button>
               </Link>
             </div>
 
@@ -188,8 +229,22 @@ export default function Navbar() {
                   className="flex items-center gap-1 text-sm hover:text-primary transition-colors"
                   onClick={() => setMobileLangOpen(!mobileLangOpen)}
                 >
-                  {currentLocale === "en" ? <span role="img" aria-label="english-flag">🇬🇧</span> : <span role="img" aria-label="arabic-flag">🇰🇼</span>}
-                  <ChevronDown size={14} className={cn("transition-transform", mobileLangOpen && "rotate-180")} />
+                  {currentLocale === "en" ? (
+                    <span role="img" aria-label="english-flag">
+                      🇬🇧
+                    </span>
+                  ) : (
+                    <span role="img" aria-label="arabic-flag">
+                      🇰🇼
+                    </span>
+                  )}
+                  <ChevronDown
+                    size={14}
+                    className={cn(
+                      "transition-transform",
+                      mobileLangOpen && "rotate-180"
+                    )}
+                  />
                 </button>
 
                 {mobileLangOpen && (
@@ -203,7 +258,8 @@ export default function Navbar() {
                       onClick={() => switchLocale("en")}
                       className={cn(
                         "w-full text-left px-3 py-2 text-sm transition-colors hover:bg-primary hover:text-white flex items-center gap-2 rounded-t-lg",
-                        currentLocale === "en" && "bg-primary text-white font-medium"
+                        currentLocale === "en" &&
+                          "bg-primary text-white font-medium"
                       )}
                     >
                       🇬🇧 English
@@ -212,7 +268,8 @@ export default function Navbar() {
                       onClick={() => switchLocale("ar")}
                       className={cn(
                         "w-full text-left px-3 py-2 text-sm transition-colors hover:bg-primary hover:text-white flex items-center gap-2 rounded-b-lg",
-                        currentLocale === "ar" && "bg-primary text-white font-medium"
+                        currentLocale === "ar" &&
+                          "bg-primary text-white font-medium"
                       )}
                     >
                       🇰🇼 العربية
@@ -232,25 +289,46 @@ export default function Navbar() {
         <div className="hidden md:block bg-background border-b border-grey-5">
           <div className="max-w-[1440px] mx-auto px-[32px] py-[8px] h-[55px] flex items-center justify-between">
             <nav className="flex items-center gap-5 text-normal-regular text-color-grey-2 min-w-0 flex-wrap">
-              <Link href={`/${currentLocale}/`} className="hover:text-primary transition-colors">
+              <Link
+                href={`/${currentLocale}/`}
+                className="hover:text-primary transition-colors"
+              >
                 {t("home")}
               </Link>
-              <Link href={`/${currentLocale}/offers`} className="hover:text-primary transition-colors">
+              {/* <Link
+                href={`/${currentLocale}/offers`}
+                className="hover:text-primary transition-colors"
+              >
                 {t("offers")}
               </Link>
-              <Link href={`/${currentLocale}/flashdeals`} className="flex items-center gap-1 text-tertiary font-semibold hover:text-primary transition-colors">
+              <Link
+                href={`/${currentLocale}/flashdeals`}
+                className="flex items-center gap-1 text-tertiary font-semibold hover:text-primary transition-colors"
+              >
                 ⚡ {t("flashDeals")}
-              </Link>
-              <Link href={`/${currentLocale}/explore`} className="hover:text-primary transition-colors">
+              </Link> */}
+              <Link
+                href={`/${currentLocale}/explore`}
+                className="hover:text-primary transition-colors"
+              >
                 {t("explore")}
               </Link>
-              <Link href={`/${currentLocale}/marketplace?tab=products`} className="hover:text-primary transition-colors">
+              <Link
+                href={`/${currentLocale}/product`}
+                className="hover:text-primary transition-colors"
+              >
                 {t("products")}
               </Link>
-              <Link href={`/${currentLocale}/marketplace?tab=services`} className="hover:text-primary transition-colors">
+              <Link
+                href={`/${currentLocale}/service`}
+                className="hover:text-primary transition-colors"
+              >
                 {t("services")}
               </Link>
-              <Link href={`/${currentLocale}/events`} className="hover:text-primary transition-colors">
+              <Link
+                href={`/${currentLocale}/events`}
+                className="hover:text-primary transition-colors"
+              >
                 {t("events")}
               </Link>
 
@@ -260,16 +338,30 @@ export default function Navbar() {
                   onClick={() => setMoreOpen(!moreOpen)}
                   onMouseEnter={() => setMoreOpen(true)}
                 >
-                  {t("more")} <ChevronDown size={16} className={cn("transition-transform", moreOpen && "rotate-180")} />
+                  {t("more")}{" "}
+                  <ChevronDown
+                    size={16}
+                    className={cn(
+                      "transition-transform",
+                      moreOpen && "rotate-180"
+                    )}
+                  />
                 </button>
 
                 {moreOpen && (
-                  <div className="absolute left-0 top-full mt-2 w-48 bg-background border border-border rounded-lg shadow-lg z-50" onMouseLeave={() => setMoreOpen(false)}>
+                  <div
+                    className="absolute left-0 top-full mt-2 w-48 bg-background border border-border rounded-lg shadow-lg z-50"
+                    onMouseLeave={() => setMoreOpen(false)}
+                  >
                     {moreItems.map((item, index) => (
                       <Link
                         key={item.href}
                         href={`/${currentLocale}${item.href}`}
-                        className={cn("block w-full text-left px-4 py-2 text-sm transition-colors hover:bg-primary hover:text-white", index === 0 && "rounded-t-lg", index === moreItems.length - 1 && "rounded-b-lg")}
+                        className={cn(
+                          "block w-full text-left px-4 py-2 text-sm transition-colors hover:bg-primary hover:text-white",
+                          index === 0 && "rounded-t-lg",
+                          index === moreItems.length - 1 && "rounded-b-lg"
+                        )}
                         onClick={() => setMoreOpen(false)}
                       >
                         {item.label}
@@ -283,17 +375,32 @@ export default function Navbar() {
         </div>
 
         {/* Sidebar (Mobile Menu) */}
-        <div className={`fixed inset-0 z-50 bg-black/50 transition-opacity duration-300 ${isOpen ? "opacity-100 visible" : "opacity-0 invisible"}`} onClick={closeMobileMenu}>
+        <div
+          className={`fixed inset-0 z-50 bg-black/50 transition-opacity duration-300 ${
+            isOpen ? "opacity-100 visible" : "opacity-0 invisible"
+          }`}
+          onClick={closeMobileMenu}
+        >
           <aside
             className={cn(
               "fixed top-0 h-full w-80 bg-background shadow-xl transform transition-transform duration-300 flex flex-col",
               currentLocale === "ar" ? "left-0" : "right-0",
-              isOpen ? "translate-x-0" : currentLocale === "ar" ? "-translate-x-full" : "translate-x-full"
+              isOpen
+                ? "translate-x-0"
+                : currentLocale === "ar"
+                ? "-translate-x-full"
+                : "translate-x-full"
             )}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex-shrink-0 flex justify-between items-center px-6 py-4 border-b border-grey-5">
-              <Image src="/Logo.png" alt="Offerly Logo" width={100} height={30} className="object-contain" />
+              <Image
+                src="/Logo.png"
+                alt="Offerly Logo"
+                width={100}
+                height={30}
+                className="object-contain"
+              />
               <button onClick={closeMobileMenu}>
                 <X size={24} className="text-primary" />
               </button>
@@ -305,30 +412,62 @@ export default function Navbar() {
 
             <div className="flex-1 overflow-y-auto min-h-0">
               <nav className="flex flex-col pt-2 px-6 text-normal-regular text-color-grey-2">
-                <Link href={`/${currentLocale}/`} className="hover:text-primary transition-colors py-1.5" onClick={closeMobileMenu}>
+                <Link
+                  href={`/${currentLocale}/`}
+                  className="hover:text-primary transition-colors py-1.5"
+                  onClick={closeMobileMenu}
+                >
                   {t("home")}
                 </Link>
-                <Link href={`/${currentLocale}/offers`} className="hover:text-primary transition-colors py-1.5" onClick={closeMobileMenu}>
+                {/* <Link
+                  href={`/${currentLocale}/offers`}
+                  className="hover:text-primary transition-colors py-1.5"
+                  onClick={closeMobileMenu}
+                >
                   {t("offers")}
-                </Link>
-                <Link href={`/${currentLocale}/flashdeals`} className="flex items-center gap-1 text-tertiary font-semibold hover:text-primary transition-colors py-1.5" onClick={closeMobileMenu}>
+                </Link> */}
+                {/* <Link
+                  href={`/${currentLocale}/flashdeals`}
+                  className="flex items-center gap-1 text-tertiary font-semibold hover:text-primary transition-colors py-1.5"
+                  onClick={closeMobileMenu}
+                >
                   ⚡ {t("flashDeals")}
-                </Link>
-                <Link href={`/${currentLocale}/explore`} className="hover:text-primary transition-colors py-1.5" onClick={closeMobileMenu}>
+                </Link> */}
+                <Link
+                  href={`/${currentLocale}/explore`}
+                  className="hover:text-primary transition-colors py-1.5"
+                  onClick={closeMobileMenu}
+                >
                   {t("explore")}
                 </Link>
-                <Link href={`/${currentLocale}/marketplace?tab=products`} className="hover:text-primary transition-colors py-1.5" onClick={closeMobileMenu}>
+                <Link
+                  href={`/${currentLocale}/product`}
+                  className="hover:text-primary transition-colors py-1.5"
+                  onClick={closeMobileMenu}
+                >
                   {t("products")}
                 </Link>
-                <Link href={`/${currentLocale}/marketplace?tab=services`} className="hover:text-primary transition-colors py-1.5" onClick={closeMobileMenu}>
+                <Link
+                  href={`/${currentLocale}/service`}
+                  // href={`/${currentLocale}/marketplace?tab=services`}
+                  className="hover:text-primary transition-colors py-1.5"
+                  onClick={closeMobileMenu}
+                >
                   {t("services")}
                 </Link>
-                <Link href={`/${currentLocale}/events`} className="hover:text-primary transition-colors py-1.5" onClick={closeMobileMenu}>
+                <Link
+                  href={`/${currentLocale}/events`}
+                  className="hover:text-primary transition-colors py-1.5"
+                  onClick={closeMobileMenu}
+                >
                   {t("events")}
                 </Link>
 
                 <div className="pt-0 ">
-                  <button className="flex items-center justify-between w-full text-normal-regular text-color-grey-2 hover:text-primary transition-colors py-2" onClick={() => setMoreModalOpen(true)}>
+                  <button
+                    className="flex items-center justify-between w-full text-normal-regular text-color-grey-2 hover:text-primary transition-colors py-2"
+                    onClick={() => setMoreModalOpen(true)}
+                  >
                     {t("more")}
                     <ChevronDown size={16} />
                   </button>
@@ -339,20 +478,33 @@ export default function Navbar() {
             </div>
 
             <div className="flex-shrink-0 flex flex-col gap-3 px-1 py-4 border-t border-grey-5 bg-background">
-              <Button variant="outline" size="lg" className="flex items-center gap-2 justify-center min-h-[40px]">
+              <Button
+                variant="outline"
+                size="lg"
+                className="flex items-center gap-2 justify-center min-h-[40px]"
+              >
                 <Download size={16} />
                 {t("app")}
               </Button>
               <Link href={`/${currentLocale}/auth`}>
-              <Button variant="normal" size="lg" className="flex w-full items-center gap-2 justify-center min-h-[40px]" onClick={closeMobileMenu}>
-                {t("login")}
-              </Button>
+                <Button
+                  variant="normal"
+                  size="lg"
+                  className="flex w-full items-center gap-2 justify-center min-h-[40px]"
+                  onClick={closeMobileMenu}
+                >
+                  {t("login")}
+                </Button>
               </Link>
               <Link href={`/${currentLocale}/auth`}>
-
-              <Button variant="gradient" size="lg" className="flex w-full items-center gap-2 justify-center text-white min-h-[40px]" onClick={closeMobileMenu}>
-                {t("signup")}
-              </Button>
+                <Button
+                  variant="gradient"
+                  size="lg"
+                  className="flex w-full items-center gap-2 justify-center text-white min-h-[40px]"
+                  onClick={closeMobileMenu}
+                >
+                  {t("signup")}
+                </Button>
               </Link>
             </div>
           </aside>
@@ -360,12 +512,28 @@ export default function Navbar() {
 
         {/* More modal (mobile) */}
         {moreModalOpen && (
-          <div className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm transition-all duration-300" onClick={closeMoreModal}>
-            <div className="fixed inset-0 flex items-center justify-center p-4" onClick={(e) => e.stopPropagation()}>
-              <div className={cn("bg-background rounded-2xl shadow-2xl border border-border w-full max-w-sm mx-4 transform transition-all duration-300 scale-100 opacity-100 max-h-[80vh] overflow-hidden", "animate-in slide-in-from-bottom-4 fade-in-0")}>
+          <div
+            className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm transition-all duration-300"
+            onClick={closeMoreModal}
+          >
+            <div
+              className="fixed inset-0 flex items-center justify-center p-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div
+                className={cn(
+                  "bg-background rounded-2xl shadow-2xl border border-border w-full max-w-sm mx-4 transform transition-all duration-300 scale-100 opacity-100 max-h-[80vh] overflow-hidden",
+                  "animate-in slide-in-from-bottom-4 fade-in-0"
+                )}
+              >
                 <div className="flex-shrink-0 flex items-center justify-between p-6 border-b border-grey-5">
-                  <h3 className="text-lg font-semibold text-foreground">{t("more")}</h3>
-                  <button onClick={closeMoreModal} className="p-1 rounded-full hover:bg-grey-5 transition-colors">
+                  <h3 className="text-lg font-semibold text-foreground">
+                    {t("more")}
+                  </h3>
+                  <button
+                    onClick={closeMoreModal}
+                    className="p-1 rounded-full hover:bg-grey-5 transition-colors"
+                  >
                     <X size={20} className="text-muted-foreground" />
                   </button>
                 </div>
@@ -375,14 +543,21 @@ export default function Navbar() {
                     <Link
                       key={item.href}
                       href={`/${currentLocale}${item.href}`}
-                      className={cn("flex items-center w-full px-4 py-3 text-sm transition-all duration-200", "hover:bg-primary/10 hover:text-primary rounded-lg mx-2 my-1", "border-l-2 border-transparent hover:border-primary")}
+                      className={cn(
+                        "flex items-center w-full px-4 py-3 text-sm transition-all duration-200",
+                        "hover:bg-primary/10 hover:text-primary rounded-lg mx-2 my-1",
+                        "border-l-2 border-transparent hover:border-primary"
+                      )}
                       onClick={() => {
                         closeMoreModal();
                         closeMobileMenu();
                       }}
                     >
                       <span className="flex-1">{item.label}</span>
-                      <ChevronDown size={16} className="rotate-[-90deg] text-muted-foreground" />
+                      <ChevronDown
+                        size={16}
+                        className="rotate-[-90deg] text-muted-foreground"
+                      />
                     </Link>
                   ))}
                 </div>

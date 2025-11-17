@@ -46,15 +46,22 @@ const Dialog = ({ open, onOpenChange, children }: DialogProps) => {
 const DialogContent = ({
   className,
   children,
+  ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("space-y-4", className)}>{children}</div>
+  <div className={cn("space-y-4", className)} {...props}>
+    {children}
+  </div>
 );
 
 const DialogHeader = ({
   className,
   children,
+  ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("flex items-center justify-between", className)}>
+  <div
+    className={cn("flex items-center justify-between", className)}
+    {...props}
+  >
     {children}
   </div>
 );
@@ -62,8 +69,89 @@ const DialogHeader = ({
 const DialogTitle = ({
   className,
   children,
+  ...props
 }: React.HTMLAttributes<HTMLHeadingElement>) => (
-  <h2 className={cn("text-lg font-semibold", className)}>{children}</h2>
+  <h2 className={cn("text-lg font-semibold", className)} {...props}>
+    {children}
+  </h2>
 );
 
-export { Dialog, DialogContent, DialogHeader, DialogTitle };
+const DialogDescription = ({
+  className,
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLParagraphElement>) => (
+  <p className={cn("text-sm text-muted-foreground", className)} {...props}>
+    {children}
+  </p>
+);
+
+const DialogFooter = ({
+  className,
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cn(
+      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+      className
+    )}
+    {...props}
+  >
+    {children}
+  </div>
+);
+
+// YEH IMPORTANT HAI - DialogClose component add karo
+const DialogClose = ({
+  className,
+  children,
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+  <button
+    className={cn(
+      "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground",
+      className
+    )}
+    onClick={() => {
+      /* Close logic handle karna hoga */
+    }}
+    {...props}
+  >
+    {children || <X className="h-4 w-4" />}
+    <span className="sr-only">Close</span>
+  </button>
+);
+
+const DialogTrigger = React.forwardRef<
+  HTMLButtonElement,
+  React.ButtonHTMLAttributes<HTMLButtonElement> & { asChild?: boolean }
+>(({ className, children, asChild = false, ...props }, ref) => {
+  if (asChild) {
+    return <>{children}</>;
+  }
+  return (
+    <button
+      ref={ref}
+      className={cn(
+        "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+});
+DialogTrigger.displayName = "DialogTrigger";
+
+export {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+  DialogTrigger,
+};

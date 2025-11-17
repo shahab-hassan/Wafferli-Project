@@ -1,46 +1,45 @@
-// Updated MarketplaceServiceCard component
-"use client"
-import type React from "react"
-import { MessageCircle, Star } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/common/button"
-import { useTranslations } from "next-intl"
-import Link from "next/link"
-import { WishlistButton } from "@/components/common/wishlist-button" // New import
-import { useWishlist, type WishlistItem } from "@/contexts/wishListContext" // New import
-
+"use client";
+import type React from "react";
+import { MessageCircle, Star } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/common/button";
+import { useTranslations } from "next-intl";
+import Link from "next/link";
 
 export interface MarketplaceServiceCardProps {
-  id: string
-  name: string
-  category: string
-  subcategory: string
-  image: string
-  rating: number
-  reviewCount?: number
-  startingPrice: number
-  description: string
-  badge?: "sponsored" | null
-  seller: string
-  location?: string
-  className?: string
+  id: string; // Changed from optional to required
+  name: string;
+  category: string;
+  subcategory: string;
+  image: string;
+  rating: number;
+  reviewCount?: number;
+  startingPrice: number;
+  description: string;
+  badge?: "sponsored" | null;
+  seller: string;
+  location?: string;
+  className?: string;
 }
 
+const getBadgeText = (
+  badge: NonNullable<MarketplaceServiceCardProps["badge"]>,
+  t: any
+) => (badge === "sponsored" ? t("marketplace.badges.sponsored") : "");
 
-const getBadgeText = (badge: NonNullable<MarketplaceServiceCardProps["badge"]>, t: any) =>
-  badge === "sponsored" ? t("marketplace.badges.sponsored") : ""
-
-const getBadgeStyles = (badge: NonNullable<MarketplaceServiceCardProps["badge"]>) => {
+const getBadgeStyles = (
+  badge: NonNullable<MarketplaceServiceCardProps["badge"]>
+) => {
   switch (badge) {
     case "sponsored":
-      return "bg-yellow-400 text-black"
+      return "bg-yellow-400 text-black";
     default:
-      return "bg-grey-200 text-grey-700"
+      return "bg-grey-200 text-grey-700";
   }
-}
+};
 
 export function MarketplaceServiceCard({
-  id,
+  id, // Now properly required
   name,
   category,
   subcategory,
@@ -54,16 +53,13 @@ export function MarketplaceServiceCard({
   location,
   className,
 }: MarketplaceServiceCardProps) {
-  const t = useTranslations()
-
-  // Create wishlist item
-  const wishlistItem: WishlistItem = { type: 'marketplace-service', props: { id, name, category, subcategory, image, rating, reviewCount, startingPrice, description, badge, seller, location, className } }
+  const t = useTranslations();
 
   const handleChat = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    console.log("Chat with service provider:", seller)
-  }
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("Chat with service provider:", seller);
+  };
 
   return (
     <Link
@@ -71,7 +67,7 @@ export function MarketplaceServiceCard({
       className={cn(
         "group relative bg-white rounded-[14px] overflow-visible border border-grey-5 transition-all duration-200 hover:shadow-md",
         "w-full max-w-[340px]",
-        className,
+        className
       )}
     >
       {/* IMAGE AREA */}
@@ -82,19 +78,12 @@ export function MarketplaceServiceCard({
           className="w-full h-full object-cover rounded-t-[14px] group-hover:scale-105 transition-transform duration-300"
         />
 
-        {/* Wishlist Button */}
-        <WishlistButton 
-          item={wishlistItem} 
-          className="top-3 right-3 w-9 h-9" 
-          iconClass="w-4 h-4"
-        />
-
         {/* SPONSORED BADGE */}
         {badge && (
           <div
             className={cn(
               "absolute left-4 bottom-0 -translate-y-1/4 inline-flex items-center text-[12px] font-semibold px-3 py-1 rounded-full shadow-sm z-30",
-              getBadgeStyles(badge),
+              getBadgeStyles(badge)
             )}
           >
             {getBadgeText(badge, t)}
@@ -107,7 +96,9 @@ export function MarketplaceServiceCard({
           aria-label={`rating ${rating}`}
         >
           <Star className="w-4 h-4 fill-warning text-warning" />
-          <span className="text-sm font-semibold text-black-1">{rating.toFixed(1)}</span>
+          <span className="text-sm font-semibold text-black-1">
+            {rating.toFixed(1)}
+          </span>
         </div>
       </div>
 
@@ -128,22 +119,30 @@ export function MarketplaceServiceCard({
 
         {/* Title + Description */}
         <div className="mt-3">
-          <h3 className="text-sm font-semibold text-black-1 line-clamp-1">{name}</h3>
+          <h3 className="text-sm font-semibold text-black-1 line-clamp-1">
+            {name}
+          </h3>
           <p className="text-xs text-grey-2 mt-1 line-clamp-2">{description}</p>
         </div>
 
         {/* Price */}
         <div className="mt-3">
           <div className="flex items-baseline gap-3">
-            <span className="text-sm text-grey-2">{t("marketplace.services.startingFrom")}</span>
-            <div className="text-2xl font-extrabold text-primary">{startingPrice} KD</div>
+            <span className="text-sm text-grey-2">
+              {t("marketplace.services.startingFrom")}
+            </span>
+            <div className="text-2xl font-extrabold text-primary">
+              {startingPrice} KD
+            </div>
           </div>
         </div>
 
         {/* Seller */}
         <div className="flex items-center gap-3 mt-4 mb-3">
           <div className="w-7 h-7 bg-grey-4 rounded-full flex items-center justify-center">
-            <span className="text-xs text-grey-2 font-medium">{seller?.charAt(0) ?? "S"}</span>
+            <span className="text-xs text-grey-2 font-medium">
+              {seller?.charAt(0) ?? "S"}
+            </span>
           </div>
           <div>
             <div className="text-sm text-grey-2">{seller}</div>
@@ -162,5 +161,5 @@ export function MarketplaceServiceCard({
         </Button>
       </div>
     </Link>
-  )
+  );
 }

@@ -2,14 +2,170 @@
 import { Search, MapPin } from "lucide-react"
 import { TextField } from "@/components/common/text-field"
 import { useTranslations } from "next-intl"
+import { useEffect, useRef, useState } from "react"
 
 interface HeroSectionProps {
   searchQuery: string
   setSearchQuery: (query: string) => void
+  onSearch: () => void
+  suggestions?: any[]
+  showSuggestions?: boolean
+  onSuggestionSelect: (suggestion: any) => void
+  onHideSuggestions: () => void
 }
 
-export function HeroSection({ searchQuery, setSearchQuery }: HeroSectionProps) {
+export function HeroSection({ 
+  searchQuery, 
+  setSearchQuery, 
+  onSearch,
+  suggestions = [],
+  showSuggestions = false,
+  onSuggestionSelect,
+  onHideSuggestions
+}: HeroSectionProps) {
   const t = useTranslations()
+  const suggestionsRef = useRef<HTMLDivElement>(null)
+  const [userLocation, setUserLocation] = useState<string>("")
+  const [locationError, setLocationError] = useState<string>("")
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        suggestionsRef.current &&
+        !suggestionsRef.current.contains(event.target as Node)
+      ) {
+        onHideSuggestions()
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [onHideSuggestions])
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      onSearch()
+    }
+  }
+
+  // Function to get location name from coordinates (reverse geocoding)
+  const getLocationName = async (latitude: number, longitude: number): Promise<string> => {
+    try {
+      const response = await fetch(
+        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+      )
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch location data')
+      }
+      
+      const data = await response.json()
+      
+      // Return the most specific location name available
+      if (data.locality) {
+        return data.locality
+      } else if (data.city) {
+        return data.city
+      } else if (data.principalSubdivision) {
+        return data.principalSubdivision
+      } else if (data.countryName) {
+        return data.countryName
+      } else {
+        return `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`
+      }
+    } catch (error) {
+      console.error('Error getting location name:', error)
+      // Fallback to coordinates if reverse geocoding fails
+      return `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`
+    }
+  }
+
+ const handleLocationSearch = async () => {
+    // Reset previous errors
+    setLocationError("")
+    
+    // Check if geolocation is supported
+    if (!navigator.geolocation) {
+      const errorText = "Geolocation is not supported by this browser"
+      setLocationError(errorText)
+      return
+    }
+    
+    // Check if we're in a secure context (HTTPS)
+    if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+      const errorText = "HTTPS is required for location access. Please use a secure connection."
+      setLocationError(errorText)
+      return
+    }
+
+    // Check permissions API if available
+    if (navigator.permissions) {
+      try {
+        const permissionStatus = await navigator.permissions.query({ name: 'geolocation' })
+        if (permissionStatus.state === 'denied') {
+          setLocationError("Location access is blocked. Please enable it in your browser settings.")
+          return
+        }
+      } catch (e) {
+        // Permissions API not fully supported, continue anyway
+        console.log("Permissions API not available")
+      }
+    }
+    
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords
+        
+        try {
+          // Get location name from coordinates
+          const locationName = await getLocationName(latitude, longitude)
+          
+          // Display actual location name in search bar
+          setUserLocation(locationName)
+          setSearchQuery(locationName)
+          onSearch()
+        } catch (error) {
+          console.error("Error getting location name:", error)
+          // Fallback to coordinates
+          const locationText = `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`
+          setUserLocation(locationText)
+          setSearchQuery(locationText)
+          onSearch()
+        }
+      },
+      (error) => {
+        console.error("Error getting location:", error)
+        let errorMessage = "Failed to get your location"
+        let helpText = ""
+        
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = "Location permission denied."
+            helpText = "Please click the location icon in your browser's address bar and allow access."
+            break
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = "Location information is unavailable."
+            helpText = "Please ensure location services are enabled in your device settings and try again."
+            break
+          case error.TIMEOUT:
+            errorMessage = "Location request timed out."
+            helpText = "Please check your internet connection and try again."
+            break
+          default:
+            errorMessage = "An unknown error occurred."
+            helpText = "Please try again or search manually."
+            break
+        }
+        
+        setLocationError(`${errorMessage} ${helpText}`)
+      },
+      {
+        enableHighAccuracy: false, // Changed to false for faster response
+        timeout: 10000, // Reduced to 10 seconds
+        maximumAge: 300000 // Cache for 5 minutes
+      }
+    )
+  }
 
   return (
     // Break out to full viewport width
@@ -64,19 +220,58 @@ export function HeroSection({ searchQuery, setSearchQuery }: HeroSectionProps) {
             {t("explore.hero.subtitle")}
           </p>
 
-          {/* Search Bar */}
-          <div className="relative max-w-2xl mx-auto">
-            <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-grey-3 z-10" />
-            <TextField
-              type="text"
-              placeholder={t("explore.hero.searchPlaceholder")}
-              className="w-full pl-14 pr-16 py-4 text-normal-regular bg-white rounded-full border-0 shadow-lg focus:ring-2 focus:ring-white/50"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <button className="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-grey-5 hover:bg-grey-4 transition-colors">
-              <MapPin className="w-4 h-4 text-grey-2" />
-            </button>
+          {/* Search Bar with Suggestions */}
+          <div className="relative max-w-2xl mx-auto" ref={suggestionsRef}>
+            <div className="relative">
+              <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-grey-3 z-10" />
+              <TextField
+                type="text"
+                placeholder={t("explore.hero.searchPlaceholder")}
+                className="w-full pl-14 pr-16 py-4 text-normal-regular bg-white rounded-full border-0 shadow-lg focus:ring-2 focus:ring-white/50"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={handleKeyPress}
+              />
+              <button 
+                onClick={handleLocationSearch}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-grey-5 hover:bg-grey-4 transition-colors"
+                title="Use my current location"
+              >
+                <MapPin className="w-4 h-4 text-grey-2" />
+              </button>
+
+              {/* Location Error Message */}
+              {locationError && (
+                <div className="absolute top-full left-0 right-0 mt-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm text-center">
+                  {locationError}
+                </div>
+              )}
+
+              {/* Suggestions Dropdown */}
+              {showSuggestions && suggestions.length > 0 && (
+                <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-2xl shadow-lg mt-2 z-50 max-h-60 overflow-y-auto">
+                  {suggestions.map((suggestion, index) => (
+                    <button
+                      key={index}
+                      className="w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 border-b border-gray-100 last:border-b-0"
+                      onClick={() => onSuggestionSelect(suggestion)}
+                    >
+                      <MapPin className="w-4 h-4 text-muted-foreground" />
+                      <div>
+                        <div className="font-medium text-foreground">
+                          {suggestion.name}
+                        </div>
+                        {suggestion.category && (
+                          <div className="text-sm text-muted-foreground">
+                            {suggestion.category}
+                          </div>
+                        )}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

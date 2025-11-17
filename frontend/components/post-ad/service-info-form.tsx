@@ -1,26 +1,67 @@
-"use client"
+// components/forms/ServiceInfoForm.tsx
+"use client";
 
-import * as React from "react"
-import { Card } from "@/components/common/shadecn-card"
-import { Label } from "@/components/common/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/common/select"
-import { Button } from "@/components/common/button"
-import { cn } from "@/lib/utils"
-import { Wrench, ChevronRight } from "lucide-react"
-import { useRouter } from "next/navigation"
+import * as React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Card } from "@/components/common/shadecn-card";
+import { Label } from "@/components/common/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/common/select";
+import { Button } from "@/components/common/button";
+import { cn } from "@/lib/utils";
+import { Wrench, ChevronRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { setAdData } from "@/features/slicer/AdSlice";
+import type { RootState } from "@/features/store/store";
+import type { ServiceAdData } from "@/types/ad";
+import { Input } from "../common/input";
+import { categoryOptions, serviceTypeOptions } from "@/lib/data";
 
-type ServiceInfoValues = {
-  category?: string
-  subcategory?: string
-}
+export function ServiceInfoForm({
+  onChangeType,
+}: {
+  onChangeType: () => void;
+}) {
+  const dispatch = useDispatch();
+  const adData = useSelector(
+    (state: RootState) => state.ad.adData
+  ) as ServiceAdData;
+  const router = useRouter();
 
-export function ServiceInfoForm({ onChangeType }: { onChangeType: () => void }) {
-  const [values, setValues] = React.useState<ServiceInfoValues>({})
-  const setField = <K extends keyof ServiceInfoValues>(k: K, v: ServiceInfoValues[K]) =>
-    setValues((p) => ({ ...p, [k]: v }))
+  // Type-safe setField function
+  const setField = <K extends keyof ServiceAdData>(
+    key: K,
+    value: ServiceAdData[K]
+  ) => {
+    dispatch(setAdData({ [key]: value }));
+  };
 
-  const valid = !!values.category && !!values.subcategory
-  const router = useRouter()
+  // Handle number input changes
+  const handleNumberChange = (field: keyof ServiceAdData, value: string) => {
+    const numValue = value === "" ? 0 : parseFloat(value);
+    setField(field, numValue as any);
+  };
+
+  // Get current subcategories based on selected category
+  const currentSubcategories = adData?.category
+    ? categoryOptions[adData.category as keyof typeof categoryOptions]
+        ?.subcategories || []
+    : [];
+
+  // Validation
+  const categoryValid = !!adData?.category?.trim();
+  const subcategoryValid = !!adData?.subCategory?.trim();
+  const serviceTypeValid = !!adData?.serviceType?.trim();
+  const priceValid =
+    adData?.servicePrice !== undefined && adData.servicePrice > 0;
+
+  const valid =
+    categoryValid && subcategoryValid && serviceTypeValid && priceValid;
 
   return (
     <div className="space-y-6">
@@ -34,7 +75,9 @@ export function ServiceInfoForm({ onChangeType }: { onChangeType: () => void }) 
             </span>
             <div>
               <div className="text-sm font-medium">Service</div>
-              <div className="text-xs text-muted-foreground">Any service you are offering.</div>
+              <div className="text-xs text-muted-foreground">
+                Any service you are offering.
+              </div>
             </div>
           </div>
         </Card>
@@ -48,22 +91,27 @@ export function ServiceInfoForm({ onChangeType }: { onChangeType: () => void }) 
             {/* Category */}
             <div className="flex items-center justify-between gap-3">
               <Label className="text-sm font-medium">
-                Category{!values.category ? <span className="ml-0.5 text-destructive">*</span> : null}
+                Category
+                {!categoryValid && (
+                  <span className="ml-0.5 text-destructive">*</span>
+                )}
               </Label>
               <Select
-                value={values.category}
-                onValueChange={(v) => {
-                  setField("category", v)
-                  setField("subcategory", undefined)
+                value={adData?.category || ""}
+                onValueChange={(value: string) => {
+                  setField("category", value);
+                  setField("subCategory", ""); // Reset subcategory when category changes
                 }}
               >
                 <SelectTrigger className="w-64">
                   <SelectValue placeholder="Choose a category" />
                 </SelectTrigger>
                 <SelectContent align="end">
-                  <SelectItem value="home-services">Home Services</SelectItem>
-                  <SelectItem value="auto">Automotive</SelectItem>
-                  <SelectItem value="wellness">Wellness</SelectItem>
+                  {Object.entries(categoryOptions).map(([value, option]) => (
+                    <SelectItem key={value} value={value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -71,31 +119,104 @@ export function ServiceInfoForm({ onChangeType }: { onChangeType: () => void }) 
             {/* Subcategory */}
             <div className="flex items-center justify-between gap-3">
               <Label className="text-sm font-medium">
-                Subcategory{!values.subcategory ? <span className="ml-0.5 text-destructive">*</span> : null}
+                Subcategory
+                {!subcategoryValid && (
+                  <span className="ml-0.5 text-destructive">*</span>
+                )}
               </Label>
               <Select
-                value={values.subcategory}
-                onValueChange={(v) => setField("subcategory", v)}
-                disabled={!values.category}
+                value={adData?.subCategory || ""}
+                onValueChange={(value: string) =>
+                  setField("subCategory", value)
+                }
+                disabled={!adData?.category}
               >
                 <SelectTrigger className="w-64">
                   <SelectValue placeholder="Choose a subcategory" />
                 </SelectTrigger>
                 <SelectContent align="end">
-                  {/* simple static options; replace with dynamic if needed */}
-                  <SelectItem value="cleaning">Cleaning</SelectItem>
-                  <SelectItem value="plumbing">Plumbing</SelectItem>
-                  <SelectItem value="massage">Massage</SelectItem>
+                  {currentSubcategories.map((subcategory) => (
+                    <SelectItem
+                      key={subcategory.value}
+                      value={subcategory.value}
+                    >
+                      {subcategory.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
 
+            {/* Service Type */}
+            <div className="flex items-center justify-between gap-3">
+              <Label className="text-sm font-medium">
+                Service Type
+                {!serviceTypeValid && (
+                  <span className="ml-0.5 text-destructive">*</span>
+                )}
+              </Label>
+              <Select
+                value={adData?.serviceType || ""}
+                onValueChange={(value: string) =>
+                  setField("serviceType", value)
+                }
+              >
+                <SelectTrigger className="w-64">
+                  <SelectValue placeholder="Choose service type" />
+                </SelectTrigger>
+                <SelectContent align="end">
+                  {serviceTypeOptions.map((serviceType) => (
+                    <SelectItem
+                      key={serviceType.value}
+                      value={serviceType.value}
+                    >
+                      {serviceType.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Service Price */}
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <Label className="text-sm font-medium">
+                  Service Price
+                  {!priceValid && (
+                    <span className="ml-0.5 text-destructive">*</span>
+                  )}
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Estimated price for your service.
+                </p>
+              </div>
+              <div className="relative w-64">
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                  KWD
+                </span>
+                <Input
+                  className="pl-12"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  inputMode="decimal"
+                  placeholder="0.00"
+                  value={adData.servicePrice ?? ""}
+                  onChange={(e) =>
+                    handleNumberChange("servicePrice", e.target.value)
+                  }
+                />
+              </div>
+            </div>
+
             {/* Actions */}
-            <div className="flex items-center justify-end">
+            <div className="flex items-center justify-end pt-4">
               <Button
                 variant="primary"
                 disabled={!valid}
-                className={cn("rounded-full px-6 transition-transform hover:translate-y-[-1px]")}
+                className={cn(
+                  "rounded-full px-6 transition-transform hover:translate-y-[-1px]"
+                )}
                 onClick={() => router.push("/post-ad/billing")}
               >
                 Continue
@@ -106,5 +227,5 @@ export function ServiceInfoForm({ onChangeType }: { onChangeType: () => void }) 
         </Card>
       </section>
     </div>
-  )
+  );
 }

@@ -1,8 +1,68 @@
+const jwt = require("jsonwebtoken");
+const asyncHandler = require("express-async-handler");
+const User = require("../models/user.model");
+const { ApiError } = require("../utils/apiError");
+
+exports.authorized = asyncHandler(async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(" ")[1];
+
+    if (!token) {
+      return next(new ApiError(401, "No token provided"));
+    }
+
+    // ✅ Use Promise-based verification
+    const decoded = jwt.verify(token, process.env.JWT_TOKEN_SECRET);
+
+    const user = await User.findById(decoded.id).select("-password");
+
+    if (!user) {
+      return next(new ApiError(401, "User not found"));
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    console.log(error.message);
+    return next(new ApiError(403, "Invalid or expired token"));
+  }
+});
+
+exports.optionalAuth = asyncHandler(async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(" ")[1];
+    if (!token) {
+      // No token provided - continue without user
+      req.user = null;
+      return next();
+    }
+
+    // ✅ Use Promise-based verification
+    const decoded = jwt.verify(token, process.env.JWT_TOKEN_SECRET);
+
+    const user = await User.findById(decoded.id).select("-password");
+
+    if (!user) {
+      // User not found but token was valid - continue without user
+      req.user = null;
+      return next();
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    console.log("Optional auth error:", error.message);
+    // Invalid token - continue without user (don't throw error)
+    req.user = null;
+    next();
+  }
+});
 // const jwt = require("jsonwebtoken");
 // const asyncHandler = require("express-async-handler");
 // const authModel = require("../models/userModel");
 // const adminModel = require("../models/adminModel");
-
 
 // exports.authorized = asyncHandler(async (req, res, next) => {
 
@@ -68,7 +128,6 @@
 //     }
 // }
 
-
 // exports.combinedAuthorization = (req, res, next) => {
 //     const authHeader = req.headers.authorization;
 
@@ -77,7 +136,6 @@
 //     else
 //         this.authorized(req, res, next);
 // };
-
 
 // exports.optionalAuth = asyncHandler(async (req, res, next) => {
 //     const authHeader = req.headers.authorization;

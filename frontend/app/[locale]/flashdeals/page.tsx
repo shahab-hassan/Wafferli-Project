@@ -1,587 +1,706 @@
-"use client"
-import { useState, useEffect } from "react"
-import {
-  Search,
-  MapPin,
-  Filter,
-  Clock,
-  Zap,
-  X,
-  ArrowUp,
-} from "lucide-react"
-import { Button } from "@/components/common/button"
-import { TextField } from "@/components/common/text-field"
-import { Badge } from "@/components/common/badge"
-import { Dropdown, DropdownOption } from "@/components/common/dropdown"
-import {FlashCard} from "@/components/cards/flash-card"
-import { useTranslations } from 'next-intl'
-import { cn } from "@/lib/utils"
-import { useMediaQuery } from 'react-responsive'
-import FilterSidebar from "@/components/offers-page/side-bar"
-import { Pagination } from "@/components/common/pagination"
+// app/offers/page.tsx
+"use client";
 
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { Search, MapPin, Filter, X, ArrowUp, TrendingUp } from "lucide-react";
+import { Button } from "@/components/common/button";
+import { TextField } from "@/components/common/text-field";
+import { Badge } from "@/components/common/badge";
+import { Dropdown, DropdownOption } from "@/components/common/dropdown";
+import { OfferCard } from "@/components/cards/offer-card";
+import { useTranslations } from "next-intl";
+import { useMediaQuery } from "react-responsive";
+import { FilterSidebar } from "@/components/filterSidebarProduct";
+import OfferPopup from "@/components/common/offer-popup/offer-popup";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/features/store/store";
+import { GetAllFlashDeal, SearchFlashDeal } from "@/features/slicer/AdSlice";
+import { SkeletonCard } from "@/components/common/SkeletonCard";
 
 interface ActiveFilters {
-  categories: string[]
-  location: string
-  distance: number[]
-  priceRange: number[]
-  discountRange: number[]
-  rating: number
-  types: string[]
+  category?: string;
+  offerCat?: string;
+  city?: string;
+  neighbourhood?: string;
+  minRating?: number;
+  minPrice?: number;
+  maxPrice?: number;
+  minDiscount?: number;
+  maxDiscount?: number;
 }
 
-interface FlashDeal {
-  id: string
-  title: string
-  subtitle: string
-  image: string
-  location: string
-  rating: number
-  reviewCount: number
-  originalPrice: string
-  discountedPrice: string
-  discountPercentage: number
-  expiryDate: string
-  timerMinutes: number
-  timerSeconds: number
+interface Offer {
+  _id: string;
+  title: string;
+  description: string;
+  images: string[];
+  city: string;
+  neighbourhood: string;
+  rating: number;
+  reviewsCount: number;
+  discountedPrice: number | null;
+  originalPrice?: number;
+  category: string;
+  discountPercentage?: number;
+  expiryDate: string;
+  badge?: "new_arrival" | "sponsored" | "trending" | "expiring_soon" | null;
+  flashDeal: boolean;
+  adType: string;
+  createdAt: string;
+  isFavorited: boolean;
+  fullPrice?: number;
+  discountPercent?: number;
+  offerDetail?: string;
+  isClaimed?: boolean;
+  totalClaims?: number;
+  claimDeal?: boolean;
 }
 
-interface SearchAndFilterSectionProps {
-  searchQuery: string
-  setSearchQuery: (query: string) => void
-  showFilters: boolean
-  setShowFilters: (show: boolean) => void
-  getActiveFilterCount: () => number
-}
+export default function OffersPage() {
+  const t = useTranslations();
+  const dispatch = useDispatch<AppDispatch>();
+  const [pagination, setPagination] = useState<any>({});
+  const [loading, setLoading] = useState<boolean>(false);
+  const [offers, setOffers] = useState<Offer[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [showFilters, setShowFilters] = useState<boolean>(false);
+  const [sortBy, setSortBy] = useState<string>("newest");
+  const [showBackToTop, setShowBackToTop] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
+  const [availableFilters, setAvailableFilters] = useState<any>({});
 
-interface SortAndViewOptionsProps {
-  sortBy: string
-  setSortBy: (sortBy: string) => void
-}
+  const [activeFilters, setActiveFilters] = useState<ActiveFilters>({});
 
-// Interactive Components
-function SearchAndFilterSection({ searchQuery, setSearchQuery, showFilters, setShowFilters, getActiveFilterCount }: SearchAndFilterSectionProps) {
-  const t = useTranslations()
-  const isDesktop = useMediaQuery({ query: '(min-width: 1024px)' })
+  const [showClaimPopup, setShowClaimPopup] = useState<boolean>(false);
+  const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
 
-  
-  return (
-    <div className="flex flex-row gap-4 items-center mb-10">
-      
-      <Button
-      variant="normal"
-        onClick={() => setShowFilters(!showFilters)}
-        className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 px-4 sm:px-8 py-3 sm:py-5 relative text-white font-medium shrink-0"
-      >
-        <Filter className="w-4 sm:w-5 h-4 sm:h-5 mr-3" />
-       {isDesktop ? t('filters') : ""}
-        {getActiveFilterCount() > 0 && (
-          <Badge className="absolute -top-2 -right-2 bg-tertiary text-black rounded-full w-7 h-7 p-0 flex items-center justify-center text-smaller-bold">
-            {getActiveFilterCount()}
-          </Badge>
-        )}
-      </Button>
-      <div className="relative flex-1">
-        <Search className="absolute left-3 sm:left-5 top-1/2 transform -translate-y-1/2 w-4 sm:w-5 h-4 sm:h-5 text-grey-3 z-2" />
-        <TextField
-          type="text"
-          placeholder={t('search_placeholder')}
-          className="pl-4 sm:pl-14 pr-16 py-3 sm:py- focus:border-primary focus:ring-primary text-normal-regular bg-white"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-        <div className="absolute right-3 sm:right-5 top-1/2 transform -translate-y-1/2 flex items-center space-x-3">
-          <button className="p-1.5 sm:p-2.5 rounded-full bg-grey-5 hover:bg-grey-4 transition-colors">
-            <MapPin className="w-3 sm:w-4 h-3 sm:h-4 text-grey-2" />
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
+  const isLargeScreen = useMediaQuery({ query: "(min-width: 1024px)" });
 
-function SortAndViewOptions({ sortBy, setSortBy, }: SortAndViewOptionsProps) {
-  const t = useTranslations()
-  
-  const sortOptions: DropdownOption[] = [
-    { value: "newest", label: t('newest_first') },
-    { value: "ending", label: t('ending_soon') },
-    { value: "discount", label: t('highest_discount') },
-    { value: "popular", label: t('most_popular') },
-    { value: "nearest", label: t('nearest') },
-  ]
+  // Debounce search to avoid too many API calls
+  const debouncedSearch = useMemo(() => {
+    let timeoutId: NodeJS.Timeout;
+    return (callback: () => void) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(callback, 500);
+    };
+  }, []);
 
-  return (
-    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-10">
-      <div>
-        <h2 className="text-h5 text-foreground font-bold mb-2">{t('flash_deals')}</h2>
-        <p className="text-normal-regular text-muted-foreground">{t('showing_deals')} 14</p>
-      </div>
+  // Fetch offers function
+  const fetchOffers = useCallback(async () => {
+    try {
+      setLoading(true);
 
-      <div className="flex items-center space-x-6">
-        {/* Sort Options */}
-        <div className="min-w-[200px]">
-          <Dropdown
-            placeholder="Sort by"
-            options={sortOptions}
-            value={sortBy}
-            onValueChange={setSortBy}
-            variant="rounded"
-            className="w-full"
-          />
-        </div>
-      </div>
-    </div>
-  )
-}
+      // Build filter params
+      const params: any = {
+        page,
+        limit: 12,
+        sortBy,
+      };
 
-export default function FlashDealsPage() {
-  const t = useTranslations()
-  const [searchQuery, setSearchQuery] = useState<string>("")
-  const [showFilters, setShowFilters] = useState<boolean>(false)
-  const [sortBy, setSortBy] = useState<string>("newest")
-  const [showBackToTop, setShowBackToTop] = useState<boolean>(false)
-  const [currentPage, setCurrentPage] = useState<number>(1)
-  const [activeFilters, setActiveFilters] = useState<ActiveFilters>({
-    categories: [],
-    location: "",
-    distance: [5],
-    priceRange: [0, 1000],
-    discountRange: [0, 100],
-    rating: 0,
-    types: [],
-  })
+      // Add filters
+      if (activeFilters.category) params.category = activeFilters.category;
+      if (activeFilters.city) params.city = activeFilters.city;
+      if (activeFilters.neighbourhood)
+        params.neighbourhood = activeFilters.neighbourhood;
+      if (activeFilters.minRating) params.minRating = activeFilters.minRating;
+      if (activeFilters.minPrice) params.minPrice = activeFilters.minPrice;
+      if (activeFilters.maxPrice) params.maxPrice = activeFilters.maxPrice;
+      if (activeFilters.minDiscount)
+        params.minDiscount = activeFilters.minDiscount;
+      if (activeFilters.maxDiscount)
+        params.maxDiscount = activeFilters.maxDiscount;
 
-  const [flashDealsTime, setFlashDealsTime] = useState<{ hours: number; minutes: number; seconds: number }>({ 
-    hours: 5, 
-    minutes: 23, 
-    seconds: 45 
-  })
-  const [showClaimPopup, setShowClaimPopup] = useState<boolean>(false)
-  const [selectedOffer, setSelectedOffer] = useState<FlashDeal | null>(null)
-  const isLargeScreen = useMediaQuery({ query: '(min-width: 1024px)' })
+      let res;
 
-  // Flash deals countdown
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setFlashDealsTime((prev) => {
-        if (prev.seconds > 0) {
-          return { ...prev, seconds: prev.seconds - 1 }
-        } else if (prev.minutes > 0) {
-          return { ...prev, minutes: prev.minutes - 1, seconds: 59 }
-        } else if (prev.hours > 0) {
-          return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 }
+      // If there's a search query, use SearchFlashDeal, otherwise GetAllFlashDeal
+      if (searchQuery.trim()) {
+        res = await dispatch(
+          SearchFlashDeal({
+            query: searchQuery.trim(),
+            ...params,
+          }) as any
+        ).unwrap();
+      } else {
+        res = await dispatch(GetAllFlashDeal(params) as any).unwrap();
+      }
+
+      if (res.success) {
+        // API returns flashDeals, not offers
+        const offersData = res.data.flashDeals || [];
+
+        // If pagination request (page > 1), append to existing offers
+        if (page > 1) {
+          setOffers((prev) => [...prev, ...offersData]);
+        } else {
+          setOffers(offersData);
         }
-        return prev
-      })
-    }, 1000)
-    return () => clearInterval(timer)
-  }, [])
 
-  // Back to top visibility
+        setPagination(res.data.pagination || {});
+        setAvailableFilters(res.data.filters || {});
+      }
+    } catch (error) {
+      console.error("Error fetching offers:", error);
+      setOffers([]);
+      setPagination({});
+    } finally {
+      setLoading(false);
+    }
+  }, [dispatch, page, sortBy, searchQuery, activeFilters]);
+
+  // Effect for search and filter changes (reset to page 1)
+  useEffect(() => {
+    setPage(1);
+    setOffers([]); // Clear offers when filters change
+    debouncedSearch(() => fetchOffers());
+  }, [sortBy, searchQuery, activeFilters]);
+
+  // Effect for page changes (load more)
+  useEffect(() => {
+    if (page > 1) {
+      fetchOffers();
+    }
+  }, [page]);
+
+  // Scroll event listener
   useEffect(() => {
     const handleScroll = () => {
-      setShowBackToTop(window.scrollY > 400)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+      setShowBackToTop(window.scrollY > 400);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-  const toggleFilter = (type: string, value: any) => {
+  const toggleFilter = (type: keyof ActiveFilters, value: any) => {
     setActiveFilters((prev) => {
-      if (type === "categories") {
-        const categories = prev.categories.includes(value)
-          ? prev.categories.filter((c) => c !== value)
-          : [...prev.categories, value]
-        return { ...prev, categories }
+      // Special handling for offerCategory
+      if (type === "offerCat") {
+        return { ...prev, category: value };
       }
-      if (type === "types") {
-        const types = prev.types.includes(value) ? prev.types.filter((t) => t !== value) : [...prev.types, value]
-        return { ...prev, types }
-      }
-      return { ...prev, [type]: value }
-    })
-  }
+      return { ...prev, [type]: value };
+    });
+  };
 
   const clearAllFilters = () => {
-    setActiveFilters({
-      categories: [],
-      location: "",
-      distance: [5],
-      priceRange: [0, 1000],
-      discountRange: [0, 100],
-      rating: 0,
-      types: [],
-    })
-  }
+    setActiveFilters({});
+    setSearchQuery("");
+    setSortBy("newest");
+    setPage(1);
+  };
 
   const getActiveFilterCount = (): number => {
-    return (
-      activeFilters.categories.length +
-      activeFilters.types.length +
-      (activeFilters.location ? 1 : 0) +
-      (activeFilters.rating > 0 ? 1 : 0)
-    )
-  }
+    let count = 0;
+    if (activeFilters.category) count++;
+    if (activeFilters.city) count++;
+    if (activeFilters.neighbourhood) count++;
+    if (activeFilters.minRating) count++;
+    if (activeFilters.minPrice || activeFilters.maxPrice) count++;
+    if (activeFilters.minDiscount || activeFilters.maxDiscount) count++;
+    return count;
+  };
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
-  const handleClaimOffer = (offer: FlashDeal) => {
-    setSelectedOffer(offer)
-    setShowClaimPopup(true)
-  }
+  const handleClaimOffer = (offer: Offer) => {
+    setSelectedOffer(offer);
+    setShowClaimPopup(true);
+  };
 
-  // Flash deals data - 14 products for pagination
-  const allFlashDeals: FlashDeal[] = [
-    {
-      id: "1",
-      title: t('traditional_kuwaiti_feast'),
-      subtitle: t('al_boom_restaurant'),
-      image: "/placeholder.svg?height=200&width=300&text=Al+Boom+Restaurant",
-      location: t('kuwait_city'),
-      rating: 4.8,
-      reviewCount: 234,
-      originalPrice: "45 KD",
-      discountedPrice: "18 KD",
-      discountPercentage: 60,
-      expiryDate: "2024-12-31",
-      timerMinutes: flashDealsTime.hours * 60 + flashDealsTime.minutes,
-      timerSeconds: flashDealsTime.seconds,
-    },
-    {
-      id: "2",
-      title: t('full_body_massage_package'),
-      subtitle: t('luxury_spa_center'),
-      image: "/placeholder.svg?height=200&width=300&text=Luxury+Spa",
-      location: t('salmiya'),
-      rating: 4.9,
-      reviewCount: 156,
-      originalPrice: "120 KD",
-      discountedPrice: "60 KD",
-      discountPercentage: 50,
-      expiryDate: "2024-12-31",
-      timerMinutes: flashDealsTime.hours * 60 + flashDealsTime.minutes + 30,
-      timerSeconds: flashDealsTime.seconds,
-    },
-    {
-      id: "3",
-      title: t('designer_collection_sale'),
-      subtitle: t('fashion_boutique'),
-      image: "/placeholder.svg?height=200&width=300&text=Fashion+Boutique",
-      location: t('avenues_mall'),
-      rating: 4.7,
-      reviewCount: 89,
-      originalPrice: "200 KD",
-      discountedPrice: "60 KD",
-      discountPercentage: 70,
-      expiryDate: "2024-12-31",
-      timerMinutes: flashDealsTime.hours * 60 + flashDealsTime.minutes - 30,
-      timerSeconds: flashDealsTime.seconds,
-    },
-    {
-      id: "4",
-      title: "Premium Italian Dinner",
-      subtitle: "Bella Vista Restaurant",
-      image: "/placeholder.svg?height=200&width=300&text=Italian+Restaurant",
-      location: t('salmiya'),
-      rating: 4.6,
-      reviewCount: 187,
-      originalPrice: "65 KD",
-      discountedPrice: "26 KD",
-      discountPercentage: 60,
-      expiryDate: "2024-12-31",
-      timerMinutes: flashDealsTime.hours * 60 + flashDealsTime.minutes - 10,
-      timerSeconds: flashDealsTime.seconds,
-    },
-    {
-      id: "5",
-      title: "Luxury Car Wash Package",
-      subtitle: "Elite Auto Care",
-      image: "/placeholder.svg?height=200&width=300&text=Car+Wash",
-      location: t('hawalli'),
-      rating: 4.5,
-      reviewCount: 98,
-      originalPrice: "30 KD",
-      discountedPrice: "12 KD",
-      discountPercentage: 60,
-      expiryDate: "2024-12-31",
-      timerMinutes: flashDealsTime.hours * 60 + flashDealsTime.minutes + 45,
-      timerSeconds: flashDealsTime.seconds,
-    },
-    {
-      id: "6",
-      title: "Professional Hair Styling",
-      subtitle: "Glamour Salon",
-      image: "/placeholder.svg?height=200&width=300&text=Hair+Salon",
-      location: t('farwaniya'),
-      rating: 4.8,
-      reviewCount: 145,
-      originalPrice: "80 KD",
-      discountedPrice: "32 KD",
-      discountPercentage: 60,
-      expiryDate: "2024-12-31",
-      timerMinutes: flashDealsTime.hours * 60 + flashDealsTime.minutes + 15,
-      timerSeconds: flashDealsTime.seconds,
-    },
-    {
-      id: "7",
-      title: "Fitness Bootcamp Sessions",
-      subtitle: "Power Gym Club",
-      image: "/placeholder.svg?height=200&width=300&text=Fitness+Gym",
-      location: t('kuwait_city'),
-      rating: 4.4,
-      reviewCount: 76,
-      originalPrice: "90 KD",
-      discountedPrice: "36 KD",
-      discountPercentage: 60,
-      expiryDate: "2024-12-31",
-      timerMinutes: flashDealsTime.hours * 60 + flashDealsTime.minutes - 20,
-      timerSeconds: flashDealsTime.seconds,
-    },
-    {
-      id: "8",
-      title: "Gourmet Sushi Experience",
-      subtitle: "Tokyo Sushi Bar",
-      image: "/placeholder.svg?height=200&width=300&text=Sushi+Bar",
-      location: t('salmiya'),
-      rating: 4.9,
-      reviewCount: 203,
-      originalPrice: "75 KD",
-      discountedPrice: "30 KD",
-      discountPercentage: 60,
-      expiryDate: "2024-12-31",
-      timerMinutes: flashDealsTime.hours * 60 + flashDealsTime.minutes + 60,
-      timerSeconds: flashDealsTime.seconds,
-    },
-    {
-      id: "9",
-      title: "Electronics Mega Sale",
-      subtitle: "Tech World Store",
-      image: "/placeholder.svg?height=200&width=300&text=Electronics",
-      location: t('avenues_mall'),
-      rating: 4.3,
-      reviewCount: 134,
-      originalPrice: "500 KD",
-      discountedPrice: "200 KD",
-      discountPercentage: 60,
-      expiryDate: "2024-12-31",
-      timerMinutes: flashDealsTime.hours * 60 + flashDealsTime.minutes - 40,
-      timerSeconds: flashDealsTime.seconds,
-    },
-    {
-      id: "10",
-      title: "Luxury Spa Day Package",
-      subtitle: "Serenity Wellness Center",
-      image: "/placeholder.svg?height=200&width=300&text=Wellness+Spa",
-      location: t('kuwait_city'),
-      rating: 4.7,
-      reviewCount: 167,
-      originalPrice: "150 KD",
-      discountedPrice: "60 KD",
-      discountPercentage: 60,
-      expiryDate: "2024-12-31",
-      timerMinutes: flashDealsTime.hours * 60 + flashDealsTime.minutes + 25,
-      timerSeconds: flashDealsTime.seconds,
-    },
-    {
-      id: "11",
-      title: "Adventure Desert Safari",
-      subtitle: "Desert Explorer Tours",
-      image: "/placeholder.svg?height=200&width=300&text=Desert+Safari",
-      location: "Outskirts Kuwait",
-      rating: 4.6,
-      reviewCount: 89,
-      originalPrice: "100 KD",
-      discountedPrice: "40 KD",
-      discountPercentage: 60,
-      expiryDate: "2024-12-31",
-      timerMinutes: flashDealsTime.hours * 60 + flashDealsTime.minutes - 50,
-      timerSeconds: flashDealsTime.seconds,
-    },
-    {
-      id: "12",
-      title: "Photography Session Deal",
-      subtitle: "Creative Lens Studio",
-      image: "/placeholder.svg?height=200&width=300&text=Photography",
-      location: t('hawalli'),
-      rating: 4.8,
-      reviewCount: 112,
-      originalPrice: "120 KD",
-      discountedPrice: "48 KD",
-      discountPercentage: 60,
-      expiryDate: "2024-12-31",
-      timerMinutes: flashDealsTime.hours * 60 + flashDealsTime.minutes + 35,
-      timerSeconds: flashDealsTime.seconds,
-    },
-    {
-      id: "13",
-      title: "Home Cleaning Service",
-      subtitle: "Sparkle Clean Co",
-      image: "/placeholder.svg?height=200&width=300&text=Cleaning+Service",
-      location: t('farwaniya'),
-      rating: 4.4,
-      reviewCount: 78,
-      originalPrice: "50 KD",
-      discountedPrice: "20 KD",
-      discountPercentage: 60,
-      expiryDate: "2024-12-31",
-      timerMinutes: flashDealsTime.hours * 60 + flashDealsTime.minutes + 10,
-      timerSeconds: flashDealsTime.seconds,
-    },
-    {
-      id: "14",
-      title: "Artisan Coffee Masterclass",
-      subtitle: "Bean & Brew Academy",
-      image: "/placeholder.svg?height=200&width=300&text=Coffee+Class",
-      location: t('salmiya'),
-      rating: 4.9,
-      reviewCount: 156,
-      originalPrice: "85 KD",
-      discountedPrice: "34 KD",
-      discountPercentage: 60,
-      expiryDate: "2024-12-31",
-      timerMinutes: flashDealsTime.hours * 60 + flashDealsTime.minutes - 15,
-      timerSeconds: flashDealsTime.seconds,
-    },
-  ]
+  const loadMore = () => {
+    if (pagination?.hasNextPage) {
+      setPage((prev) => prev + 1);
+    }
+  };
 
-  const itemsPerPage = 9
-  const totalPages = Math.ceil(allFlashDeals.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const endIndex = startIndex + itemsPerPage
-  const currentFlashDeals = allFlashDeals.slice(startIndex, endIndex)
+  const sortOptions: DropdownOption[] = useMemo(
+    () => [
+      { value: "newest", label: "Newest First" },
+      { value: "rating", label: "Rating: High to Low" },
+      { value: "reviews", label: "Most Reviews" },
+      { value: "name", label: "Name: A to Z" },
+      { value: "priceLowToHigh", label: "Price: Low to High" },
+      { value: "priceHighToLow", label: "Price: High to Low" },
+    ],
+    []
+  );
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page)
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }
+  const hasOffers = offers.length > 0;
+  const activeFilterCount = getActiveFilterCount();
 
   return (
     <div className="min-h-screen bg-background font-sans overflow-x-hidden">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex flex-col lg:flex-row gap-10">
-          {/* Filter Sidebar */}
-          <FilterSidebar 
+          <FilterSidebar
             showFilters={showFilters}
             setShowFilters={setShowFilters}
             activeFilters={activeFilters}
             toggleFilter={toggleFilter}
             clearAllFilters={clearAllFilters}
             getActiveFilterCount={getActiveFilterCount}
+            availableFilters={availableFilters}
+            visibleFilters={{
+              offerCategory: true,
+              city: true,
+              neighbourhood: true,
+              rating: true,
+              price: true,
+            }}
+            filterType="offer"
           />
-
-          {/* Main Content */}
           <div className="flex-1">
-            {/* Search and Filter Section */}
             <SearchAndFilterSection
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
               showFilters={showFilters}
               setShowFilters={setShowFilters}
               getActiveFilterCount={getActiveFilterCount}
+              onSearch={fetchOffers}
             />
 
-            {/* Active Filter Tags */}
-            {(activeFilters.categories.length > 0 || activeFilters.types.length > 0) && (
+            {activeFilterCount > 0 && (
               <div className="flex flex-wrap gap-3 mb-8">
-                {activeFilters.categories.map((category) => (
-                  <Badge
-                    key={category}
-                    className="bg-accent text-primary rounded-full px-4 py-2 flex items-center space-x-2 text-sm"
-                  >
-                    <span>{category}</span>
-                    <button onClick={() => toggleFilter("categories", category)}>
+                {activeFilters.category && (
+                  <Badge className="bg-accent text-primary rounded-full px-4 py-2 flex items-center space-x-2 text-sm">
+                    <span>{activeFilters.category}</span>
+                    <button
+                      onClick={() => toggleFilter("category", "")}
+                      className="focus:outline-none"
+                    >
                       <X className="w-4 h-4" />
                     </button>
                   </Badge>
-                ))}
-                {activeFilters.types.map((type) => (
-                  <Badge
-                    key={type}
-                    className="bg-accent text-primary rounded-full px-4 py-2 flex items-center space-x-2 text-sm"
-                  >
-                    <span>{type}</span>
-                    <button onClick={() => toggleFilter("types", type)}>
+                )}
+                {activeFilters.city && (
+                  <Badge className="bg-accent text-primary rounded-full px-4 py-2 flex items-center space-x-2 text-sm">
+                    <span>{activeFilters.city}</span>
+                    <button
+                      onClick={() => toggleFilter("city", "")}
+                      className="focus:outline-none"
+                    >
                       <X className="w-4 h-4" />
                     </button>
                   </Badge>
-                ))}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={clearAllFilters}
-                  className="text-muted-foreground hover:text-foreground rounded-full"
-                >
-                  {t('clear_all')}
+                )}
+                {activeFilters.neighbourhood && (
+                  <Badge className="bg-accent text-primary rounded-full px-4 py-2 flex items-center space-x-2 text-sm">
+                    <span>{activeFilters.neighbourhood}</span>
+                    <button
+                      onClick={() => toggleFilter("neighbourhood", "")}
+                      className="focus:outline-none"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </Badge>
+                )}
+                {activeFilters.minRating && (
+                  <Badge className="bg-accent text-primary rounded-full px-4 py-2 flex items-center space-x-2 text-sm">
+                    <span>{activeFilters.minRating}+ Stars</span>
+                    <button
+                      onClick={() => toggleFilter("minRating", undefined)}
+                      className="focus:outline-none"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </Badge>
+                )}
+                {(activeFilters.minPrice || activeFilters.maxPrice) && (
+                  <Badge className="bg-accent text-primary rounded-full px-4 py-2 flex items-center space-x-2 text-sm">
+                    <span>
+                      Price: {activeFilters.minPrice || 0} -{" "}
+                      {activeFilters.maxPrice || "∞"}
+                    </span>
+                    <button
+                      onClick={() => {
+                        toggleFilter("minPrice", undefined);
+                        toggleFilter("maxPrice", undefined);
+                      }}
+                      className="focus:outline-none"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </Badge>
+                )}
+                {(activeFilters.minDiscount || activeFilters.maxDiscount) && (
+                  <Badge className="bg-accent text-primary rounded-full px-4 py-2 flex items-center space-x-2 text-sm">
+                    <span>
+                      Discount: {activeFilters.minDiscount || 0}% -{" "}
+                      {activeFilters.maxDiscount || 100}%
+                    </span>
+                    <button
+                      onClick={() => {
+                        toggleFilter("minDiscount", undefined);
+                        toggleFilter("maxDiscount", undefined);
+                      }}
+                      className="focus:outline-none"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </Badge>
+                )}
+                <Button variant="ghost" size="sm" onClick={clearAllFilters}>
+                  {t("clear_all") || "Clear All"}
                 </Button>
               </div>
             )}
 
-            {/* Sort & View Options */}
-            <SortAndViewOptions
-              sortBy={sortBy}
-              setSortBy={setSortBy}
-            />
-
-            {/* Flash Deals Header */}
-            <div className="mb-16">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4 sm:gap-0">
-                <div className="flex items-center space-x-4">
-                  <Zap className="w-8 h-8 text-tertiary" />
-                  <h3 className="text-h5 text-foreground font-bold">{t('flash_deals')}</h3>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <Badge className="bg-tertiary text-primary rounded-full px-4 py-2 font-medium">
-                    {t('limited_time')}
-                  </Badge>
-                  <div className="flex items-center space-x-3 bg-tertiary rounded-[100px] px-2 py-2">
-                    <Clock className="w-4 h-4 text-primary" />
-                    <span className="text-primary text-small-semibold">
-                      {flashDealsTime.hours.toString().padStart(2, "0")}:
-                      {flashDealsTime.minutes.toString().padStart(2, "0")}:
-                      {flashDealsTime.seconds.toString().padStart(2, "0")}
-                    </span>
-                  </div>
-                </div>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-10">
+              <div>
+                <h2 className="text-h5 text-foreground font-bold mb-2">
+                  {t("available_offers") || "Available Offers"}
+                </h2>
+                <p className="text-normal-regular text-muted-foreground">
+                  {hasOffers
+                    ? `${t("showing_deals") || "Showing"} ${offers.length} of ${
+                        pagination?.totalItems || offers.length
+                      } deals`
+                    : "No deals found"}
+                </p>
               </div>
-
-              {/* Flash Deals Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 place-items-center mb-12">
-                {currentFlashDeals.map((deal) => (
-                  <FlashCard
-                    key={deal.id}
-                    {...deal}
-                    isResponsive={true}
-                    className="hover:scale-105 transition-transform duration-300 mx-auto w-full max-w-md"
-                  />
-                ))}
-              </div>
-
-              {/* Pagination */}
-              <div className="flex justify-center mb-5">
-                <Pagination 
-                  currentPage={currentPage} 
-                  totalPages={totalPages} 
-                  onPageChange={handlePageChange} 
+              <div className="min-w-[200px]">
+                <Dropdown
+                  placeholder="Sort by"
+                  options={sortOptions}
+                  value={sortBy}
+                  onValueChange={(val) => setSortBy(val)}
+                  variant="rounded"
+                  className="w-full"
                 />
               </div>
+            </div>
+
+            {/* All Offers Grid */}
+            <div className="mb-12">
+              <h3 className="text-h5 text-foreground font-bold mb-8">
+                {t("all_offers") || "All Offers"}
+              </h3>
+
+              {loading && page === 1 ? (
+                <div className="">
+                  <SkeletonCard />
+                </div>
+              ) : hasOffers ? (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 place-items-center">
+                    {offers.map((offer: Offer) => (
+                      <OfferCard
+                        key={offer._id}
+                        id={offer._id}
+                        title={offer.title}
+                        description={offer.description}
+                        images={offer.images}
+                        city={offer.city}
+                        neighbourhood={offer.neighbourhood}
+                        rating={offer.rating}
+                        reviewsCount={offer.reviewsCount}
+                        category={offer.category}
+                        discountedPrice={offer.discountedPrice || null}
+                        isFavorited={offer.isFavorited}
+                        originalPrice={offer.originalPrice || offer.fullPrice}
+                        discountPercentage={
+                          offer.discountPercentage || offer.discountPercent
+                        }
+                        expiryDate={offer.expiryDate}
+                        flashDeal={offer.flashDeal}
+                        offerDetail={offer.offerDetail}
+                        adType={offer.adType}
+                        isClaimed={offer.isClaimed}
+                        isResponsive={true}
+                        className="w-full max-w-md mx-auto"
+                        onClaim={() => handleClaimOffer(offer)}
+                      />
+                    ))}
+                  </div>
+
+                  {pagination?.hasNextPage && (
+                    <div className="text-center mt-12">
+                      <Button
+                        size="lg"
+                        variant="outline"
+                        onClick={loadMore}
+                        disabled={loading}
+                        className="rounded-xl px-10 py-4"
+                      >
+                        {loading
+                          ? "Loading..."
+                          : t("load_more_deals") || "Load More Deals"}
+                        <TrendingUp className="ml-3 h-5 w-5" />
+                      </Button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="text-center py-10 text-muted-foreground">
+                  No offers found. Try adjusting your filters.
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Back to Top Button */}
+      {/* Back to Top */}
       {showBackToTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 p-4 bg-gradient-to-r from-primary to-secondary text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 z-50"
+          className="fixed bottom-8 right-8 p-4 bg-gradient-to-r from-primary to-secondary text-white rounded-full shadow-lg hover:shadow-xl transition-all z-50 focus:outline-none focus:ring-2 focus:ring-primary"
+          aria-label="Back to top"
         >
           <ArrowUp className="w-6 h-6" />
         </button>
       )}
+
+      {/* Claim Popup */}
+      {showClaimPopup && selectedOffer && (
+        <OfferPopup
+          offer={selectedOffer}
+          open={showClaimPopup}
+          onOpenChange={setShowClaimPopup}
+        />
+      )}
     </div>
-  )
+  );
+}
+
+// Reusable Search & Filter Section
+function SearchAndFilterSection({
+  searchQuery,
+  setSearchQuery,
+  showFilters,
+  setShowFilters,
+  getActiveFilterCount,
+  onSearch,
+}: any) {
+  const t = useTranslations();
+  const isDesktop = useMediaQuery({ query: "(min-width: 1024px)" });
+  const [locationError, setLocationError] = useState<string>("");
+  const [isGettingLocation, setIsGettingLocation] = useState<boolean>(false);
+
+  const getLocationName = async (
+    latitude: number,
+    longitude: number
+  ): Promise<string> => {
+    try {
+      const response = await fetch(
+        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch location data");
+      }
+
+      const data = await response.json();
+
+      // Return the most specific location name available
+      if (data.locality) {
+        return data.locality;
+      } else if (data.city) {
+        return data.city;
+      } else if (data.principalSubdivision) {
+        return data.principalSubdivision;
+      } else if (data.countryName) {
+        return data.countryName;
+      } else {
+        return `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+      }
+    } catch (error) {
+      console.error("Error getting location name:", error);
+      // Fallback to coordinates if reverse geocoding fails
+      return `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+    }
+  };
+
+  const handleLocationSearch = async () => {
+    // Reset previous errors
+    setLocationError("");
+    setIsGettingLocation(true);
+
+    // Check if geolocation is supported
+    if (!navigator.geolocation) {
+      const errorText = "Geolocation is not supported by this browser";
+      setLocationError(errorText);
+      setIsGettingLocation(false);
+      return;
+    }
+
+    // Check if we're in a secure context (HTTPS)
+    if (
+      window.location.protocol !== "https:" &&
+      window.location.hostname !== "localhost"
+    ) {
+      const errorText =
+        "HTTPS is required for location access. Please use a secure connection.";
+      setLocationError(errorText);
+      setIsGettingLocation(false);
+      return;
+    }
+
+    // Check permissions API if available
+    if (navigator.permissions) {
+      try {
+        const permissionStatus = await navigator.permissions.query({
+          name: "geolocation",
+        });
+        if (permissionStatus.state === "denied") {
+          setLocationError(
+            "Location access is blocked. Please enable it in your browser settings."
+          );
+          setIsGettingLocation(false);
+          return;
+        }
+      } catch (e) {
+        // Permissions API not fully supported, continue anyway
+        console.log("Permissions API not available");
+      }
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+
+        try {
+          // Get location name from coordinates
+          const locationName = await getLocationName(latitude, longitude);
+
+          // Set location name in search bar
+          setSearchQuery(locationName);
+
+          // Trigger search after a short delay to ensure state is updated
+          setTimeout(() => {
+            if (onSearch) {
+              onSearch();
+            }
+          }, 100);
+        } catch (error) {
+          console.error("Error getting location name:", error);
+          // Fallback to coordinates
+          const locationText = `${latitude.toFixed(4)}, ${longitude.toFixed(
+            4
+          )}`;
+          setSearchQuery(locationText);
+
+          setTimeout(() => {
+            if (onSearch) {
+              onSearch();
+            }
+          }, 100);
+        } finally {
+          setIsGettingLocation(false);
+        }
+      },
+      (error) => {
+        console.error("Error getting location:", error);
+        let errorMessage = "Failed to get your location";
+        let helpText = "";
+
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = "Location permission denied.";
+            helpText =
+              "Please click the location icon in your browser's address bar and allow access.";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = "Location information is unavailable.";
+            helpText =
+              "Please ensure location services are enabled in your device settings and try again.";
+            break;
+          case error.TIMEOUT:
+            errorMessage = "Location request timed out.";
+            helpText = "Please check your internet connection and try again.";
+            break;
+          default:
+            errorMessage = "An unknown error occurred.";
+            helpText = "Please try again or search manually.";
+            break;
+        }
+
+        setLocationError(`${errorMessage} ${helpText}`);
+        setIsGettingLocation(false);
+      },
+      {
+        enableHighAccuracy: false, // Changed to false for faster response
+        timeout: 10000, // Reduced to 10 seconds
+        maximumAge: 300000, // Cache for 5 minutes
+      }
+    );
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      if (onSearch) {
+        onSearch();
+      }
+    }
+  };
+
+  return (
+    <div className="mb-10">
+      <div className="flex flex-row gap-4 items-center mb-4">
+        <Button
+          variant="normal"
+          onClick={() => setShowFilters(!showFilters)}
+          className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 px-4 sm:px-8 py-3 sm:py-5 relative text-white font-medium shrink-0"
+        >
+          <Filter className="w-4 sm:w-5 h-4 sm:h-5 mr-3" />
+          {isDesktop ? t("filters") || "Filters" : ""}
+          {getActiveFilterCount() > 0 && (
+            <Badge className="absolute -top-2 -right-2 bg-tertiary text-black rounded-full w-7 h-7 p-0 flex items-center justify-center text-smaller-bold">
+              {getActiveFilterCount()}
+            </Badge>
+          )}
+        </Button>
+
+        <div className="relative flex-1">
+          <Search className="absolute left-3 sm:left-5 top-1/2 transform -translate-y-1/2 w-4 sm:w-5 h-4 sm:h-5 text-grey-3" />
+          <TextField
+            type="text"
+            placeholder={
+              t("search_placeholder") ||
+              "Search for offers by location, name, or category..."
+            }
+            className="pl-14 pr-16 py-3 focus:border-primary focus:ring-primary text-normal-regular bg-white w-full"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyPress={handleKeyPress}
+          />
+          <div className="absolute right-3 sm:right-5 top-1/2 transform -translate-y-1/2">
+            <button
+              onClick={handleLocationSearch}
+              disabled={isGettingLocation}
+              className={`p-2.5 rounded-full focus:outline-none focus:ring-2 focus:ring-primary ${
+                isGettingLocation
+                  ? "bg-grey-4 cursor-not-allowed"
+                  : "bg-grey-5 hover:bg-grey-4"
+              }`}
+              aria-label="Use current location"
+            >
+              <MapPin
+                className={`w-4 h-4 ${
+                  isGettingLocation ? "text-grey-3" : "text-grey-2"
+                }`}
+              />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Location Error Message */}
+      {locationError && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+          <p className="text-red-700 text-sm">{locationError}</p>
+        </div>
+      )}
+
+      {/* Loading State */}
+      {isGettingLocation && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+          <p className="text-blue-700 text-sm flex items-center">
+            <MapPin className="w-4 h-4 mr-2 animate-pulse" />
+            Getting your location...
+          </p>
+        </div>
+      )}
+    </div>
+  );
 }

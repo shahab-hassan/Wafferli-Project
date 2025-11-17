@@ -1,60 +1,91 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Card } from "@/components/common/shadecn-card"
-import { Label } from "@/components/common/label"
-import { Input } from "@/components/common/input"
-import { Textarea } from "@/components/common/textarea"
-import { Button } from "@/components/common/button"
-import { Switch } from "@/components/common/switch"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/common/popover"
-import { Calendar } from "@/components/common/calender"
-import { cn } from "@/lib/utils"
-import { ChevronRight, CalendarIcon, Tag } from "lucide-react"
-import { useRouter } from "next/navigation"
+import * as React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Card } from "@/components/common/shadecn-card";
+import { Label } from "@/components/common/label";
+import { Input } from "@/components/common/input";
+import { Textarea } from "@/components/common/textarea";
+import { Button } from "@/components/common/button";
+import { Switch } from "@/components/common/switch";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/common/popover";
+import { Calendar } from "@/components/common/calender";
+import { cn } from "@/lib/utils";
+import { Tag, CalendarIcon, ChevronRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { setAdData } from "@/features/slicer/AdSlice";
+import type { RootState } from "@/features/store/store";
+import { OfferAdData } from "@/types/ad";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/common/select";
+import { offerCategories } from "@/lib/data";
 
-type OfferInfoValues = {
-  flashDeal: boolean
-  expiry?: Date
-  discountDeal: boolean
-  fullPrice?: string
-  discountPercent?: string
-  offerDetail?: string
+function formatDDMMYYYY(d?: string | Date): string {
+  if (!d) return "";
+  const date = typeof d === "string" ? new Date(d) : d;
+  if (isNaN(date.getTime())) return "";
+  const dd = String(date.getDate()).padStart(2, "0");
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const yyyy = date.getFullYear();
+  return `${dd}-${mm}-${yyyy}`;
 }
 
-function formatDDMMYYYY(d?: Date) {
-  if (!d) return ""
-  const dd = String(d.getDate()).padStart(2, "0")
-  const mm = String(d.getMonth() + 1).padStart(2, "0")
-  const yyyy = d.getFullYear()
-  return `${dd}-${mm}-${yyyy}`
-}
+export function OfferInfoForm({ onChangeType }: { onChangeType: () => void }) {
+  const dispatch = useDispatch();
+  const adData = useSelector(
+    (state: RootState) => state.ad.adData as OfferAdData
+  );
+  const router = useRouter();
+  const [open, setOpen] = React.useState(false);
 
-export function OfferInfoForm({
-  onChangeType,
-}: {
-  onChangeType: () => void
-}) {
-  const [values, setValues] = React.useState<OfferInfoValues>({
-    flashDeal: false,
-    discountDeal: false,
-  })
-  const [open, setOpen] = React.useState(false)
-  const router = useRouter()
+  const setField = <K extends keyof OfferAdData>(k: K, v: OfferAdData[K]) => {
+    dispatch(setAdData({ [k]: v }));
+  };
 
-  const setField = <K extends keyof OfferInfoValues>(k: K, v: OfferInfoValues[K]) =>
-    setValues((p) => ({ ...p, [k]: v }))
+  const fullPriceValid =
+    !adData?.discountDeal ||
+    (adData?.fullPrice !== null &&
+      !isNaN(Number(adData?.fullPrice)) &&
+      Number(adData?.fullPrice) > 0);
+  const discountPercentValid =
+    !adData?.discountDeal ||
+    (adData?.discountPercent !== null &&
+      !isNaN(Number(adData?.discountPercent)) &&
+      adData?.discountPercent >= 0 &&
+      adData?.discountPercent <= 100);
+  const offerDetailValid =
+    adData?.discountDeal ||
+    (adData?.offerDetail?.trim().length > 0 &&
+      adData?.offerDetail?.length <= 70);
+  const expiryValid =
+    adData?.expiryDate &&
+    !isNaN(new Date(adData?.expiryDate).getTime()) &&
+    new Date(adData?.expiryDate) > new Date();
+  const categoryValid = !!adData.category?.trim();
 
-  const expiryValid = values.flashDeal ? !!values.expiry : true
-  const discountPathValid = values.discountDeal
-    ? !!values.fullPrice && !!values.discountPercent
-    : !!values.offerDetail && values.offerDetail.trim().length > 0 && values.offerDetail.trim().length <= 70
+  const valid =
+    fullPriceValid && discountPercentValid && offerDetailValid && expiryValid;
 
-  const valid = expiryValid && discountPathValid
+  // Initialize default expiryDate for flashDeal
+  React.useEffect(() => {
+    if (adData?.flashDeal && !adData?.expiryDate) {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      setField("expiryDate", tomorrow.toISOString());
+    }
+  }, [adData?.flashDeal, adData?.expiryDate]);
 
   return (
     <div className="space-y-6">
-      {/* Type summary - matches the screenshot */}
       <section className="space-y-3">
         <h2 className="text-base font-semibold">Type</h2>
         <Card className="relative flex flex-col rounded-2xl border bg-card p-4 sm:p-5">
@@ -64,43 +95,44 @@ export function OfferInfoForm({
             </span>
             <div>
               <div className="text-sm font-medium">Offer</div>
-              <div className="text-xs text-muted-foreground">Exclusive deal, flash deal, or package.</div>
+              <div className="text-xs text-muted-foreground">
+                Exclusive deal, flash deal, or package.
+              </div>
             </div>
           </div>
         </Card>
       </section>
 
-      {/* Offer Information */}
       <section className="space-y-3">
         <h2 className="text-base font-semibold">Offer Information</h2>
         <Card className="rounded-2xl border bg-card p-4 sm:p-6">
           <div className="grid grid-cols-1 gap-5">
-            {/* Flash Deal */}
             <div className="flex items-center justify-between gap-3">
               <div>
                 <Label className="text-sm font-medium">Flash Deal</Label>
                 <p className="text-xs text-muted-foreground">
-                  Flash Deals are exclusive deals, that expire within 24h.
+                  Flash Deals are exclusive deals that expire within 24h.
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <Switch
-                  checked={values.flashDeal}
-                  onCheckedChange={(v) => {
-                    setField("flashDeal", v)
-                    if (!v) setField("expiry", undefined)
-                  }}
+                  checked={adData?.flashDeal}
+                  onCheckedChange={(v) => setField("flashDeal", v)}
                   aria-label="Flash deal"
                 />
-                <span className="text-sm text-muted-foreground">{values.flashDeal ? "Yes" : "No"}</span>
+                <span className="text-sm text-muted-foreground">
+                  {adData?.flashDeal ? "Yes" : "No"}
+                </span>
               </div>
             </div>
 
-            {/* Expiry Date */}
-            {values.flashDeal && (
+            <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between gap-3">
                 <Label className="text-sm font-medium">
-                  Expiry Date{!values.expiry ? <span className="ml-0.5 text-destructive">*</span> : null}
+                  Expiry Date
+                  {!adData?.expiryDate && (
+                    <span className="ml-0.5 text-destructive">*</span>
+                  )}
                 </Label>
                 <div className="relative w-64">
                   <Popover open={open} onOpenChange={setOpen}>
@@ -109,117 +141,197 @@ export function OfferInfoForm({
                         type="button"
                         className={cn(
                           "w-full rounded-full border bg-background px-10 py-2.5 text-left text-sm",
-                          !values.expiry && "text-muted-foreground",
+                          !adData?.expiryDate && "text-muted-foreground"
                         )}
                       >
-                        {formatDDMMYYYY(values.expiry) || "dd-mm-yyyy"}
+                        {formatDDMMYYYY(adData?.expiryDate) || "dd-mm-yyyy"}
                       </button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="end">
                       <Calendar
                         mode="single"
-                        selected={values.expiry}
+                        selected={
+                          adData?.expiryDate
+                            ? new Date(adData?.expiryDate)
+                            : undefined
+                        }
                         onSelect={(d) => {
-                          setField("expiry", d)
-                          setOpen(false)
+                          if (d) setField("expiryDate", d.toISOString());
+                          setOpen(false);
                         }}
                         initialFocus
+                        disabled={(date) => date <= new Date()}
                       />
                     </PopoverContent>
                   </Popover>
                   <CalendarIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 </div>
               </div>
-            )}
-
-            {/* Discount Deal */}
+              {!expiryValid && (
+                <p className="text-xs text-destructive">
+                  Expiry date must be a valid future date
+                </p>
+              )}
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <Label className="text-sm font-medium">
+                Category
+                {!categoryValid && (
+                  <span className="ml-0.5 text-destructive">*</span>
+                )}
+              </Label>
+              <Select
+                value={adData.category}
+                onValueChange={(value: string) => {
+                  setField("category", value);
+                }}
+              >
+                <SelectTrigger className="w-64">
+                  <SelectValue placeholder="Choose a category" />
+                </SelectTrigger>
+                <SelectContent align="end">
+                  {offerCategories.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <div className="flex items-center justify-between gap-3">
               <Label className="text-sm font-medium">Discount Deal</Label>
               <div className="flex items-center gap-2">
                 <Switch
-                  checked={values.discountDeal}
-                  onCheckedChange={(v) => setField("discountDeal", v)}
+                  checked={adData?.discountDeal}
+                  onCheckedChange={(v) => {
+                    setField("discountDeal", v);
+                    if (v) {
+                      setField("offerDetail", "");
+                      setField("fullPrice", 0);
+                      setField("discountPercent", 0);
+                    } else {
+                      setField("fullPrice", null);
+                      setField("discountPercent", null);
+                      setField("offerDetail", "");
+                    }
+                  }}
                   aria-label="Discount deal"
                 />
-                <span className="text-sm text-muted-foreground">{values.discountDeal ? "Yes" : "No"}</span>
+                <span className="text-sm text-muted-foreground">
+                  {adData?.discountDeal ? "Yes" : "No"}
+                </span>
               </div>
             </div>
 
-            {values.discountDeal ? (
-              <>
-                {/* Full Price */}
-                <div className="flex items-center justify-between gap-3">
-                  <Label className="text-sm font-medium">
-                    Full Price
-                    {!(values.fullPrice && values.fullPrice.trim().length > 0) ? (
-                      <span className="ml-0.5 text-destructive">*</span>
-                    ) : null}
-                  </Label>
-                  <div className="relative w-64">
-                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                      KWD
-                    </span>
-                    <Input
-                      className="pl-12"
-                      inputMode="decimal"
-                      placeholder="Enter price before discount"
-                      value={values.fullPrice ?? ""}
-                      onChange={(e) => setField("fullPrice", e.target.value)}
-                    />
-                  </div>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between gap-3">
+                <Label className="text-sm font-medium">
+                  Full Price
+                  {!fullPriceValid && (
+                    <span className="ml-0.5 text-destructive">*</span>
+                  )}
+                </Label>
+                <div className="relative w-64">
+                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                    KWD
+                  </span>
+                  <Input
+                    className="pl-12 rounded-full"
+                    inputMode="decimal"
+                    placeholder="Enter price before discount"
+                    value={adData?.fullPrice ?? ""}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setField("fullPrice", value ? Number(value) : null);
+                    }}
+                  />
                 </div>
+              </div>
+              {!fullPriceValid && adData?.fullPrice !== null && (
+                <p className="text-xs text-destructive">
+                  Full price must be a positive number
+                </p>
+              )}
+            </div>
+            {adData?.discountDeal ? (
+              <>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between gap-3">
+                    <Label className="text-sm font-medium">
+                      Discount Percent
+                      {!discountPercentValid && (
+                        <span className="ml-0.5 text-destructive">*</span>
+                      )}
+                    </Label>
+                    <div className="relative w-64">
+                      <Input
+                        className="pr-8 rounded-full"
+                        inputMode="decimal"
+                        placeholder="Enter discount"
+                        value={adData?.discountPercent ?? ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
 
-                {/* Discount Percent */}
-                <div className="flex items-center justify-between gap-3">
-                  <Label className="text-sm font-medium">
-                    Discount Percent
-                    {!(values.discountPercent && values.discountPercent.trim().length > 0) ? (
-                      <span className="ml-0.5 text-destructive">*</span>
-                    ) : null}
-                  </Label>
-                  <div className="relative w-64">
-                    <Input
-                      inputMode="decimal"
-                      placeholder="Enter discount"
-                      value={values.discountPercent ?? ""}
-                      onChange={(e) => setField("discountPercent", e.target.value)}
-                    />
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                      %
-                    </span>
+                          // Only allow numbers and dot (for decimals)
+                          if (/^\d*\.?\d*$/.test(value)) {
+                            setField(
+                              "discountPercent",
+                              value === "" ? null : Number(value)
+                            );
+                          }
+                        }}
+                      />
+
+                      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                        %
+                      </span>
+                    </div>
                   </div>
+                  {!discountPercentValid &&
+                    adData?.discountPercent !== null && (
+                      <p className="text-xs text-destructive">
+                        Discount percent must be between 0 and 100
+                      </p>
+                    )}
                 </div>
               </>
             ) : (
-              // Offer Detail
-              <div className="flex items-center justify-between gap-3">
-                <Label className="text-sm font-medium">
-                  Offer Detail
-                  {!(values.offerDetail && values.offerDetail.trim().length > 0) ? (
-                    <span className="ml-0.5 text-destructive">*</span>
-                  ) : null}
-                </Label>
-                <div className="w-64">
-                  <Textarea
-                    rows={2}
-                    maxLength={70}
-                    placeholder="Describe the offer, if e.g. it is a package-deal, Buy 1 Get 1 Free, etc..."
-                    value={values.offerDetail ?? ""}
-                    onChange={(e) => setField("offerDetail", e.target.value)}
-                  />
-                  <div className="mt-1 text-right text-xs text-muted-foreground">
-                    {values.offerDetail?.length ?? 0}/70
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center justify-between gap-3">
+                  <Label className="text-sm font-medium">
+                    Offer Detail
+                    {!offerDetailValid && (
+                      <span className="ml-0.5 text-destructive">*</span>
+                    )}
+                  </Label>
+                  <div className="w-64">
+                    <Textarea
+                      rows={2}
+                      maxLength={70}
+                      placeholder="Describe the offer, e.g., Buy 1 Get 1 Free"
+                      value={adData?.offerDetail}
+                      onChange={(e) => setField("offerDetail", e.target.value)}
+                    />
+                    <div className="mt-1 text-right text-xs text-muted-foreground">
+                      {adData?.offerDetail?.length}/70
+                    </div>
                   </div>
                 </div>
+                {!offerDetailValid && adData?.offerDetail && (
+                  <p className="text-xs text-destructive">
+                    Offer detail must be 1-70 characters
+                  </p>
+                )}
               </div>
             )}
 
-            {/* Actions */}
             <div className="flex items-center justify-end">
               <Button
                 variant="primary"
                 disabled={!valid}
-                className={cn("rounded-full px-6 transition-transform hover:translate-y-[-1px]")}
+                className={cn(
+                  "rounded-full px-6 transition-transform hover:translate-y-[-1px]"
+                )}
                 onClick={() => router.push("/post-ad/billing")}
               >
                 Continue
@@ -230,5 +342,5 @@ export function OfferInfoForm({
         </Card>
       </section>
     </div>
-  )
+  );
 }
