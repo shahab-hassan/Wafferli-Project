@@ -172,7 +172,7 @@ export function LoginForm() {
         </Button>
 
         {/* Divider */}
-        <div className="relative my-6">
+        {/* <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-grey-5"></div>
           </div>
@@ -181,10 +181,10 @@ export function LoginForm() {
               {t("Auth.login.orContinueWith")}
             </span>
           </div>
-        </div>
+        </div> */}
 
         {/* Social Login */}
-        <div className="space-y-3">
+        {/* <div className="space-y-3">
           <Button
             type="button"
             variant="outline"
@@ -224,7 +224,7 @@ export function LoginForm() {
             </svg>
             {t("Auth.login.signInWithApple")}
           </Button>
-        </div>
+        </div> */}
       </form>
     </div>
   );

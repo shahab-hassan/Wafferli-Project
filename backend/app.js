@@ -1,23 +1,16 @@
 const express = require("express");
 const cors = require("cors");
-const passport = require("passport");
 const session = require("express-session");
 const errorHandler = require("./middlewares/errorHandlerMW");
 const path = require("path");
 
 require("dotenv").config({ path: "./config/.env" });
-require("./config/passport.js");
 
-// Import the unified socket configuration
-const { app, server, io } = require("./config/socket.js"); // Add io here
-
-// Remove this duplicate app creation
-// const app = express();
+const { app, server, io } = require("./config/socket.js");
 
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Enhanced CORS configuration
 app.use(
   cors({
     origin: [
@@ -57,9 +50,6 @@ app.use(
   })
 );
 
-app.use(passport.initialize());
-app.use(passport.session());
-
 // Routes
 app.use("/api/v1/user", require("./routes/user.routes.js"));
 app.use("/api/v1/seller", require("./routes/seller.routes.js"));
@@ -69,7 +59,7 @@ app.use("/api/v1/notifications", require("./routes/notification.routes.js"));
 
 app.use(errorHandler);
 
-// Make io available to routes if needed
+
 app.set("io", io);
 
-module.exports = { app, server, io }; // Export io as well
+module.exports = { app, server, io };
