@@ -10,6 +10,7 @@ import "./globals.css";
 import { RoleProvider } from "@/contexts/roleContext";
 import { WishlistProvider } from "@/contexts/wishListContext";
 import { OnboardingProvider } from "@/contexts/onboarding-context";
+import ChatBot from "@/components/common/chatbot";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -50,6 +51,7 @@ export default async function LocaleLayout({
           >
             <NavbarAuth />
             <Breadcrumb />
+            <ChatBot/>
             <main className="flex-grow">{children}</main>
             <Footer />
           </div>
