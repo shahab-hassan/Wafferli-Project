@@ -16,9 +16,12 @@ const sendSignupOtp = async (req, res, next) => {
     if (!emailRegex.test(email))
       throw new ApiError(400, "Invalid email format");
 
-    const phoneRegex = /^\+?[1-9]\d{5,14}$/;
-    if (!phoneRegex.test(phoneNumber))
-      throw new ApiError(400, "Invalid phone number format");
+    // const phoneRegex = /^\+?[1-9]\d{5,14}$/;
+    // if (!phoneRegex.test(phoneNumber))
+    //   throw new ApiError(400, "Invalid phone number format");
+
+    if (!phoneNumber)
+      throw new ApiError(400, "Phone Number is required");
 
     // Check if user exists
     const existingUser = await User.findOne({ email });

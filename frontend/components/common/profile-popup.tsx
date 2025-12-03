@@ -164,7 +164,7 @@ export default function ProfileDropdown({
               onClick={toggleRole}
               className="w-full bg-primary text-white text-sm py-2 rounded-lg hover:brightness-95 transition"
             >
-              {t("becomeSeller")}
+              {t("switchToSeller")}
             </button>
           )}
         </div>
@@ -299,7 +299,7 @@ export default function ProfileDropdown({
             onClick={toggleRole}
             className="w-full bg-primary text-white text-sm py-2 rounded-lg hover:brightness-95 transition"
           >
-            {t("becomeSeller")}
+            {t("switchToSeller")}
           </button>
         )}
       </div>

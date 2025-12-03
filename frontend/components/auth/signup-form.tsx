@@ -248,7 +248,7 @@ export function SignupForm() {
             </div>
 
             {/* Referral Code Field */}
-            <div className="space-y-2">
+            {/*<div className="space-y-2">
               <div className="relative">
                 <UserRoundPlus
                   className={cn(
@@ -268,7 +268,7 @@ export function SignupForm() {
                   )}
                 />
               </div>
-            </div>
+            </div> */ }
 
             {/* Phone Number Field */}
             <div className="space-y-2">
