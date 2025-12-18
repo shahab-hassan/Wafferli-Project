@@ -5,11 +5,9 @@ import { routing } from "@/i18n/routing";
 import { Inter } from "next/font/google";
 import Footer from "@/components/common/footer/footer";
 import Breadcrumb from "@/components/common/breadcrumb-secction";
-import NavbarAuth from "@/components/common/navbar-auth";
+import Navbar from "@/components/common/navbar";
 import "./globals.css";
-import { RoleProvider } from "@/contexts/roleContext";
 import { WishlistProvider } from "@/contexts/wishListContext";
-import { OnboardingProvider } from "@/contexts/onboarding-context";
 import ChatBot from "@/components/common/chatbot";
 
 const inter = Inter({
@@ -20,8 +18,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Wafferli App",
-  description: "Created by DH Solution",
-  generator: "asjad ilahi",
+  description: "A web platform that connects customers and businesses through exclusive offers, powerful marketing tools, and a multi-purpose discovery ecosystem",
 };
 
 export default async function LocaleLayout({
@@ -41,15 +38,13 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider locale={locale}>
-      {" "}
-      {/* new: wrap with RoleProvider */}
       <WishlistProvider>
           <div
             lang={locale}
             dir={dir}
             className={`${inter.variable} flex flex-col min-h-screen`}
           >
-            <NavbarAuth />
+            <Navbar />
             <Breadcrumb />
             <ChatBot/>
             <main className="flex-grow">{children}</main>

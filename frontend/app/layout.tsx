@@ -1,7 +1,6 @@
 // app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { IsLoginProvider } from "@/contexts/isLoginContext"; // Import provider
 import "./globals.css";
 import { Providers } from "@/features/store/provider";
 import { Toaster } from "react-hot-toast";
@@ -33,8 +32,6 @@ export default function RootLayout({
       >
         <Providers>
           <AuthWrapper>
-            <IsLoginProvider>
-              {/* <Toaster /> */}
               <Toaster
                 position="top-right"
                 toastOptions={{
@@ -49,7 +46,6 @@ export default function RootLayout({
                 }}
               />
               {children}
-            </IsLoginProvider>
           </AuthWrapper>
         </Providers>
       </body>

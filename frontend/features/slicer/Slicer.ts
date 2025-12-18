@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-export const baseUrlImg = process.env.NEXT_PUBLIC_BASE_URL_IMG;
 
 //  Token getter function (checks both storages)
 const getToken = () => {

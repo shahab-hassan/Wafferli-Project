@@ -1,16 +1,18 @@
-//navbar
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { ChevronDown, Menu, X, Download } from "lucide-react";
+import { ChevronDown, Menu, X, Download, MessageCircle } from "lucide-react";
 import { Button } from "./button";
-// import { SearchBar } from "./nav-searchbar";
 import SearchBar from "../searchbar";
 import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import ProfileDropdown from "./profile-popup";
+import { useDispatch, useSelector } from "react-redux";
+import NotificationDropdown from "../notification";
+import { GetNotification } from "@/features/slicer/NotificationSlice";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,6 +20,9 @@ export default function Navbar() {
   const [mobileLangOpen, setMobileLangOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [moreModalOpen, setMoreModalOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+
+  const { isAuthenticated, user, role } = useSelector((state: any) => state.auth);
 
   const t = useTranslations("Navbar");
   const router = useRouter();
@@ -26,14 +31,22 @@ export default function Navbar() {
   const desktopLangRef = useRef<HTMLDivElement>(null);
   const mobileLangRef = useRef<HTMLDivElement>(null);
   const moreRef = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
 
   // get locale from pathname
   const currentLocale = (pathname || "").split("/")[1] === "ar" ? "ar" : "en";
 
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (isOpen && user) {
+      dispatch(GetNotification({ page: 1, limit: 10 }) as any);
+    }
+  }, [isOpen, user, dispatch]);
+
   const moreItems = [
     { label: t("about"), href: "/about" },
     { label: t("contact"), href: "/contact" },
-    // { label: t("for_businesses"), href: "/for-businesses" },
+    ...(isAuthenticated ? [{ label: t("giftcenter"), href: "/gift-card" }] : []),
     { label: t("privacy"), href: "/privacy-policy" },
     { label: t("terms"), href: "/terms" },
   ];
@@ -56,6 +69,12 @@ export default function Navbar() {
       if (moreRef.current && !moreRef.current.contains(event.target as Node)) {
         setMoreOpen(false);
       }
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(event.target as Node)
+      ) {
+        setProfileOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -67,6 +86,7 @@ export default function Navbar() {
     setMoreModalOpen(false);
     setDesktopLangOpen(false);
     setMobileLangOpen(false);
+    setProfileOpen(false);
   };
 
   const closeMoreModal = () => {
@@ -112,8 +132,17 @@ export default function Navbar() {
       window.removeEventListener("resize", measure);
       window.removeEventListener("load", measure);
     };
-    // We intentionally do NOT include many transient states here; ResizeObserver will handle layout changes.
   }, [pathname]);
+
+  const getInitials = (fullName: string) => {
+    if (!fullName) return "";
+    const parts = fullName.trim().split(" ");
+    if (parts.length === 1) {
+      const single = parts[0];
+      return single.slice(0, 2).toUpperCase(); // "Ali" -> "AL"
+    }
+    return parts[0][0].toUpperCase() + parts[1][0].toUpperCase();
+  };
 
   return (
     <>
@@ -178,7 +207,7 @@ export default function Navbar() {
                       className={cn(
                         "w-full text-left px-4 py-2 text-sm transition-colors hover:bg-primary hover:text-white flex items-center gap-2 rounded-t-lg",
                         currentLocale === "en" &&
-                          "bg-primary text-white font-medium"
+                        "bg-primary text-white font-medium"
                       )}
                     >
                       🇬🇧 English
@@ -188,7 +217,7 @@ export default function Navbar() {
                       className={cn(
                         "w-full text-left px-4 py-2 text-sm transition-colors hover:bg-primary hover:text-white flex items-center gap-2 rounded-b-lg",
                         currentLocale === "ar" &&
-                          "bg-primary text-white font-medium"
+                        "bg-primary text-white font-medium"
                       )}
                     >
                       🇰🇼 العربية
@@ -206,20 +235,86 @@ export default function Navbar() {
                 {t("app")}
               </Button>
 
-              <Link href={`/${currentLocale}/auth`}>
-                <Button variant="normal" size="sm" className="px-6">
-                  {t("login")}
-                </Button>
-              </Link>
-              <Link href={`/${currentLocale}/auth`}>
-                <Button
-                  variant="gradient"
-                  size="sm"
-                  className="text-white px-6"
-                >
-                  {t("signup")}
-                </Button>
-              </Link>
+              {isAuthenticated ? (
+                <>
+                  {/* Notifications Component */}
+                  <NotificationDropdown />
+
+                  {/* Messages */}
+                  <Link
+                    href="/chat"
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  >
+                    <MessageCircle size={20} className="text-gray-600" />
+                  </Link>
+
+                  {/* Profile Dropdown */}
+                  <div className="relative" ref={profileRef}>
+                    <button
+                      className="flex items-center gap-2 p-1 hover:bg-gray-100 rounded-full transition-colors"
+                      onClick={() => setProfileOpen(!profileOpen)}
+                    >
+                      <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                        <span className="text-white text-sm font-medium">
+                          {getInitials(user.fullName)}
+                        </span>
+                      </div>
+                      <ChevronDown
+                        size={16}
+                        className={cn(
+                          "transition-transform text-gray-600",
+                          profileOpen && "rotate-180"
+                        )}
+                      />
+                    </button>
+
+                    <ProfileDropdown
+                      currentLocale={currentLocale}
+                      open={profileOpen}
+                      onClose={() => setProfileOpen(false)}
+                      user={{
+                        name: user.fullName,
+                        email: user.email,
+                        initials: getInitials(user.fullName),
+                        points: 0,
+                      }}
+                    />
+                  </div>
+
+                  {/* Post Ad Button */}
+                  {role === "seller" && (
+                    <Link
+                      href={`/${currentLocale}/post-ad`}
+                      onClick={() => setProfileOpen(false)}
+                    >
+                      <Button
+                        variant="gradient"
+                        size="sm"
+                        className="text-white px-6"
+                      >
+                        {t("postAd")}
+                      </Button>
+                    </Link>
+                  )}
+                </>
+              ) : (
+                <>
+                  <Link href={`/${currentLocale}/auth?tab=signin`}>
+                    <Button variant="normal" size="sm" className="px-6">
+                      {t("login")}
+                    </Button>
+                  </Link>
+                  <Link href={`/${currentLocale}/auth?tab=signup`}>
+                    <Button
+                      variant="gradient"
+                      size="sm"
+                      className="text-white px-6"
+                    >
+                      {t("signup")}
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile Right Section - Language + Menu */}
@@ -259,7 +354,7 @@ export default function Navbar() {
                       className={cn(
                         "w-full text-left px-3 py-2 text-sm transition-colors hover:bg-primary hover:text-white flex items-center gap-2 rounded-t-lg",
                         currentLocale === "en" &&
-                          "bg-primary text-white font-medium"
+                        "bg-primary text-white font-medium"
                       )}
                     >
                       🇬🇧 English
@@ -269,7 +364,7 @@ export default function Navbar() {
                       className={cn(
                         "w-full text-left px-3 py-2 text-sm transition-colors hover:bg-primary hover:text-white flex items-center gap-2 rounded-b-lg",
                         currentLocale === "ar" &&
-                          "bg-primary text-white font-medium"
+                        "bg-primary text-white font-medium"
                       )}
                     >
                       🇰🇼 العربية
@@ -295,18 +390,22 @@ export default function Navbar() {
               >
                 {t("home")}
               </Link>
-              {/* <Link
-                href={`/${currentLocale}/offers`}
-                className="hover:text-primary transition-colors"
-              >
-                {t("offers")}
-              </Link>
-              <Link
-                href={`/${currentLocale}/flashdeals`}
-                className="flex items-center gap-1 text-tertiary font-semibold hover:text-primary transition-colors"
-              >
-                ⚡ {t("flashDeals")}
-              </Link> */}
+              {isAuthenticated && (
+                <Link
+                  href={`/${currentLocale}/offers`}
+                  className="hover:text-primary transition-colors"
+                >
+                  {t("offers")}
+                </Link>
+              )}
+              {isAuthenticated && (
+                <Link
+                  href={`/${currentLocale}/flashdeals`}
+                  className="flex items-center gap-1 text-tertiary font-semibold hover:text-primary transition-colors"
+                >
+                  ⚡ {t("flashDeals")}
+                </Link>
+              )}
               <Link
                 href={`/${currentLocale}/explore`}
                 className="hover:text-primary transition-colors"
@@ -376,9 +475,8 @@ export default function Navbar() {
 
         {/* Sidebar (Mobile Menu) */}
         <div
-          className={`fixed inset-0 z-50 bg-black/50 transition-opacity duration-300 ${
-            isOpen ? "opacity-100 visible" : "opacity-0 invisible"
-          }`}
+          className={`fixed inset-0 z-50 bg-black/50 transition-opacity duration-300 ${isOpen ? "opacity-100 visible" : "opacity-0 invisible"
+            }`}
           onClick={closeMobileMenu}
         >
           <aside
@@ -388,8 +486,8 @@ export default function Navbar() {
               isOpen
                 ? "translate-x-0"
                 : currentLocale === "ar"
-                ? "-translate-x-full"
-                : "translate-x-full"
+                  ? "-translate-x-full"
+                  : "translate-x-full"
             )}
             onClick={(e) => e.stopPropagation()}
           >
@@ -410,6 +508,76 @@ export default function Navbar() {
               <SearchBar />
             </div>
 
+            {isAuthenticated && (
+              <div className="flex items-center gap-3 px-6 py-2 border-b border-grey-5">
+                <NotificationDropdown />
+
+                <Link
+                  href={`/${currentLocale}/chat`}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  onClick={closeMobileMenu}
+                >
+                  <MessageCircle size={20} className="text-gray-600" />
+                </Link>
+
+                <div className="ml-auto">
+                  <div className="relative" ref={mobileLangRef}>
+                    <button
+                      className="flex items-center gap-1 text-sm hover:text-primary transition-colors"
+                      onClick={() => setMobileLangOpen(!mobileLangOpen)}
+                    >
+                      {currentLocale === "en" ? (
+                        <span role="img" aria-label="english-flag">
+                          🇬🇧
+                        </span>
+                      ) : (
+                        <span role="img" aria-label="arabic-flag">
+                          🇰🇼
+                        </span>
+                      )}
+                      <ChevronDown
+                        size={14}
+                        className={cn(
+                          "transition-transform",
+                          mobileLangOpen && "rotate-180"
+                        )}
+                      />
+                    </button>
+
+                    {mobileLangOpen && (
+                      <div
+                        className={cn(
+                          "absolute top-full mt-2 w-36 bg-background border border-border rounded-lg shadow-lg z-[60]",
+                          currentLocale === "ar" ? "left-0" : "right-0"
+                        )}
+                      >
+                        <button
+                          onClick={() => switchLocale("en")}
+                          className={cn(
+                            "w-full text-left px-3 py-2 text-sm transition-colors hover:bg-primary hover:text-white flex items-center gap-2 rounded-t-lg",
+                            currentLocale === "en" &&
+                            "bg-primary text-white font-medium"
+                          )}
+                        >
+                          🇬🇧 English
+                        </button>
+                        <button
+                          onClick={() => switchLocale("ar")}
+                          className={cn(
+                            "w-full text-left px-3 py-2 text-sm transition-colors hover:bg-primary hover:text-white flex items-center gap-2 rounded-b-lg",
+                            currentLocale === "ar" &&
+                            "bg-primary text-white font-medium"
+                          )}
+                        >
+                          🇰🇼 العربية
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="flex-1 overflow-y-auto min-h-0">
               <nav className="flex flex-col pt-2 px-6 text-normal-regular text-color-grey-2">
                 <Link
@@ -419,20 +587,24 @@ export default function Navbar() {
                 >
                   {t("home")}
                 </Link>
-                {/* <Link
-                  href={`/${currentLocale}/offers`}
-                  className="hover:text-primary transition-colors py-1.5"
-                  onClick={closeMobileMenu}
-                >
-                  {t("offers")}
-                </Link> */}
-                {/* <Link
-                  href={`/${currentLocale}/flashdeals`}
-                  className="flex items-center gap-1 text-tertiary font-semibold hover:text-primary transition-colors py-1.5"
-                  onClick={closeMobileMenu}
-                >
-                  ⚡ {t("flashDeals")}
-                </Link> */}
+                {isAuthenticated && (
+                  <Link
+                    href={`/${currentLocale}/offers`}
+                    className="hover:text-primary transition-colors py-1.5"
+                    onClick={closeMobileMenu}
+                  >
+                    {t("offers")}
+                  </Link>
+                )}
+                {isAuthenticated && (
+                  <Link
+                    href={`/${currentLocale}/flashdeals`}
+                    className="flex items-center gap-1 text-tertiary font-semibold hover:text-primary transition-colors py-1.5"
+                    onClick={closeMobileMenu}
+                  >
+                    ⚡ {t("flashDeals")}
+                  </Link>
+                )}
                 <Link
                   href={`/${currentLocale}/explore`}
                   className="hover:text-primary transition-colors py-1.5"
@@ -449,7 +621,6 @@ export default function Navbar() {
                 </Link>
                 <Link
                   href={`/${currentLocale}/service`}
-                  // href={`/${currentLocale}/marketplace?tab=services`}
                   className="hover:text-primary transition-colors py-1.5"
                   onClick={closeMobileMenu}
                 >
@@ -472,12 +643,29 @@ export default function Navbar() {
                     <ChevronDown size={16} />
                   </button>
                 </div>
+
+                {isAuthenticated && (
+                  <div className="border-t border-grey-5 mt-4 pt-4 px-0">
+                    <ProfileDropdown
+                      currentLocale={currentLocale}
+                      open={true}
+                      onClose={closeMobileMenu}
+                      user={{
+                        name: user.fullName,
+                        email: user.email,
+                        initials: getInitials(user.fullName),
+                        points: 0,
+                      }}
+                      mobileLayout
+                    />
+                  </div>
+                )}
               </nav>
 
               <div className="h-4"></div>
             </div>
 
-            <div className="flex-shrink-0 flex flex-col gap-3 px-1 py-4 border-t border-grey-5 bg-background">
+            <div className="flex-shrink-0 flex flex-col gap-3 px-6 py-4 border-t border-grey-5 bg-background">
               <Button
                 variant="outline"
                 size="lg"
@@ -486,26 +674,48 @@ export default function Navbar() {
                 <Download size={16} />
                 {t("app")}
               </Button>
-              <Link href={`/${currentLocale}/auth`}>
-                <Button
-                  variant="normal"
-                  size="lg"
-                  className="flex w-full items-center gap-2 justify-center min-h-[40px]"
-                  onClick={closeMobileMenu}
-                >
-                  {t("login")}
-                </Button>
-              </Link>
-              <Link href={`/${currentLocale}/auth`}>
-                <Button
-                  variant="gradient"
-                  size="lg"
-                  className="flex w-full items-center gap-2 justify-center text-white min-h-[40px]"
-                  onClick={closeMobileMenu}
-                >
-                  {t("signup")}
-                </Button>
-              </Link>
+              {isAuthenticated ? (
+                <>
+                  {role === "seller" && (
+                    <Link
+                      href={`/${currentLocale}/post-ad`}
+                      onClick={closeMobileMenu}
+                    >
+                      <Button
+                        variant="gradient"
+                        size="lg"
+                        className="flex w-full items-center gap-2 justify-center text-white min-h-[40px]"
+                        onClick={closeMobileMenu}
+                      >
+                        {t("postAd")}
+                      </Button>
+                    </Link>
+                  )}
+                </>
+              ) : (
+                <>
+                  <Link href={`/${currentLocale}/auth?tab=signin`}>
+                    <Button
+                      variant="normal"
+                      size="lg"
+                      className="flex w-full items-center gap-2 justify-center min-h-[40px]"
+                      onClick={closeMobileMenu}
+                    >
+                      {t("login")}
+                    </Button>
+                  </Link>
+                  <Link href={`/${currentLocale}/auth?tab=signup`}>
+                    <Button
+                      variant="gradient"
+                      size="lg"
+                      className="flex w-full items-center gap-2 justify-center text-white min-h-[40px]"
+                      onClick={closeMobileMenu}
+                    >
+                      {t("signup")}
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </aside>
         </div>

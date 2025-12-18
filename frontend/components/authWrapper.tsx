@@ -17,26 +17,45 @@ export default function AuthWrapper({
 
   const { isAuthenticated, user } = useSelector((state: any) => state.auth);
 
-  console.log(
-    "AuthWrapper: isAuthenticated =",
-    isAuthenticated,
-    "user =",
-    user
-  );
   //  Protect these routes
   const protectedRoutes = [
     "/en/chat",
     "/en/become-seller",
-    "/ar/settings",
-    "/en/my-wallet",
-    "/en/all-my-ads",
+    "/en/settings",
+    "/en/wishlist",
+    "/en/wallet",
+    "/en/contact",
+
+    "/en/for-businesses",
+    "/en/gift-card",
+
     // Arabic
-    "/ar/become-seller",
     "/ar/chat",
+    "/ar/become-seller",
     "/ar/settings",
-    "/en/my-wallet",
+    "/ar/wishlist",
+    "/ar/wallet",
+    "/ar/contact",
+
+    "/ar/for-businesses",
+    "/ar/gift-card",
+  ];
+
+  const sellerOnlyRoutes = [
+    "/en/post-ad",
+    "/en/edit-ad",
     "/en/all-my-ads",
-    ,
+
+    "/en/my-ads",
+    "/en/boost-ad-listing",
+
+    // Arabic
+    "/ar/post-ad",
+    "/ar/edit-ad",
+    "/ar/all-my-ads",
+
+    "/ar/my-ads",
+    "/ar/boost-ad-listing",
   ];
 
   //  Auth pages (never redirect from here)
@@ -50,6 +69,10 @@ export default function AuthWrapper({
       (route) => pathname === route || pathname.startsWith(route + "/")
     );
 
+    const isSellerRoute = sellerOnlyRoutes.some(
+      (route) => pathname === route || pathname.startsWith(route + "/")
+    );
+
     const isPublic = publicPrefixes.some((prefix) =>
       pathname.startsWith(prefix)
     );
@@ -57,62 +80,54 @@ export default function AuthWrapper({
     const isArabic = pathname.startsWith("/ar");
 
     // ✅ Public route → skip auth check
-    if (isPublic) {
+    if (isPublic && !token) {
       setAuthChecked(true);
       return;
     }
 
     // ✅ No token and trying to access protected route → redirect
-    if (isProtected && !token) {
+    if ((isProtected || isSellerRoute) && !token) {
       router.replace(isArabic ? "/ar/auth" : "/en/auth");
       return;
     }
 
-    // ✅ If already authenticated → skip API call
-    if (isAuthenticated) {
-      console.log("✅ Already authenticated, skipping CheckAuth API");
-      setAuthChecked(true);
-      return;
-    }
-
-    // ✅ Token exists but not verified yet → call CheckAuth once
-    if (token) {
-      console.log("🔍 First-time auth check...");
-
+    // 🔁 Token exists but redux not hydrated
+    if (token && !isAuthenticated) {
       dispatch(CheckAuth() as any)
         .unwrap()
         .then((res: any) => {
-          console.log("✅ Auth success:", res);
+          const role = res?.data?.role;
+
+          if (isSellerRoute && role !== "seller") {
+            router.replace(
+              isArabic ? "/ar/become-seller" : "/en/become-seller"
+            );
+            return;
+          }
+
           setAuthChecked(true);
         })
-        .catch((err: any) => {
-          console.log("❌ Auth failed:", err);
-
-          const statusCode =
-            err?.statusCode ||
-            err?.response?.status ||
-            err?.status ||
-            err?.code ||
-            null;
-
-          if (statusCode === 401 || statusCode === 403) {
-            localStorage.removeItem("token");
-            sessionStorage.removeItem("token");
-            sessionStorage.removeItem("hasAuthChecked");
-
-            if (isProtected) {
-              router.replace(isArabic ? "/ar/auth" : "/en/auth");
-            } else {
-              setAuthChecked(true);
-            }
-          } else {
-            console.warn("⚠️ Network issue, token preserved.");
-            setAuthChecked(true);
-          }
+        .catch(() => {
+          localStorage.removeItem("token");
+          sessionStorage.removeItem("token");
+          router.replace(isArabic ? "/ar/auth" : "/en/auth");
         });
-    } else {
-      setAuthChecked(true);
+
+      return;
     }
+
+    // 🔒 Already authenticated → role check
+    if (isAuthenticated) {
+      if (isSellerRoute && user?.role !== "seller") {
+        router.replace(
+          isArabic ? "/ar/become-seller" : "/en/become-seller"
+        );
+        return;
+      }
+    }
+
+    setAuthChecked(true);
+
   }, [dispatch, pathname, router, isAuthenticated]);
 
   if (!authChecked) {

@@ -7,7 +7,6 @@ import {
   SEND_SIGNUP_OTP_API,
   VERIFY_SIGNUP_OTP_API,
   CHECK_AUTH_API,
-  USER_DETALS_API,
   VERIFY_OTP_API,
   LOGIN_API,
   LOGOUT_API,
@@ -123,7 +122,6 @@ export const CheckAuth = createAsyncThunk(
   "auth/CheckAuth",
   async (_, { rejectWithValue }) => {
     try {
-      console.log("check Auth");
       const res = await axios.get(baseUrl + CHECK_AUTH_API, getConfig());
       return res.data;
     } catch (err) {

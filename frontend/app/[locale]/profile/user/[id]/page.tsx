@@ -1,15 +1,13 @@
 "use client"
 
 import { useParams } from "next/navigation"
-import LocationSection from "@/components/marketplace/location-section"
-import ReviewsSection from "@/components/marketplace/reviews-section"
 import AdsGrid from "@/components/profile/ads-grid"
 import UserSidebar from "@/components/profile/user-sidebar"
 
 // Mock data - in real app, this would come from API based on the ID
 const getUserData = (id: string) => ({
   id,
-  name: "Mohammad Mohid",
+  name: "Shahab Hassan",
   memberSince: "14 August, 2025",
   activeAds: 10,
   phone: "+965 2222 3333",

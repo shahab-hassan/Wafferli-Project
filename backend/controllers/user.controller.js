@@ -281,6 +281,8 @@ const checkAuth = async (req, res, next) => {
       _id: fullUser._id,
       fullName: fullUser.fullName,
       email: fullUser.email,
+      phone: fullUser.phone,
+      role: fullUser.role,
       referralCode: fullUser.referralCode,
       loyaltyPoints: userLoyaltyPoints, // ✅ Direct from user model
       membershipStatus, // ✅ Calculated based on user's points

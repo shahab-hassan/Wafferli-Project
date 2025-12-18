@@ -180,7 +180,7 @@ export default function MyAdsPage() {
             <PaymentMethodCard
               brand="Visa"
               last4="1234"
-              name="Daud"
+              name="Sarah Johnson"
               expiry="12/27"
               lastSuccess="Apr 25, 2025"
               onUpdate={() => alert("Demo: Update Payment Method")}

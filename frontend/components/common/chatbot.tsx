@@ -17,7 +17,6 @@ Main Menu Pages:
 6. Flash Deals - Route: /flash-deals
 7. Marketplace - Route: /marketplace
 8. Weddings & Events - Route: /weddings-events
-9. For Businesses - Route: /for-businesses
 10. Blog / News - Route: /blog
 11. About Wafferli - Route: /about
 12. FAQs - Route: /faq
@@ -85,12 +84,6 @@ Admin Control: All content dynamically managed from CMS with start/end date sett
 · Filters: event type, location, budget
 · Dedicated detail pages
 · Subcategory under Explore or separate main section
-
-11. FOR BUSINESSES
-· Benefits of joining Wafferli
-· Ads & listing models (monthly, per-customer, banners)
-· Case studies / testimonials
-· Become a partner form or WhatsApp CTA
 
 12. BLOG / NEWS
 · SEO articles, updates, top 10 lists

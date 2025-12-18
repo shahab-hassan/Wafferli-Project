@@ -10,15 +10,6 @@ import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { CheckAuth, Logout, setRole } from "@/features/slicer/AuthSlice";
 
-type User = {
-  _id?: string;
-  fullName?: string;
-  email?: string;
-  referralCode?: string;
-  loyaltyPoints?: number;
-  membershipStatus?: string;
-};
-
 type Props = {
   currentLocale: "en" | "ar";
   open: boolean;
@@ -33,8 +24,7 @@ export default function ProfileDropdown({
   mobileLayout = false,
 }: Props) {
   const t = useTranslations("Navbar");
-  const role = useSelector((state: any) => state.auth.role);
-  const { isAuthenticated, user } = useSelector((state: any) => state.auth);
+  const { isAuthenticated, user, role } = useSelector((state: any) => state.auth);
   const dispatch = useDispatch();
 
   const dropdownRef = React.useRef<HTMLDivElement | null>(null);
@@ -57,31 +47,7 @@ export default function ProfileDropdown({
       localStorage.removeItem("token");
       sessionStorage.removeItem("token");
     }
-  };
-
-  const toggleRole = async () => {
-    try {
-      if (role === "user") {
-        // ✅ Backend role check
-        const res = await dispatch(CheckAuth() as any).unwrap();
-        console.log(res, "response");
-        const backendRole = res?.data?.role;
-
-        if (backendRole === "user") {
-          // ✅ Backend bhi user → Go to become seller
-          router.push("/become-seller");
-        } else {
-          // ✅ Backend role seller hai → go to seller
-          dispatch(setRole("seller") as any);
-        }
-      } else {
-        // ✅ Redux role seller → switch to user
-        dispatch(setRole("user") as any);
-        router.push("/");
-      }
-    } catch (error) {
-      console.error("Auth check failed:", error);
-    }
+    window.location.href = `/${currentLocale}`;
   };
 
   React.useEffect(() => {
@@ -161,8 +127,8 @@ export default function ProfileDropdown({
           </div>
           {role === "user" && (
             <button
-              onClick={toggleRole}
-              className="w-full bg-primary text-white text-sm py-2 rounded-lg hover:brightness-95 transition"
+              onClick={() => router.push("/become-seller")}
+              className="w-full bg-primary text-white text-sm py-2 rounded-lg hover:brightness-95 transition cursor-pointer"
             >
               {t("switchToSeller")}
             </button>
@@ -296,8 +262,8 @@ export default function ProfileDropdown({
 
         {role === "user" && (
           <button
-            onClick={toggleRole}
-            className="w-full bg-primary text-white text-sm py-2 rounded-lg hover:brightness-95 transition"
+            onClick={() => router.push("/become-seller")}
+            className="w-full bg-primary text-white text-sm py-2 rounded-lg hover:brightness-95 transition cursor-pointer"
           >
             {t("switchToSeller")}
           </button>
@@ -348,7 +314,7 @@ export default function ProfileDropdown({
 
           <div
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 hover:bg-red-600 hover:text-white transition-colors text-red-600"
+            className="flex items-center gap-3 px-4 py-3 hover:bg-red-600 hover:text-white transition-colors text-red-600 cursor-pointer"
           >
             <LogOut size={16} />
             <span className="text-sm">{t("logout")}</span>

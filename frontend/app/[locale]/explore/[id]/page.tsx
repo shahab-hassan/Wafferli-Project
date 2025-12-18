@@ -3,21 +3,10 @@
 import { useState, useEffect } from "react";
 import {
   ArrowLeft,
-  Heart,
-  Share2,
   MapPin,
-  Clock,
   Phone,
   Globe,
   Star,
-  Car,
-  Wifi,
-  Baby,
-  CreditCard,
-  Coffee,
-  MessageCircle,
-  ThumbsUp,
-  User,
 } from "lucide-react";
 import { Badge } from "@/components/common/badge";
 import { Card, CardContent } from "@/components/common/shadecn-card";
@@ -33,8 +22,6 @@ import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import {
   GetFeaturedExploreDetails,
-  GetAdReviews,
-  toggleFavorite,
 } from "@/features/slicer/AdSlice";
 import { RootState } from "@/features/store/store";
 import ReviewsSection from "@/components/marketplace/reviews-section";
