@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/common/button";
 import { GetFeaturedExplore } from "@/features/slicer/AdSlice";
+import { ArrowLeftIcon, ArrowRight, ArrowRightIcon } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useEffect } from "react";
@@ -556,11 +557,11 @@ const BusinessDiscoveryCarousel: React.FC = () => {
             <div className="carousel-buttons">
               <Link href="/offers">
                 <Button variant="tertiary" size="lg">
-                  {t("buttons.exploreDeal")} {isRTL ? "←" : "→"}
+                  {t("buttons.exploreDeal")} {isRTL ? <ArrowLeftIcon /> : <ArrowRightIcon />}
                 </Button>
               </Link>
 
-              <Link href="/products">
+              <Link href="/product">
                 <Button variant="normal">Explore Products</Button>
               </Link>
             </div>
@@ -596,7 +597,7 @@ const BusinessDiscoveryCarousel: React.FC = () => {
           <div className="mobile-buttons md:hidden">
             <Link href="/offers">
               <Button variant="tertiary" size="lg">
-                {t("buttons.exploreDeal")} {isRTL ? "←" : "→"}
+                {t("buttons.exploreDeal")} {isRTL ? <ArrowLeftIcon /> : <ArrowRightIcon />}
               </Button>
             </Link>
 

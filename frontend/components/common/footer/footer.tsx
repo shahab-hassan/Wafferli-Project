@@ -14,12 +14,12 @@ const Footer: React.FC = () => {
     customers: [
       { key: 'browseDeals', href: '/offers' },
       { key: 'flashDeals', href: '/flashdeals' },
-      { key: 'mobileApps', href: '/apps' },
+      // { key: 'mobileApps', href: '/apps' },
       { key: 'helpCenter', href: '/contact' }
     ],
     businesses: [
       { key: 'partnerWithUs', href: '/contact' },
-      { key: 'pricingPlans', href: '/for-businesses' }
+      // { key: 'pricingPlans', href: '/for-businesses' }
     ],
     company: [
       { key: 'aboutWafferli', href: '/about' },

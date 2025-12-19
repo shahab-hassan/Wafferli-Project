@@ -93,7 +93,7 @@ export default function ProductDetailPage({
           <div className="lg:col-span-2 space-y-6">
             {/* Image Gallery */}
             <Card className="overflow-hidden rounded-3xl shadow-sm">
-              <div className="relative h-80 md:h-96">
+              <div className="relative h-80 md:h-[520px]">
                 {productData.images?.[0] ? (
                   <Image
                     src={
@@ -394,7 +394,7 @@ export default function ProductDetailPage({
                           (img: string, index: number) => (
                             <div
                               key={index}
-                              className="relative h-32 rounded-lg overflow-hidden"
+                              className="relative h-42 rounded-lg overflow-hidden"
                             >
                               <Image
                                 src={img}

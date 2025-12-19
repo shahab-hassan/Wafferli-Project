@@ -56,6 +56,8 @@ app.use("/api/v1/seller", require("./routes/seller.routes.js"));
 app.use("/api/v1/ad", require("./routes/ad.routes.js"));
 app.use("/api/v1/chat", require("./routes/chat.routes.js"));
 app.use("/api/v1/notifications", require("./routes/notification.routes.js"));
+app.use("/api/v1/admins", require("./routes/adminRoute.js"));
+app.use("/api/v1/settings/admin", require("./routes/adminSettingsRoute.js"));
 
 app.use(errorHandler);
 

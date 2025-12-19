@@ -130,7 +130,7 @@ export default function ProfileDropdown({
               onClick={() => router.push("/become-seller")}
               className="w-full bg-primary text-white text-sm py-2 rounded-lg hover:brightness-95 transition cursor-pointer"
             >
-              {t("switchToSeller")}
+              {t("becomeSeller")}
             </button>
           )}
         </div>
@@ -265,7 +265,7 @@ export default function ProfileDropdown({
             onClick={() => router.push("/become-seller")}
             className="w-full bg-primary text-white text-sm py-2 rounded-lg hover:brightness-95 transition cursor-pointer"
           >
-            {t("switchToSeller")}
+            {t("becomeSeller")}
           </button>
         )}
       </div>

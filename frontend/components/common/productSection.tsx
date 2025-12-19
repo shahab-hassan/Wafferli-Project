@@ -64,8 +64,6 @@ export default function ProductSection() {
     );
   }
 
-  console.log("Featured Products:", productItems);
-
   return (
     <div className="mb-10">
       <div className="w-full">
@@ -79,7 +77,7 @@ export default function ProductSection() {
               768: { slidesPerView: 2, spaceBetween: 20 },
               1024: { slidesPerView: 3, spaceBetween: 24 },
               1280: { slidesPerView: 4, spaceBetween: 24 },
-              1536: { slidesPerView: 5, spaceBetween: 24 },
+              1536: { slidesPerView: 4, spaceBetween: 24 },
             }}
             navigation={{
               prevEl: navigationPrevRef.current,

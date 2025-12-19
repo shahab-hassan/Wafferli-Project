@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/user.model");
+const adminModel = require("../models/adminModel");
 
 exports.authorized = asyncHandler(async (req, res, next) => {
 
@@ -45,6 +46,33 @@ exports.optionalAuth = asyncHandler(async (req, res, next) => {
   }
 
   next();
+});
+
+exports.authorizeAdmin = asyncHandler(async (req, res, next) => {
+
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+        res.status(401);
+        throw new Error("Please login to access this resource!");
+    }
+
+    const token = authHeader.split(' ')[1];
+
+    if (!token) {
+        res.status(401);
+        throw new Error("Please login to access this resource!");
+    }
+
+    const decode = jwt.verify(token, process.env.JWT_TOKEN_SECRET);
+    req.admin = await adminModel.findById(decode.id);
+
+    if (!req.admin) {
+        res.status(401);
+        throw new Error("User not found, please login!");
+    }
+
+    next();
 });
 
 
@@ -137,32 +165,6 @@ exports.optionalAuth = asyncHandler(async (req, res, next) => {
 
 
 
-// exports.authorizeAdmin = asyncHandler(async (req, res, next) => {
-
-//     const authHeader = req.headers.authorization;
-
-//     if (!authHeader) {
-//         res.status(401);
-//         throw new Error("Please login to access this resource!");
-//     }
-
-//     const token = authHeader.split(' ')[1];
-
-//     if (!token) {
-//         res.status(401);
-//         throw new Error("Please login to access this resource!");
-//     }
-
-//     const decode = jwt.verify(token, process.env.JWT_TOKEN_SECRET);
-//     req.admin = await adminModel.findById(decode.id);
-
-//     if (!req.admin) {
-//         res.status(401);
-//         throw new Error("User not found, please login!");
-//     }
-
-//     next();
-// });
 
 // exports.authorizedRoles = (...roles) => {
 //     return (req, res, next) => {

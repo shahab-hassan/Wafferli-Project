@@ -46,7 +46,7 @@ export default function Navbar() {
   const moreItems = [
     { label: t("about"), href: "/about" },
     { label: t("contact"), href: "/contact" },
-    ...(isAuthenticated ? [{ label: t("giftcenter"), href: "/gift-card" }] : []),
+    // ...(isAuthenticated ? [{ label: t("giftcenter"), href: "/gift-card" }] : []),
     { label: t("privacy"), href: "/privacy-policy" },
     { label: t("terms"), href: "/terms" },
   ];

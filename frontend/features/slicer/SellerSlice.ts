@@ -16,7 +16,6 @@ export const CreateSeller = createAsyncThunk(
         getConfigFormData()
       );
 
-      toast.success(response.data.message || "Seller created successfully!");
       return response.data;
     } catch (err) {
       const errorMsg = HandleApiError(err);
@@ -85,7 +84,6 @@ const Seller = createSlice({
       .addCase(CreateSeller.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        // ✅ Use response data safely
         state.sellerData = action.payload?.data || action.payload;
         sessionStorage.setItem("sellerData", JSON.stringify(state.sellerData));
       })

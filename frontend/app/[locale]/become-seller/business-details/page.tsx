@@ -88,11 +88,10 @@ export default function Step3() {
     try {
       setIsloading(true);
       const res = await dispatch(CreateSeller(formData) as any).unwrap();
-      console.log(res, "res");
 
       if (res.success) {
-        toast.success("Seller created successfully! 🎉");
-        router.push("/");
+        toast.success("Seller profile created successfully! 🎉");
+        window.location.href = "/";
       }
     } catch (error) {
       console.error(error);

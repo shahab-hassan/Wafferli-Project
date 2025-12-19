@@ -28,7 +28,7 @@ const SettingsPage: React.FC = () => {
         </div>
 
         {/* Seller-only sections */}
-        {role === "seller" && (
+        {/* {role === "seller" && (
           <>
             <Card>
               <CardHeader>
@@ -42,10 +42,9 @@ const SettingsPage: React.FC = () => {
               </CardContent>
             </Card>
 
-            {/* Ad Settings */}
             <AdSettingsSection />
           </>
-        )}
+        )} */}
       </div>
     </div>
   );

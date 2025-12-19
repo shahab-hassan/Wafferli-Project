@@ -136,8 +136,6 @@ export default function ProductPage() {
           }
         });
 
-        console.log("Fetching products with filters:", filters);
-
         const res = await dispatch(
           GetAllProducts({
             page,
@@ -145,8 +143,6 @@ export default function ProductPage() {
             ...filters,
           }) as any
         ).unwrap();
-
-        console.log("API Response:", res);
 
         if (res.success) {
           setProductsData(res.data);
@@ -188,8 +184,6 @@ export default function ProductPage() {
           }
         });
 
-        console.log("Searching products with filters:", { query, ...filters });
-
         const res = await dispatch(
           SearchProducts({
             query,
@@ -198,8 +192,6 @@ export default function ProductPage() {
             ...filters,
           }) as any
         ).unwrap();
-
-        console.log("Search API Response:", res);
 
         if (res.success) {
           setProductsData(res.data);
@@ -309,11 +301,8 @@ export default function ProductPage() {
   // Transform API data to AdCard format for products
   const transformedProductsData = useMemo(() => {
     if (!productsData?.productAds) {
-      console.log("No productAds found in data:", productsData);
       return [];
     }
-
-    console.log("Transforming productAds:", productsData.productAds);
 
     return productsData.productAds.map((item: any) => ({
       id: item._id,
@@ -326,8 +315,9 @@ export default function ProductPage() {
       rating: item.rating || 0,
       reviewCount: item.reviewsCount || 0,
       askingPrice: item.askingPrice || 0,
-      discountedPrice: item.discountedPrice,
       discount: item.discount,
+      discountPercent: item.discountPercent,
+      discountedPrice: item.discountedPrice,
       inStock: item.quantity !== null && item.quantity > 0,
       location: `${item.city || ""}, ${item.neighbourhood || ""}`
         .trim()
@@ -338,28 +328,11 @@ export default function ProductPage() {
     }));
   }, [productsData]);
 
+  
   // Get all products
   const allProducts = useMemo(() => {
-    console.log("All products:", transformedProductsData);
     return transformedProductsData;
   }, [transformedProductsData]);
-
-  // Debug logs
-  useEffect(() => {
-    console.log("Products Data:", productsData);
-    console.log("Transformed Products:", transformedProductsData);
-    console.log("All Products:", allProducts);
-    console.log("Loading:", loading);
-    console.log("Active Filters:", activeFilters);
-    console.log("Sort By:", sortBy);
-  }, [
-    productsData,
-    transformedProductsData,
-    allProducts,
-    loading,
-    activeFilters,
-    sortBy,
-  ]);
 
   return (
     <div className="min-h-screen bg-background font-sans overflow-x-hidden">
@@ -558,7 +531,7 @@ export default function ProductPage() {
                       </p>
                     </div>
                   )}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 place-items-center">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 place-items-center">
                     {allProducts.map((product: any) => (
                       <AdCard key={product.id} {...product} />
                     ))}

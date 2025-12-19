@@ -5,7 +5,6 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import WishlistButton from "@/components/common/wishlist-button";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 
 // Base interface for all ad types
@@ -117,7 +116,6 @@ export default function AdCard(props: AdCardProps) {
     showBadge = true,
   } = props;
 
-  const router = useRouter();
   const { isAuthenticated } = useSelector((state: any) => state.auth);
 
   // Helper function to truncate text
@@ -634,26 +632,32 @@ export default function AdCard(props: AdCardProps) {
   return (
     <div className="block transition-opacity duration-200 hover:opacity-95 !w-full">
       <div className="group relative w-full max-w-[320px] bg-white rounded-[12px] overflow-hidden border border-grey-5 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
-        {/* Image Section - Fixed Height */}
-        <Link href={getItemLink(id, type)} className="flex-shrink-0">
-          <div className="relative h-[145px] overflow-hidden bg-grey-5">
-            <img
-              src={image || "/placeholder.svg?height=145&width=320"}
-              alt={title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
 
-            {ShowFavorite && (
-              <div className="absolute top-2 right-2">
-                <WishlistButton adId={id} isFavorited={isFavorited} />
-              </div>
-            )}
-          </div>
+        {/* Image Section */}
+        <div className="relative h-[170px] overflow-hidden bg-grey-5">
+
+          <Link href={getItemLink(id, type)}>
+            <img
+              src={image || "/placeholder.svg"}
+              alt={title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+            />
+          </Link>
+
+          {(ShowFavorite && isAuthenticated) && (
+            <div className="absolute top-2 right-2 z-10">
+              <WishlistButton adId={id} isFavorited={isFavorited} />
+            </div>
+          )}
+        </div>
+
+        {/* Content Section */}
+        <Link href={getItemLink(id, type)} className="flex-grow min-h-[180px]">
+          {renderCardContent()}
         </Link>
 
-        {/* Dynamic Content Section - Flexible Height */}
-        <div className="flex-grow min-h-[180px]">{renderCardContent()}</div>
       </div>
     </div>
+
   );
 }
