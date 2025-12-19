@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/common/dailog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/common/dialog"
 import { Input } from "@/components/common/input"
 import { Button } from "@/components/common/button"
 import { ScrollArea } from "@/components/common/scroll-area"
