@@ -22,7 +22,7 @@ function AdminEmail() {
         const fetchAllEmails = async () => {
             try {
                 const { data } = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_URL}/api/v1/settings/admin/emails`,
+                    `${process.env.REACT_APP_BACKEND_URL}/api/v1/admin/settings/emails`,
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
                 setEmails(data.emails || []);
@@ -105,7 +105,7 @@ function AdminEmail() {
         try {
             setIsDeleting(true);
             await axios.post(
-                `${process.env.REACT_APP_BACKEND_URL}/api/v1/settings/admin/emails/delete`,
+                `${process.env.REACT_APP_BACKEND_URL}/api/v1/admin/settings/emails/delete`,
                 { email: emailToDelete },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -135,7 +135,7 @@ function AdminEmail() {
             }
 
             const { data } = await axios.post(
-                `${process.env.REACT_APP_BACKEND_URL}/api/v1/settings/admin/emails/add`,
+                `${process.env.REACT_APP_BACKEND_URL}/api/v1/admin/settings/emails/add`,
                 { emails: validEmails },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

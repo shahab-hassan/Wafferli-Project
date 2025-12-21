@@ -185,7 +185,7 @@ export function BlogSlider({
                       style={{ minWidth: `${cardWidth}px`, transform: 'translateZ(0)' }}
                     >
                       <Link 
-                        href={`/blog/${item.id}`}
+                        href={`/blog/${item.slug}`}
                         className="block transition-opacity duration-200 hover:opacity-95"
                       >
                         <BlogCard {...item} />

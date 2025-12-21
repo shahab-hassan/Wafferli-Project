@@ -1,87 +1,134 @@
-import React from 'react'
-import axios from "axios"
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { enqueueSnackbar } from 'notistack';
+import { FaUsers, FaListUl, FaHeart, FaStar, FaNewspaper, FaEnvelopeOpenText } from 'react-icons/fa';
+import Loader from '../utils/Loader';
 
 function AdminDashboard() {
+  const [generalInfo, setGeneralInfo] = useState({});
+  const [loading, setLoading] = useState(true);
 
-  const [generalInfo, setGeneralInfo] = React.useState({});
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
 
-  React.useEffect(() => {
-    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/v1/settings/admin/dashboard/general`)
-      .then(res => {
-        if (res.data.success)
-          setGeneralInfo(res.data?.generalInfo);
-      })
-  }, [])
+  const fetchDashboardData = async () => {
+    setLoading(true);
+    const token = localStorage.getItem('adminToken');
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/api/v1/admin/settings/dashboard/general`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (response.data.success) {
+        setGeneralInfo(response.data.generalInfo);
+      }
+    } catch (e) {
+      enqueueSnackbar(e.response?.data?.error || 'Failed to fetch data', { variant: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  if (loading) return <div className='adminDashboardDiv'><Loader type="simple" /></div>;
 
   return (
     <div className='adminDashboardDiv'>
       <div className="adminDashboardContent">
+        <h1 className="mainHeading">Platform Insights</h1>
 
         <div className="dashboardOverview">
-
-          <div className="left">
-
-            <div className="overviewBoxA overviewBox">
-              <h2 className="secondaryHeading">Completed Orders</h2>
-              <div className='value'>{(generalInfo.completedOrders<10 && "0") + generalInfo.completedOrders}</div>
-              <div className="horizontalLine"></div>
-              <div className="row">
-                <div>Products Sold</div>
-                <div className='fw600'>{(generalInfo.productsSold<10 && "0") + generalInfo.productsSold}</div>
-              </div>
-              <div className="row">
-                <div>Services Done</div>
-                <div className='fw600'>{(generalInfo.servicesDone<10 && "0") + generalInfo.servicesDone}</div>
-              </div>
+          {/* Users Section */}
+          <div className="overviewBox">
+            <div className="boxHeader">
+              <FaUsers className="icon blue" />
+              <h2 className="secondaryHeading">Community</h2>
             </div>
-
-            <div className="leftBottom">
-              <div className="overviewBoxB overviewBox">
-                <h2 className="secondaryHeading">Active Orders</h2>
-                <div className="value">{(generalInfo.activeOrders<10 && "0") + generalInfo.activeOrders}</div>
-              </div>
-              <div className="overviewBoxB overviewBox">
-                <h2 className="secondaryHeading">Cancelled Orders</h2>
-                <div className="value">{(generalInfo.cancelledOrders<10 && "0") + generalInfo.cancelledOrders}</div>
-              </div>
-            </div>
-
+            <div className='value'>{generalInfo.totalUsers || 0}</div>
+            <div className="subtitle">Total Registered Users</div>
+            <div className="horizontalLine"></div>
+            <div className="row"><span>Verified</span><strong>{generalInfo.verifiedUsers}</strong></div>
+            <div className="row"><span>Unverified</span><strong>{generalInfo.unverifiedUsers}</strong></div>
           </div>
 
-          <div className="right">
-
-            <div className="rightTop">
-              <div className="overviewBoxB overviewBox">
-                <h2 className="secondaryHeading">Active Services</h2>
-                <div className="value">{(generalInfo.activeServices<10 && "0") + generalInfo.activeServices}</div>
-              </div>
-              <div className="overviewBoxB overviewBox">
-                <h2 className="secondaryHeading">Active Products</h2>
-                <div className="value">{(generalInfo.activeProducts<10 && "0") + generalInfo.activeProducts}</div>
-              </div>
+          {/* Listings Overview */}
+          <div className="overviewBox">
+            <div className="boxHeader">
+              <FaListUl className="icon purple" />
+              <h2 className="secondaryHeading">Listings</h2>
             </div>
-            <div className="overviewBoxA overviewBox">
-              <h2 className="secondaryHeading">Registered Users</h2>
-              <div className='value'>{(generalInfo.registeredUsers<10 && "0") + generalInfo.registeredUsers}</div>
-              <div className="horizontalLine"></div>
-              <div className="row">
-                <div>Total Sellers</div>
-                <div className='fw600'>{(generalInfo.totalSellers<10 && "0") + generalInfo.totalSellers}</div>
-              </div>
-              <div className="row">
-                <div>Paid Sellers</div>
-                <div className='fw600'>{(generalInfo.paidSellers<10 && "0") + generalInfo.paidSellers}</div>
-              </div>
+            <div className='value'>{generalInfo.totalListings || 0}</div>
+            <div className="subtitle">Active Posts Across Platform</div>
+            <div className="horizontalLine"></div>
+            <div className="grid-mini">
+              <div>Products: {generalInfo.productListings}</div>
+              <div>Services: {generalInfo.serviceListings}</div>
+              <div>Events: {generalInfo.eventListings}</div>
+              <div>Offers: {generalInfo.offerListings}</div>
             </div>
-
           </div>
 
+          {/* New: Growth Section */}
+          <div className="overviewBox">
+            <div className="boxHeader">
+              <FaEnvelopeOpenText className="icon green" />
+              <h2 className="secondaryHeading">Newsletter</h2>
+            </div>
+            <div className='value'>{generalInfo.totalSubscribers || 0}</div>
+            <div className="subtitle">Active Email Subscribers</div>
+            <div className="horizontalLine"></div>
+            <div className="row">
+              <FaNewspaper className="mr-2" />
+              <span>Blog Posts: <strong>{generalInfo.totalBlogPosts}</strong></span>
+            </div>
+          </div>
         </div>
 
+        {/* Engagement Grid */}
+        <div className="quickStatsGrid">
+          <div className="statCard">
+            <h3><FaHeart className='icon red' /> Interaction Metrics</h3>
+            <div className="statRows">
+              <div className="statRow">
+                <span>Total Favorites</span>
+                <strong>{generalInfo.totalFavorites}</strong>
+              </div>
+              <div className="statRow">
+                <span>Total Reviews</span>
+                <strong>{generalInfo.totalReviews}</strong>
+              </div>
+              <div className="statRow">
+                <span>Avg Reviews per Listing</span>
+                <strong>
+                  {generalInfo.totalListings > 0
+                    ? (generalInfo.totalReviews / generalInfo.totalListings).toFixed(1)
+                    : 0}
+                </strong>
+              </div>
+            </div>
+          </div>
+
+          <div className="statCard">
+            <h3><FaStar className='icon yellow' /> Platform Health</h3>
+            <div className="statRows">
+              <div className="statRow">
+                <span>Verification Rate</span>
+                <strong>
+                  {((generalInfo.verifiedUsers / generalInfo.totalUsers) * 100).toFixed(1)}%
+                </strong>
+              </div>
+              <div className="statRow">
+                <span>Content Density</span>
+                <strong>
+                  {(generalInfo.totalListings / generalInfo.totalUsers).toFixed(1)} posts/user
+                </strong>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default AdminDashboard
+export default AdminDashboard;

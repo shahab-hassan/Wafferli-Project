@@ -184,21 +184,16 @@ function Employees() {
 
   const adminPages = [
     'Dashboard',
-    'Categories',
-    'Coupons',
-    'Orders',
     'Users',
     'Sellers',
-    'Products',
-    'Services',
-    'Revenue',
-    'Payments',
-    'Social Links',
-    'Fee',
-    'Terms & Conditions',
-    'Disputes',
-    'Chats',
-    'Information Center',
+    'Product Ads',
+    'Service Ads',
+    'Explore Ads',
+    'Offer Ads',
+    'Event Ads',
+    'Blogs',
+    'Terms & Policy',
+    'FAQ',
     'Email Campaigns'
   ];
 

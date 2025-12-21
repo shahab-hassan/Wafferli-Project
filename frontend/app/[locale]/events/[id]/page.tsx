@@ -107,7 +107,6 @@ export default function EventDetailPage({
   const relatedEvents = responseData?.relatedEvents || [];
   const ratingDistribution = responseData?.ratingDistribution || {};
 
-  console.log(responseData, "featuredEventDetails");
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">

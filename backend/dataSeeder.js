@@ -26,13 +26,8 @@ const {
 } = require("./utils/data");
 
 // Use environment variable if available, otherwise fallback to the existing connection string
-const MONGO_URI =
-  process.env.MONGO_URI ||
-  "mongodb+srv://naveedabbasi:7QAjD2gjuUbfW02N@cluster0.uobk6ty.mongodb.net/Wafferli";
+const MONGO_URI = process.env.DB_URI;
 
-/**
- * Connect to MongoDB
- */
 const connectDB = async () => {
   try {
     await mongoose.connect(MONGO_URI, {

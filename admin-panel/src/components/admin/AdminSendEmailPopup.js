@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { enqueueSnackbar } from 'notistack';
 import { IoIosCloseCircleOutline } from 'react-icons/io';
@@ -17,28 +17,10 @@ function AdminSendEmailPopup({
     });
     const [currentRecipientType, setCurrentRecipientType] = useState('to');
     const [sendMethod, setSendMethod] = useState('');
-    const [selectedTemplate, setSelectedTemplate] = useState(null);
     const [subject, setSubject] = useState('');
     const [message, setMessage] = useState('');
     const [buttons, setButtons] = useState([{ title: '', url: '' }]);
     const [loading, setLoading] = useState(false);
-
-    const emailTemplates = [
-        {
-            id: 1,
-            name: "Seller Marketing Template",
-            code: `<div style="width: 100%; max-width: 900px; margin: 0 auto;">
-                <a href="https://faithzy.com"><img src="https://res.cloudinary.com/drcuo3fya/image/upload/v1738997178/faithzy/uploads/mbzpz182op87teugwioa.png" alt="Start Selling" width="100%"></a>
-            </div>`
-        },
-        {
-            id: 2,
-            name: "Buyers & Sellers Template",
-            code: `<div style="width: 100%; max-width: 900px; margin: 0 auto;">
-                <a href="https://faithzy.com"><img src="https://res.cloudinary.com/drcuo3fya/image/upload/v1739076722/To_Buyers_and_Sellers_-_Email_Template_1_xxabyw.png" alt="Join Now" width="100%"></a>
-            </div>`
-        }
-    ];
 
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -103,7 +85,6 @@ function AdminSendEmailPopup({
                 });
             }
             setSendMethod('');
-            setSelectedTemplate(null);
             setSubject('');
             setMessage('');
             setButtons([{ title: '', url: '' }]);
@@ -125,12 +106,8 @@ function AdminSendEmailPopup({
                     return;
                 }
             }
-        } else if (sendMethod === 'template') {
-            if (!selectedTemplate) {
-                enqueueSnackbar('Please select a template!', { variant: 'error' });
-                return;
-            }
-        } else {
+        } 
+        else {
             enqueueSnackbar('Please choose a send method!', { variant: 'error' });
             return;
         }
@@ -147,18 +124,14 @@ function AdminSendEmailPopup({
         try {
             setLoading(true);
 
-            await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/settings/admin/send/email`, {
+            await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/admin/settings/send/email`, {
                 recipients: {
                     to: recipients.to,
                     cc: recipients.cc,
                     bcc: recipients.bcc
                 },
-                subject: sendMethod === 'template'
-                    ? emailTemplates.find(t => t.id === selectedTemplate).name
-                    : subject,
-                message: sendMethod === 'template'
-                    ? emailTemplates.find(t => t.id === selectedTemplate).code
-                    : message,
+                subject: subject,
+                message: message,
                 buttons: sendMethod === 'manual' ? buttons : [],
             }, {
                 headers: {
@@ -197,8 +170,7 @@ function AdminSendEmailPopup({
     if (!show) return null;
 
     const isSendEnabled =
-        (sendMethod === 'manual' && subject && message) ||
-        (sendMethod === 'template' && selectedTemplate);
+        (sendMethod === 'manual' && subject && message)
 
     return (
         <div className="popupDiv adminSendEmailPopupDiv">
@@ -315,7 +287,6 @@ function AdminSendEmailPopup({
                         value={sendMethod}
                         onChange={(e) => {
                             setSendMethod(e.target.value);
-                            setSelectedTemplate(null);
                             setSubject('');
                             setMessage('');
                             setButtons([{ title: '', url: '' }]);
@@ -323,27 +294,9 @@ function AdminSendEmailPopup({
                     >
                         <option value="">Select Send Method</option>
                         <option value="manual">Write Custom Email</option>
-                        <option value="template">Use Email Template</option>
                     </select>
                 </div>
 
-                {sendMethod === 'template' && (
-                    <div className="inputDiv">
-                        <label>Select Template <span>*</span></label>
-                        <select
-                            className="inputField dropdownLight"
-                            value={selectedTemplate || ''}
-                            onChange={(e) => setSelectedTemplate(Number(e.target.value))}
-                        >
-                            <option value="">Choose a Template</option>
-                            {emailTemplates.map(template => (
-                                <option key={template.id} value={template.id}>
-                                    {template.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                )}
                 {sendMethod === 'manual' && (
                     <>
                         <div className="inputDiv">

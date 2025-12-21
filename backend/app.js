@@ -16,7 +16,7 @@ app.use(
     origin: [
       process.env.FRONTEND_URL,
       "http://localhost:3000",
-      "http://localhost:3001", // Add additional ports if needed
+      "http://localhost:3001",
     ],
     credentials: true,
     exposedHeaders: ["Content-Disposition"],
@@ -56,8 +56,14 @@ app.use("/api/v1/seller", require("./routes/seller.routes.js"));
 app.use("/api/v1/ad", require("./routes/ad.routes.js"));
 app.use("/api/v1/chat", require("./routes/chat.routes.js"));
 app.use("/api/v1/notifications", require("./routes/notification.routes.js"));
+
 app.use("/api/v1/admins", require("./routes/adminRoute.js"));
-app.use("/api/v1/settings/admin", require("./routes/adminSettingsRoute.js"));
+app.use("/api/v1/admin/settings", require("./routes/adminSettingsRoute.js"));
+app.use("/api/v1/admin/users", require("./routes/adminUserRoute.js"));
+app.use("/api/v1/admin/ads", require("./routes/adminAdRoute.js"));
+
+app.use("/api/v1/faq", require("./routes/faqRoute.js"));
+app.use("/api/v1/blog", require("./routes/blogRoute.js"));
 
 app.use(errorHandler);
 

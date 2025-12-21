@@ -1,12 +1,13 @@
 import { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
-import { MdAnalytics } from "react-icons/md";
-import { FaShop, FaNetworkWired, FaEnvelope, FaUsers, FaBoxesStacked } from "react-icons/fa6";
+import { MdAnalytics, MdLocalOffer, MdPlace } from "react-icons/md";
+import { FaShop, FaEnvelope, FaUsers, FaBoxesStacked, FaBlog } from "react-icons/fa6";
 import { FaUserCircle } from "react-icons/fa";
 import { BsFileEarmarkRuledFill, BsInfoSquareFill } from "react-icons/bs";
 import { HiOutlineLogout } from "react-icons/hi";
 import { GrServices } from "react-icons/gr";
 import { AuthContext } from '../../utils/AuthContext';
+import { MdEmojiEvents } from "react-icons/md";
 
 function AdminHeader() {
   const { admin, adminLogout } = useContext(AuthContext);
@@ -22,11 +23,14 @@ function AdminHeader() {
     { path: '', icon: <MdAnalytics className='icon' />, label: 'Dashboard' },
     { path: 'users', icon: <FaUserCircle className='icon' />, label: 'Users' },
     { path: 'sellers', icon: <FaShop className='icon' />, label: 'Sellers' },
-    { path: 'products', icon: <FaBoxesStacked className='icon' />, label: 'Products' },
-    { path: 'services', icon: <GrServices className='icon' />, label: 'Services' },
-    { path: 'social', icon: <FaNetworkWired className='icon' />, label: 'Social Links' },
-    { path: 'terms', icon: <BsFileEarmarkRuledFill className='icon' />, label: 'Terms & Conditions' },
-    { path: 'faq', icon: <BsInfoSquareFill className='icon' />, label: 'Information Center' },
+    { path: 'product-ads', icon: <FaBoxesStacked className='icon' />, label: 'Product Ads' },
+    { path: 'service-ads', icon: <GrServices className='icon' />, label: 'Service Ads' },
+    { path: 'explore-ads', icon: <MdPlace className='icon' />, label: 'Explore Ads' },
+    { path: 'offer-ads', icon: <MdLocalOffer className='icon' />, label: 'Offer Ads' },
+    { path: 'event-ads', icon: <MdEmojiEvents className='icon' />, label: 'Event Ads' },
+    { path: 'blogs', icon: <FaBlog className='icon' />, label: 'Blogs' },
+    { path: 'terms-policy', icon: <BsFileEarmarkRuledFill className='icon' />, label: 'Terms & Policy' },
+    { path: 'faq', icon: <BsInfoSquareFill className='icon' />, label: 'FAQ' },
     { path: 'emails', icon: <FaEnvelope className='icon' />, label: 'Email Campaigns' },
     { path: 'employees', icon: <FaUsers className='icon' />, label: 'Employees' },
   ];
@@ -36,8 +40,8 @@ function AdminHeader() {
       <section className="section">
         <div className="adminHeaderContent">
 
-          <div className="faithzyLogoDiv">
-            <img src="/assets/images/Logo.png" alt="Faithzy Logo" className='faithzyLogo' />
+          <div className="wafferliLogoDiv">
+            <img src="/assets/images/Logo.png" alt="Wafferli Logo" className='wafferliLogo' />
           </div>
 
           <div className="horizontalLine"></div>

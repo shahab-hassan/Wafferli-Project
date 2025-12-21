@@ -1,272 +1,250 @@
-// File: src/controllers/adminSettingsCtrl.js
-const adminSettingsModel = require('../models/adminSettingsModel');
-const User = require('../models/user.model');
-const asyncHandler = require('express-async-handler');
-const sendEmail = require("../utils/sendEmail")
-const { sendEmailFromAdminTemplate, receiveEmailFromUserTemplate, marketingEmailToSeller, marketingEmailToUsers } = require("../utils/emailTemplates")
+const AdminSettings = require("../models/adminSettingsModel");
+const User = require("../models/user.model");
+const Seller = require("../models/seller.model");
+const Ad = require("../models/ad/baseAd.model");
+const Blog = require("../models/blogModel");
+const nodemailer = require("nodemailer");
 
-
-exports.getTerms = asyncHandler(async (req, res) => {
+const getGeneralDashboardInfo = async (req, res) => {
     try {
+        // 1. User Metrics
+        const totalUsers = await User.countDocuments();
+        const verifiedUsers = await User.countDocuments({ isVerified: true });
 
-        const settings = await adminSettingsModel.findOne({}, 'terms');
+        // 2. Content Metrics (Renamed from Ads)
+        const totalListings = await Ad.countDocuments();
+        const productListings = await Ad.countDocuments({ adType: "product" });
+        const serviceListings = await Ad.countDocuments({ adType: "service" });
+        const eventListings = await Ad.countDocuments({ adType: "event" });
+        const exploreListings = await Ad.countDocuments({ adType: "explore" });
+        const offerListings = await Ad.countDocuments({ adType: "offer" });
 
-        if (!settings || !settings.terms) {
-            res.status(404);
-            throw new Error("Terms not found!");
+        // 3. Community Metrics (Blog & Newsletter)
+        const totalBlogPosts = await Blog.countDocuments();
+        const settings = await AdminSettings.findOne();
+        const totalSubscribers = settings?.subscribedEmails?.length || 0;
+
+        // 4. Engagement Metrics
+        const totalReviews = await Ad.aggregate([
+            { $group: { _id: null, total: { $sum: "$reviewsCount" } } }
+        ]);
+        const totalFavorites = await Ad.aggregate([
+            { $group: { _id: null, total: { $sum: "$favoritesCount" } } }
+        ]);
+
+        const generalInfo = {
+            totalUsers,
+            verifiedUsers,
+            unverifiedUsers: totalUsers - verifiedUsers,
+
+            totalListings,
+            productListings,
+            serviceListings,
+            eventListings,
+            exploreListings,
+            offerListings,
+
+            totalBlogPosts,
+            totalSubscribers,
+
+            totalReviews: totalReviews[0]?.total || 0,
+            totalFavorites: totalFavorites[0]?.total || 0,
+        };
+
+        res.status(200).json({ success: true, generalInfo });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// Terms & Privacy Policy
+const getTermsAndPrivacy = async (req, res) => {
+    try {
+        const settings = await AdminSettings.findOne();
+        res.status(200).json({
+            success: true,
+            terms: settings?.terms || "",
+            privacyPolicy: settings?.privacyPolicy || ""
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+const createOrUpdateTermsAndPrivacy = async (req, res) => {
+    try {
+        const { terms, privacyPolicy } = req.body;
+        let settings = await AdminSettings.findOne();
+
+        if (!settings) {
+            settings = await AdminSettings.create({ terms, privacyPolicy });
+        } else {
+            if (terms !== undefined) settings.terms = terms;
+            if (privacyPolicy !== undefined) settings.privacyPolicy = privacyPolicy;
+            await settings.save();
         }
 
-        res.status(200).json({ success: true, terms: settings.terms });
-
-    } catch (err) {
-        res.status(500);
-        throw new Error(err);
+        res.status(200).json({ success: true, message: "Updated successfully" });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
     }
-});
+};
 
-exports.createOrUpdateTerms = asyncHandler(async (req, res) => {
-
-    const { content } = req.body;
-
-    if (!content) {
-        res.status(400);
-        throw new Error("Content is required!");
-    }
-
-    let settings = await adminSettingsModel.findOne();
-
-    if (settings) {
-        settings.terms = content;
-        settings = await settings.save();
-    } else
-        settings = await adminSettingsModel.create({ terms: content });
-
-    res.status(200).json({
-        success: true,
-        terms: settings.terms
-    });
-});
-
-
-exports.getSocialLinks = asyncHandler(async (req, res) => {
-    const settings = await adminSettingsModel.findOne({}, 'socialLinks');
-
-    res.status(200).json({ success: true, socialLinks: settings?.socialLinks });
-});
-
-exports.createOrUpdateSocialLinks = asyncHandler(async (req, res) => {
-    const { socialLinks } = req.body;
-
-    if (!socialLinks || Object.keys(socialLinks).length === 0) {
-        res.status(400);
-        throw new Error("At least one social link is required!");
-    }
-
-    let settings = await adminSettingsModel.findOne();
-
-    if (settings) {
-        settings.socialLinks = socialLinks;
-        settings = await settings.save();
-    } else {
-        settings = await adminSettingsModel.create({ socialLinks });
-    }
-
-    res.status(200).json({ success: true, socialLinks: settings.socialLinks });
-});
-
-
-exports.receiveEmailFromUser = asyncHandler(async (req, res) => {
-
-    await sendEmail({
-        to: process.env.SMTP_FROM_EMAIL,
-        subject: `New Contact Form Submission: ${req.body.subject}`,
-        text: receiveEmailFromUserTemplate(req.body.fullName, req.body.email, req.body.country, req.body.phoneNumber, req.body.message),
-    });
-
-    res.status(200).json({ success: true });
-
-});
-
-exports.subscribeEmailByUser = asyncHandler(async (req, res) => {
+// Email Management
+const subscribeEmailByUser = async (req, res) => {
     try {
         const { email } = req.body;
-        if (!email) {
-            res.status(400);
-            throw new Error("Email is required!");
+
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            return res.status(400).json({ success: false, error: 'Invalid email' });
         }
 
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(200).json({
-                success: true,
-                message: "You are already in our system! You'll receive our updates."
-            });
+        let settings = await AdminSettings.findOne();
+
+        if (!settings) {
+            settings = await AdminSettings.create({ subscribedEmails: [email] });
+        } else {
+            if (!settings.subscribedEmails.includes(email)) {
+                settings.subscribedEmails.push(email);
+                await settings.save();
+            } else {
+                return res.status(400).json({ success: false, error: 'Email already subscribed' });
+            }
         }
 
-        let adminSettings = await adminSettingsModel.findOne({});
-        if (!adminSettings) {
-            adminSettings = await adminSettingsModel.create({
-                terms: "Default terms"
-            });
-        }
+        res.status(200).json({ success: true, message: "Email subscribed successfully" });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
 
-        const alreadySubscribed = adminSettings.subscribedEmails.includes(email);
-        if (alreadySubscribed) {
-            return res.status(200).json({
-                success: true,
-                message: "Email already subscribed!"
-            });
-        }
-
-        adminSettings.subscribedEmails.push(email);
-        await adminSettings.save();
-
+const getAllEmails = async (req, res) => {
+    try {
+        const settings = await AdminSettings.findOne();
         res.status(200).json({
             success: true,
-            message: "Subscribed Successfully!"
-        });
-
-    } catch (error) {
-        res.status(500);
-        throw new Error(error);
-    }
-});
-
-exports.getAllEmails = asyncHandler(async (req, res) => {
-    try {
-        const adminSettings = await adminSettingsModel.findOne({});
-        const subscribedEmails = adminSettings?.subscribedEmails || [];
-
-        // Optional: Add user emails if needed
-        const userEmails = await User.find({}, 'email').lean();
-        const userEmailList = userEmails.map(u => u.email);
-
-        // Combine and remove duplicates
-        // const allEmails = [...new Set([...subscribedEmails, ...userEmailList])];
-        const allEmails = [...new Set([...subscribedEmails])];
-
-        res.status(200).json({
-            success: true,
-            emails: allEmails.reverse() // Newest first
+            emails: settings?.subscribedEmails || []
         });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
+        res.status(500).json({ success: false, error: error.message });
     }
-});
+};
 
-exports.sendEmailFromAdmin = asyncHandler(async (req, res) => {
-
-    const { recipients, subject, message, buttons } = req.body;
-
-    const { to = [], cc = [], bcc = [] } = recipients;
-
-    if (to.length === 0 && cc.length === 0 && bcc.length === 0) {
-        res.status(400);
-        throw new Error("No recipients provided!");
-    }
-
-    let emailSubject, emailBody;
-
-    if (subject.includes("Seller Marketing Template")) {
-        emailSubject = "Start Selling Your Spiritual Services & Products on Faithzy!";
-        emailBody = marketingEmailToSeller();
-    } else if (subject.includes("Buyers & Sellers Template")) {
-        emailSubject = "Discover Spiritual Services & Mystical Products on Faithzy!";
-        emailBody = marketingEmailToUsers();
-    } else {
-        emailSubject = subject;
-        emailBody = sendEmailFromAdminTemplate(subject, message, buttons)
-    }
-
-    const emailOptions = {
-        subject: emailSubject,
-        text: emailBody,
-        to: to,
-        cc: cc,
-        bcc: bcc
-    };
-
-    try {
-        await sendEmail(emailOptions);
-
-        return res.status(200).json({
-            success: true,
-            message: `Email successfully sent!`,
-        });
-    } catch (error) {
-        res.status(500);
-        throw new Error(`Failed to send email: ${error.message}`);
-    }
-
-});
-
-exports.deleteEmail = asyncHandler(async (req, res) => {
-    try {
-        const { email } = req.body;
-        if (!email) {
-            return res.status(400).json({
-                success: false,
-                message: "Email is required!"
-            });
-        }
-
-        const adminSettings = await adminSettingsModel.findOne({});
-        if (adminSettings) {
-            adminSettings.subscribedEmails = adminSettings.subscribedEmails.filter(e => e !== email);
-            await adminSettings.save();
-        }
-
-        res.status(200).json({
-            success: true,
-            message: "Email deleted successfully"
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
-    }
-});
-
-exports.addEmails = asyncHandler(async (req, res) => {
+const addEmails = async (req, res) => {
     try {
         const { emails } = req.body;
-        if (!emails || !Array.isArray(emails) || emails.length === 0) {
-            return res.status(400).json({
-                success: false,
-                message: "Valid emails array is required!"
+        let settings = await AdminSettings.findOne();
+
+        if (!settings) {
+            settings = await AdminSettings.create({ subscribedEmails: emails });
+        } else {
+            const newEmails = [];
+            emails.forEach(email => {
+                if (!settings.subscribedEmails.includes(email)) {
+                    settings.subscribedEmails.push(email);
+                    newEmails.push(email);
+                }
+            });
+            await settings.save();
+
+            return res.status(200).json({
+                success: true,
+                message: `Added ${newEmails.length} email(s)`,
+                addedEmails: newEmails
             });
         }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const validEmails = emails.filter(email => emailRegex.test(email));
-
-        let adminSettings = await adminSettingsModel.findOne({});
-        if (!adminSettings) {
-            adminSettings = await adminSettingsModel.create({
-                terms: "Default terms"
-            });
-        }
-
-        const uniqueNewEmails = validEmails.filter(
-            email => !adminSettings.subscribedEmails.includes(email)
-        );
-
-        adminSettings.subscribedEmails.push(...uniqueNewEmails);
-        await adminSettings.save();
-
-        res.status(200).json({
-            success: true,
-            message: `${uniqueNewEmails.length} email(s) added successfully`,
-            addedEmails: uniqueNewEmails
-        });
+        res.status(200).json({ success: true, message: "Emails added successfully", addedEmails: emails });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
+        res.status(500).json({ success: false, error: error.message });
     }
-});
+};
+
+const deleteEmail = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const settings = await AdminSettings.findOne();
+
+        if (settings) {
+            settings.subscribedEmails = settings.subscribedEmails.filter(e => e !== email);
+            await settings.save();
+        }
+
+        res.status(200).json({ success: true, message: "Email deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+const sendEmailFromAdmin = async (req, res) => {
+    try {
+        const { recipients, subject, body } = req.body;
+
+        if (!recipients || !recipients.length) {
+            return res.status(400).json({ success: false, error: 'No recipients provided' });
+        }
+
+        const transporter = nodemailer.createTransporter({
+            service: "gmail",
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASSWORD,
+            },
+        });
+
+        await transporter.sendMail({
+            from: process.env.EMAIL_USER,
+            to: recipients.join(","),
+            subject,
+            html: body,
+        });
+
+        res.status(200).json({ success: true, message: "Email sent successfully" });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+const receiveEmailFromUser = async (req, res) => {
+    try {
+        const { name, email, subject, message } = req.body;
+
+        const transporter = nodemailer.createTransporter({
+            service: "gmail",
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASSWORD,
+            },
+        });
+
+        await transporter.sendMail({
+            from: email,
+            to: process.env.ADMIN_EMAIL || process.env.EMAIL_USER,
+            subject: `Contact Form: ${subject}`,
+            html: `
+                <h3>New Contact Form Submission</h3>
+                <p><strong>Name:</strong> ${name}</p>
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Subject:</strong> ${subject}</p>
+                <p><strong>Message:</strong></p>
+                <p>${message}</p>
+            `,
+        });
+
+        res.status(200).json({ success: true, message: "Message sent successfully" });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+module.exports = {
+    getGeneralDashboardInfo,
+    getTermsAndPrivacy,
+    createOrUpdateTermsAndPrivacy,
+    subscribeEmailByUser,
+    getAllEmails,
+    addEmails,
+    deleteEmail,
+    sendEmailFromAdmin,
+    receiveEmailFromUser,
+};

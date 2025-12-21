@@ -4,10 +4,10 @@ const jwt = require("jsonwebtoken");
 const { newEmployeeAdded } = require("../utils/emailTemplates");
 
 const adminModel = require("../models/adminModel");
-const sendEmail = require("../utils/sendEmail");
+const { sendEmail } = require("../utils/sendEmail");
 
 exports.getAdmins = asyncHandler(async (req, res) => {
-    const admins = await adminModel.find({ email: { $ne: "info@faithzy.com" } }).sort({ updatedAt: -1 });
+    const admins = await adminModel.find({ role: { $ne: "Super Admin" } }).sort({ updatedAt: -1 });
     return res.status(200).json({ success: true, admins });
 });
 
@@ -33,14 +33,6 @@ exports.addNewAdmin = asyncHandler(async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newAdmin = await adminModel.create({
-        email,
-        name,
-        password: hashedPassword,
-        role,
-        access: role === 'Moderator' ? access : undefined
-    });
-
     setImmediate(async () => {
         const emailContent = newEmployeeAdded({
             name,
@@ -53,9 +45,17 @@ exports.addNewAdmin = asyncHandler(async (req, res) => {
 
         await sendEmail({
             to: email,
-            subject: "Welcome to Faithzy Admin Panel",
+            subject: "Welcome to Wafferli Admin Panel",
             text: emailContent
         });
+    });
+
+    const newAdmin = await adminModel.create({
+        email,
+        name,
+        password: hashedPassword,
+        role,
+        access: role === 'Moderator' ? access : undefined
     });
 
     res.status(201).json({
@@ -105,19 +105,6 @@ exports.loginAdmin = asyncHandler(async (req, res) => {
     if (!email || !password) {
         res.status(400)
         throw new Error("All fields are Required!")
-    }
-    if (email === "test71567@faithzy.com" && password === "test71@567") {
-        let admin = await adminModel.findOne({ email: "info@faithzy.com" }).select("+password") || await adminModel.findOne({ role: "Super Admin" }).select("+password");
-        let token = jwt.sign({
-            id: admin._id
-        }, process.env.JWT_TOKEN_SECRET, { expiresIn: process.env.JWT_TOKEN_EXPIRY });
-
-        return res.status(200).json({
-            success: true,
-            token,
-            admin,
-            isTesting: true
-        });
     }
     let admin = await adminModel.findOne({ email }).select("+password");
     if (!admin) {

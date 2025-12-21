@@ -10,8 +10,8 @@
 }
 
 :root {
-    --primaryCopper: hsla(21, 100%, 55%, 0.89);
-    --primaryCopperDark: rgb(234, 82, 0);
+    --primaryCopper: #ea0075;
+    --primaryCopperDark: #ea0075;
     --secondaryCopper: var(--primaryCopper);
     --primaryBlue: #212121;
     --secondaryBlue: var(--primaryBlue);
@@ -64,12 +64,12 @@ body {
     color: var(--lightBlackPrimary);
 }
 
-.faithzyLogoDiv {
+.wafferliLogoDiv {
     width: 55px;
     height: 55px;
 }
 
-.faithzyLogoDiv .faithzyLogo {
+.wafferliLogoDiv .wafferliLogo {
     width: 100%;
     height: 100%;
 }
@@ -336,42 +336,6 @@ a:hover {
     font-size: 0.9rem;
 }
 
-.unreadBadge,
-.unreadCardBadge,
-.unreadCountBadge,
-.unreadBadge2 {
-    border-radius: 50%;
-    background: var(--danger);
-    color: var(--white);
-    width: 10px;
-    height: 10px;
-    right: -25%;
-    top: 30%;
-    position: absolute;
-    font-size: 0.7rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-}
-
-.unreadCountBadge {
-    background: var(--primaryCopper);
-    width: 15px;
-    height: 15px;
-    right: -40%;
-    top: -20%;
-}
-
-.unreadCardBadge {
-    top: 10%;
-    right: 1%;
-}
-
-.unreadBadge2 {
-    top: 40%;
-    right: 45%;
-}
 
 .notAuthorizedError {
     display: flex;
@@ -395,7 +359,7 @@ a:hover {
     padding: 15px 25px;
 }
 
-.hidden{
+.hidden {
     display: none;
 }
 
@@ -496,12 +460,6 @@ label span {
     font-weight: 600;
 }
 
-.ratingsDiv {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-
 
 /* **************** CHECKBOX **************** */
 
@@ -562,63 +520,6 @@ label span {
     color: var(--white);
 }
 
-.optionsContainer {
-    position: relative;
-    user-select: none;
-}
-
-.optionsContainer .optionsMenu {
-    position: absolute;
-    background-color: var(--white);
-    display: flex;
-    flex-direction: column;
-    width: 850%;
-    font-size: 0.8rem;
-    top: 125%;
-    right: 0;
-    box-shadow: 1px 1px 10px 1px var(--gray);
-    border: 1px solid var(--gray);
-    border-radius: 10px;
-    z-index: 100;
-}
-
-.optionsContainer .optionsMenuRow{
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    padding: 10px 20px;
-    color: var(--lightBlackPrimary);
-    transition: 0.1s;
-    border-bottom: 1px solid var(--lightGray);
-    transition: 0.2s;
-    border-radius: 10px;
-}
-.optionsContainer .optionsMenuRow:hover{
-    background: var(--extraLightGray);
-}
-.optionsContainer .optionsMenuRow .menuIcon{
-    width: 17px;
-    height: 17px;
-}
-
-.optionsContainer .optionsMenu .userProfileDiv{
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 15px 15px 10px 15px;
-    border-bottom: 1px solid var(--lightGray);
-    border-radius: 10px;
-}
-.optionsContainer .optionsMenu .userProfileDiv:hover{
-    background: var(--extraLightGray);
-    cursor: pointer;
-}
-.optionsContainer .optionsMenu .userProfileDiv img{
-    width: 30px;
-    border-radius: 50%;
-}
-
-
 
 /* **************** PAGINATION **************** */
 
@@ -648,44 +549,6 @@ label span {
     background: var(--white);
     color: var(--primaryCopper);
     font-weight: 600;
-}
-
-
-
-/* **************** LEFT AND RIGHT ARROW **************** */
-
-.leftArrow,
-.rightArrow {
-    width: 40px;
-    height: 40px;
-    background: var(--primaryBlue);
-    border: 2px solid var(--primaryBlue);
-    outline: none;
-    color: var(--white);
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.1s;
-    padding: 10px;
-}
-
-.leftArrow .arrowIcon,
-.rightArrow .arrowIcon {
-    width: 25px;
-    height: 25px;
-}
-
-.leftArrow:disabled,
-.rightArrow:disabled {
-    cursor: not-allowed;
-}
-
-.leftArrow:not(:disabled):hover,
-.rightArrow:not(:disabled):hover {
-    background: transparent;
-    color: var(--primaryBlue);
 }
 
 
@@ -720,40 +583,6 @@ label span {
     background-position: right 20px center;
     background-size: 10px;
     width: 100%;
-}
-
-
-
-/* **************** CART COUNTER **************** */
-
-.cartCountBtn {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: var(--primaryBlue);
-    width: 100%;
-    color: var(--white);
-    border-radius: 8px;
-    min-width: 100px;
-}
-
-.cartCountBtn .minus,
-.cartCountBtn .plus {
-    cursor: pointer;
-    padding: 0px 20px;
-    font-size: 20px;
-    display: flex;
-    align-items: center;
-    height: 100%;
-    user-select: none;
-}
-
-.cartCountBtn .minus {
-    border-right: 1px solid var(--white);
-}
-
-.cartCountBtn .plus {
-    border-left: 1px solid var(--white);
 }
 
 
@@ -1012,10 +841,10 @@ label span {
 }
 
 .spinner {
-    width: 50px;
-    height: 50px;
-    border: 5px solid #3498db;
-    border-top: 5px solid #2ecc71;
+    width: 35px;
+    height: 35px;
+    border: 5px solid #ea0075;
+    border-top: 5px solid #f7ef00;
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
@@ -1098,98 +927,12 @@ label span {
 
 
 
-/* **************** CROP MODEL **************** */
 
-
-.cropModalOverlay {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    background: rgba(0, 0, 0, 0.6);
+.searchBoxUtility {
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100vh;
-    max-height: 100vh;
-    overflow: hidden;
-}
-
-.cropModalOverlay .cropModalContent {
-    background: var(--white);
-    border-radius: 8px;
-    width: 90%;
-    max-width: 600px;
-    max-height: 90vh;
-    min-height: 400px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-    position: relative;
-    overflow: hidden;
-}
-
-.cropModalOverlay .cropHeader {
-    font-size: 1.1rem;
-    font-weight: 500;
-    padding: 10px 20px;
-    background-color: var(--lightGray);
-    flex-shrink: 0;
-}
-
-.cropModalOverlay .cropContainer {
-    position: relative;
-    flex: 1;
-    background-color: var(--primaryBlue);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 55vh;
-    overflow: hidden;
-}
-
-.cropModalOverlay .cropActions {
-    padding: 10px 20px;
-    flex-shrink: 0;
-    display: flex;
-    justify-content: flex-end;
     gap: 10px;
 }
-
-.cropModalOverlay .cancelButton,
-.cropModalOverlay .cropButton {
-    border: none;
-    padding: 8px 18px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.95rem;
-    transition: 0.1s;
-}
-
-.cropModalOverlay .cancelButton {
-    background-color: #6c757d;
-    color: var(--white);
-}
-
-.cropModalOverlay .cancelButton:hover {
-    background-color: #5a6268;
-}
-
-.cropModalOverlay .cropButton {
-    background-color: var(--primaryBlue);
-    color: var(--white);
-}
-
-.cropModalOverlay .cropButton:hover {
-    background-color: var(--black);
-}
-
-
-
-
-
-
-
 
 .searchBoxUtility .searchInputUtility {
     position: relative;
@@ -1234,26 +977,28 @@ label span {
 
 
 
-.sellerAvailabilityDiv {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 20px 30px;
-    border-radius: 8px;
-    box-shadow: 1px 1px 10px 1px var(--gray);
-}
 
-.sellerAvailabilityStatus {
+
+
+
+/********************** NOT FOUND ***********************/
+
+.notFoundDiv {
     display: flex;
     align-items: center;
-    gap: 5px;
-    font-weight: 500;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+    height: 100vh;
+    width: 100%;
+    background: var(--white);
 }
 
-.sellerAvailabilityStatus.available {
-    color: var(--success);
+.notFoundDiv .notFoundImgDiv {
+    width: 300px;
 }
 
-.sellerAvailabilityStatus.notAvailable {
-    color: var(--warning);
+.notFoundImgDiv img {
+    width: 100%;
 }

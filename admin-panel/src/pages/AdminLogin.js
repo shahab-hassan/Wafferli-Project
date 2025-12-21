@@ -28,7 +28,7 @@ function AdminLogin() {
         enqueueSnackbar("Something went wrong!", { variant: "error" })
     }
     catch (e) {
-      enqueueSnackbar(e?.response?.data?.error || "Something went wrong!", { variant: "error" })
+      enqueueSnackbar(e?.response?.data?.message || "Something went wrong!", { variant: "error" })
     }
     finally{
       setLoading(false)

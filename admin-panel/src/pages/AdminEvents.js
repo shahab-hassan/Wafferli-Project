@@ -9,40 +9,40 @@ import { IoIosCloseCircleOutline } from 'react-icons/io';
 import Loader from '../utils/Loader';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 
-function AdminServiceAds() {
-    const [services, setServices] = useState([]);
+function AdminEventAds() {
+    const [events, setEvents] = useState([]);
     const [filterType, setFilterType] = useState('All');
     const [isLoading, setIsLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [searchType, setSearchType] = useState('title');
     const [showDetailsModal, setShowDetailsModal] = useState(false);
-    const [selectedService, setSelectedService] = useState(null);
+    const [selectedEvent, setSelectedEvent] = useState(null);
     const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-    const [selectedServiceId, setSelectedServiceId] = useState(null);
+    const [selectedEventId, setSelectedEventId] = useState(null);
 
     const searchTypeMap = {
         Title: 'title',
         ID: 'id',
-        Category: 'category'
+        Type: 'type'
     };
 
     useEffect(() => {
-        fetchServices();
+        fetchEvents();
     }, [filterType]);
 
-    const fetchServices = async () => {
+    const fetchEvents = async () => {
         setIsLoading(true);
         const token = localStorage.getItem('adminToken');
         try {
             const response = await axios.get(
-                `${process.env.REACT_APP_BACKEND_URL}/api/v1/admin/ads/services/all`,
+                `${process.env.REACT_APP_BACKEND_URL}/api/v1/admin/ads/events/all`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                     params: { filterType, search: searchQuery }
                 }
             );
             if (response.data.success) {
-                setServices(response.data.ads);
+                setEvents(response.data.ads);
             }
         } catch (e) {
             enqueueSnackbar(e.response?.data?.error || 'Something went wrong!', { variant: 'error' });
@@ -52,70 +52,72 @@ function AdminServiceAds() {
     };
 
     const handleSearch = () => {
-        fetchServices();
+        fetchEvents();
     };
 
-    const handleDeleteService = async () => {
+    const handleDeleteEvent = async () => {
         try {
             const token = localStorage.getItem('adminToken');
             const response = await axios.delete(
-                `${process.env.REACT_APP_BACKEND_URL}/api/v1/admin/ads/delete/${selectedServiceId}`,
+                `${process.env.REACT_APP_BACKEND_URL}/api/v1/admin/ads/delete/${selectedEventId}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
             if (response.data.success) {
-                setServices(services.filter(s => s._id !== selectedServiceId));
-                enqueueSnackbar('Service ad deleted successfully', { variant: 'success' });
+                setEvents(events.filter(e => e._id !== selectedEventId));
+                enqueueSnackbar('Event ad deleted successfully', { variant: 'success' });
             }
         } catch (e) {
-            enqueueSnackbar(e.response?.data?.error || 'Failed to delete service ad', { variant: 'error' });
+            enqueueSnackbar(e.response?.data?.error || 'Failed to delete event ad', { variant: 'error' });
         } finally {
             setConfirmDialogOpen(false);
         }
     };
 
-    const openDetailsModal = (service) => {
-        setSelectedService(service);
+    const openDetailsModal = (event) => {
+        setSelectedEvent(event);
         setShowDetailsModal(true);
     };
 
-    const openDeleteDialog = (serviceId) => {
-        setSelectedServiceId(serviceId);
+    const openDeleteDialog = (eventId) => {
+        setSelectedEventId(eventId);
         setConfirmDialogOpen(true);
     };
 
-    const serviceElems = services.length > 0 ? (
-        services.map((service, index) => (
+    const eventElems = events.length > 0 ? (
+        events.map((event, index) => (
             <div key={index}>
                 <div className="requestRow row">
                     <div className="titleField field">
-                        <p className="title">{service.title}</p>
+                        <p className="title">{event.title}</p>
                     </div>
-                    <p className="field">{service.seller?.name || service.userId?.fullName || 'N/A'}</p>
-                    <p className="field">{service.category}</p>
-                    <p className="field">{service.subCategory}</p>
-                    <p className="priceField field">${service.servicePrice || 'N/A'}</p>
-                    <p className="field">{service.serviceType || 'N/A'}</p>
-                    <p className="ratingField field">{service.rating?.toFixed(1) || '0.0'}</p>
+                    <p className="field">{event.seller?.name || event.userId?.fullName || 'N/A'}</p>
+                    <p className="field">{event.eventType}</p>
+                    <p className="field">
+                        {new Date(event.eventDate).toLocaleDateString()}
+                    </p>
+                    <p className="field">{event.eventTime} - {event.endTime}</p>
+                    <p className="field">{event.city || 'N/A'}</p>
+                    <p className="ratingField field">{event.rating?.toFixed(1) || '0.0'}</p>
                     <div className="actionsField field">
                         <FaEye
                             className="icon"
-                            onClick={() => openDetailsModal(service)}
+                            onClick={() => openDetailsModal(event)}
                             title="View Details"
                         />
                         <FaTrash
                             className="icon delete"
-                            onClick={() => openDeleteDialog(service._id)}
+                            onClick={() => openDeleteDialog(event._id)}
                             title="Delete"
                         />
                         <MdOpenInNew
                             className="icon"
-                            onClick={() => window.open(`${process.env.REACT_APP_FRONTEND_URL}/service/${service._id}`, '_blank')}
+                            onClick={() => window.open(`${process.env.REACT_APP_FRONTEND_URL}/events/${event._id}`, '_blank')}
                             title="Open in New Tab"
                         />
                     </div>
                 </div>
-                {services.length > 1 && services.length - 1 !== index && <div className="horizontalLine"></div>}
+                {events.length > 1 && events.length - 1 !== index && <div className="horizontalLine"></div>}
             </div>
         ))
     ) : (
@@ -129,8 +131,8 @@ function AdminServiceAds() {
                     <div className="tableContent">
                         <div className="upper">
                             <h2 className="secondaryHeading">
-                                <span>{filterType} </span>Service Ads
-                                <span className="totalRows">- {(services.length < 10 ? '0' : '') + services.length}</span>
+                                <span>{filterType} </span>Event Ads
+                                <span className="totalRows">- {(events.length < 10 ? '0' : '') + events.length}</span>
                             </h2>
                             <div className="upperRight">
                                 <SearchInput
@@ -151,67 +153,67 @@ function AdminServiceAds() {
                         </div>
                         <div className="header">
                             <p className="title">Title</p>
-                            <p>Seller</p>
-                            <p>Category</p>
-                            <p>SubCategory</p>
-                            <p>Price</p>
-                            <p>Type</p>
+                            <p>Organizer</p>
+                            <p>Event Type</p>
+                            <p>Date</p>
+                            <p>Time</p>
+                            <p>City</p>
                             <p>Rating</p>
                             <p>Actions</p>
                         </div>
                         {isLoading ? (
                             <Loader type="simpleMini" />
                         ) : (
-                            <div className="rows">{serviceElems}</div>
+                            <div className="rows">{eventElems}</div>
                         )}
                     </div>
                 </div>
 
                 {/* Details Modal */}
-                {showDetailsModal && selectedService && (
+                {showDetailsModal && selectedEvent && (
                     <div className="popupDiv addNewModelDiv">
                         <div className="popupContent">
                             <div className="form">
                                 <h2 className="secondaryHeading">
-                                    Service Ad <span>Details</span>
+                                    Event Ad <span>Details</span>
                                 </h2>
 
                                 <div className="rows">
                                     <div className="row">
                                         <div>ID</div>
-                                        <div className="fw600">{selectedService._id}</div>
+                                        <div className="fw600">{selectedEvent._id}</div>
                                     </div>
                                     <div className="row">
                                         <div>Title</div>
-                                        <div className="fw600">{selectedService.title}</div>
+                                        <div className="fw600">{selectedEvent.title}</div>
                                     </div>
                                     <div className="row">
                                         <div>Description</div>
-                                        <div className="fw600">{selectedService.description}</div>
+                                        <div className="fw600">{selectedEvent.description}</div>
                                     </div>
                                     <div className="row">
-                                        <div>Category</div>
-                                        <div className="fw600">{selectedService.category}</div>
-                                    </div>
-                                    <div className="row">
-                                        <div>SubCategory</div>
-                                        <div className="fw600">{selectedService.subCategory}</div>
+                                        <div>Event Type</div>
+                                        <div className="fw600">{selectedEvent.eventType}</div>
                                     </div>
                                 </div>
 
                                 <div className="horizontalLine"></div>
 
                                 <h2 className="secondaryHeading">
-                                    Service <span>Details</span>
+                                    Event <span>Schedule</span>
                                 </h2>
                                 <div className="rows">
                                     <div className="row">
-                                        <div>Service Price</div>
-                                        <div className="fw600">${selectedService.servicePrice || 'N/A'}</div>
+                                        <div>Event Date</div>
+                                        <div className="fw600">{new Date(selectedEvent.eventDate).toLocaleDateString()}</div>
                                     </div>
                                     <div className="row">
-                                        <div>Service Type</div>
-                                        <div className="fw600">{selectedService.serviceType || 'N/A'}</div>
+                                        <div>Start Time</div>
+                                        <div className="fw600">{selectedEvent.eventTime}</div>
+                                    </div>
+                                    <div className="row">
+                                        <div>End Time</div>
+                                        <div className="fw600">{selectedEvent.endTime}</div>
                                     </div>
                                 </div>
 
@@ -223,21 +225,37 @@ function AdminServiceAds() {
                                 <div className="rows">
                                     <div className="row">
                                         <div>City</div>
-                                        <div className="fw600">{selectedService.city || 'N/A'}</div>
+                                        <div className="fw600">{selectedEvent.city || 'N/A'}</div>
                                     </div>
                                     <div className="row">
                                         <div>Neighbourhood</div>
-                                        <div className="fw600">{selectedService.neighbourhood || 'N/A'}</div>
+                                        <div className="fw600">{selectedEvent.neighbourhood || 'N/A'}</div>
                                     </div>
                                     <div className="row">
                                         <div>Phone</div>
-                                        <div className="fw600">{selectedService.phone}</div>
+                                        <div className="fw600">{selectedEvent.phone}</div>
                                     </div>
                                     <div className="row">
                                         <div>Show Phone</div>
-                                        <div className="fw600">{selectedService.showPhone ? 'Yes' : 'No'}</div>
+                                        <div className="fw600">{selectedEvent.showPhone ? 'Yes' : 'No'}</div>
                                     </div>
                                 </div>
+
+                                {selectedEvent.featuresAmenities && selectedEvent.featuresAmenities.length > 0 && (
+                                    <>
+                                        <div className="horizontalLine"></div>
+                                        <h2 className="secondaryHeading">
+                                            Features & <span>Amenities</span>
+                                        </h2>
+                                        <div className="rows">
+                                            {selectedEvent.featuresAmenities.map((feature, idx) => (
+                                                <div key={idx} className="row">
+                                                    <div className="fw600">• {feature}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
 
                                 <div className="horizontalLine"></div>
 
@@ -247,27 +265,27 @@ function AdminServiceAds() {
                                 <div className="rows">
                                     <div className="row">
                                         <div>Rating</div>
-                                        <div className="fw600">{selectedService.rating?.toFixed(1)} ({selectedService.reviewsCount} reviews)</div>
+                                        <div className="fw600">{selectedEvent.rating?.toFixed(1)} ({selectedEvent.reviewsCount} reviews)</div>
                                     </div>
                                     <div className="row">
                                         <div>Favorites</div>
-                                        <div className="fw600">{selectedService.favoritesCount}</div>
+                                        <div className="fw600">{selectedEvent.favoritesCount}</div>
                                     </div>
                                     <div className="row">
                                         <div>Created</div>
-                                        <div className="fw600">{new Date(selectedService.createdAt).toLocaleDateString()}</div>
+                                        <div className="fw600">{new Date(selectedEvent.createdAt).toLocaleDateString()}</div>
                                     </div>
                                 </div>
 
-                                {selectedService.images && selectedService.images.length > 0 && (
+                                {selectedEvent.images && selectedEvent.images.length > 0 && (
                                     <>
                                         <div className="horizontalLine"></div>
                                         <h2 className="secondaryHeading">
-                                            Service <span>Images</span>
+                                            Event <span>Images</span>
                                         </h2>
                                         <div className="productImages">
-                                            {selectedService.images.map((image, idx) => (
-                                                <img key={idx} src={image} alt={`Service ${idx + 1}`} />
+                                            {selectedEvent.images.map((image, idx) => (
+                                                <img key={idx} src={image} alt={`Event ${idx + 1}`} />
                                             ))}
                                         </div>
                                     </>
@@ -288,9 +306,9 @@ function AdminServiceAds() {
 
                 <ConfirmDialog
                     open={confirmDialogOpen}
-                    title="Delete Service Ad"
-                    message="Are you sure you want to delete this service ad? This action cannot be undone."
-                    onConfirm={handleDeleteService}
+                    title="Delete Event Ad"
+                    message="Are you sure you want to delete this event ad? This action cannot be undone."
+                    onConfirm={handleDeleteEvent}
                     onCancel={() => setConfirmDialogOpen(false)}
                     isLoading={isLoading}
                 />
@@ -299,4 +317,4 @@ function AdminServiceAds() {
     );
 }
 
-export default AdminServiceAds;
+export default AdminEventAds;

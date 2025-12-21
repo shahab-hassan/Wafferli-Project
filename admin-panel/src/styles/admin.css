@@ -122,7 +122,7 @@
     gap: 25px;
 }
 
-.adminHeaderDiv .adminHeaderContent .faithzyLogoDiv {
+.adminHeaderDiv .adminHeaderContent .wafferliLogoDiv {
     margin: auto;
     height: 50px;
     width: 100px;
@@ -294,434 +294,6 @@
 
 
 
-/* ****************************** ADMIN SOCIAL LINKS PAGE ****************************** */
-
-.socialLinksDiv .horizontalLine {
-    margin-top: 10px;
-}
-
-.socialLinksDiv .row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    width: 100%;
-}
-
-.socialLinksDiv .socialCheckInput {
-    cursor: pointer;
-}
-
-.socialLinksDiv .row .platformName {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--lightBlackPrimary);
-}
-
-.socialLinksDiv .row .socialInput {
-    width: 85%;
-    padding: 8px 20px;
-    outline: none;
-    border: 1px solid var(--gray);
-    border-radius: 8px;
-}
-
-
-
-
-/* ****************************** ADMIN CATEGORIES PAGE ****************************** */
-
-.adminCategoriesDiv .popupDiv .dropdownPlus {
-    margin: 5px 0px;
-    width: 100%;
-}
-
-
-
-
-
-/* ****************************** ADMIN COUPONS PAGE ****************************** */
-
-.adminCouponsDiv .detailsModelDiv .details .row {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.adminCouponsDiv .detailsModelDiv .buttonsDiv {
-    margin-top: 20px;
-}
-
-
-
-
-
-/* ****************************** ADMIN FEE MANAGEMENT PAGE ****************************** */
-
-.adminFeeDiv .adminFeeContent {
-    display: flex;
-    gap: 30px;
-    justify-content: space-between;
-    margin-top: 20px;
-}
-
-.adminFeeDiv .adminFeeContent .left {
-    min-width: 40%;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-}
-
-.adminFeeDiv .adminFeeContent .box {
-    width: 100%;
-    background: var(--white);
-    border-radius: 8px;
-    height: fit-content;
-}
-
-.adminFeeDiv .adminFeeContent .box .secondaryHeading {
-    color: var(--white);
-}
-
-.adminFeeDiv .adminFeeContent .box .secondaryHeading span {
-    color: var(--secondaryCopper);
-    ;
-}
-
-.adminFeeDiv .adminFeeContent .box .secondaryBtn {
-    margin-top: 10px;
-}
-
-.adminFeeDiv .adminFeeContent .box .upper {
-    padding: 10px 18px;
-    background: var(--primaryBlue);
-    color: var(--white);
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-}
-
-.adminFeeDiv .adminFeeContent .box .lower {
-    padding: 20px 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.adminFeeDiv .adminFeeContent .box .lower .buttonsDiv {
-    display: flex;
-    gap: 15px;
-    width: 100%;
-    justify-content: right;
-}
-
-.adminFeeDiv .adminFeeContent .right .lower .discountType {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-    justify-content: center;
-}
-
-.adminFeeDiv .adminFeeContent .right .lower .discountType .radioBtn {
-    display: flex;
-    gap: 5px;
-}
-
-
-
-
-
-/* ****************************** ADMIN ORDERS MANAGEMENT PAGE ****************************** */
-
-.adminOrdersDiv .tableDiv .header .title,
-.adminOrdersDiv .tableDiv .rows .row .titleField {
-    width: 220%;
-}
-
-.adminOrdersDiv .tableDiv .rows .row .titleField .title {
-    width: 100% !important;
-}
-
-.adminOrdersDiv .popupDiv .rows {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
-}
-
-.adminOrdersDiv .popupDiv .rows .row {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.adminOrdersDiv .popupDiv .contactBuyerBtnDiv {
-    display: flex;
-    justify-content: right;
-    width: 100%;
-}
-
-.adminOrdersDiv .filterIcon {
-    cursor: pointer;
-    font-size: 1.5rem;
-    margin-left: 1rem;
-    color: var(--lightBlackPrimary);
-}
-
-.adminOrdersDiv .filtersForm .filterRow {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-}
-
-.adminOrdersDiv .appliedFilters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 10px;
-    background-color: #f5f5f5;
-    border-radius: 4px;
-    margin-bottom: 15px;
-}
-
-.adminOrdersDiv .filterChip {
-    display: inline-flex;
-    align-items: center;
-    padding: 6px 12px;
-    background-color: #e0e0e0;
-    border-radius: 16px;
-    font-size: 14px;
-    color: #333;
-    font-weight: 500;
-}
-
-.adminOrdersDiv .closeIcon {
-    margin-left: 6px;
-    cursor: pointer;
-    color: #666;
-    font-size: 12px;
-    transition: color 0.2s ease;
-}
-
-.adminOrdersDiv .closeIcon:hover {
-    color: #ff4444;
-}
-
-.adminOrdersDiv .clearFiltersBtn {
-    padding: 6px 12px;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    color: #333;
-    transition: all 0.2s ease;
-}
-
-.adminOrdersDiv .clearFiltersBtn:hover {
-    background-color: #f0f0f0;
-    border-color: #999;
-}
-
-
-
-
-
-
-/* ****************************** ADMIN CHATS PAGE ****************************** */
-
-.admin .adminDiv .chatDiv {
-    margin: 0;
-}
-
-
-
-
-
-/* ****************************** ADMIN DASHBOARD PAGE ****************************** */
-
-.adminDashboardDiv .dashboardOverview {
-    display: flex;
-    gap: 20px;
-}
-
-.adminDashboardDiv .dashboardOverview .left,
-.adminDashboardDiv .dashboardOverview .right {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 100%;
-}
-
-.adminDashboardDiv .dashboardOverview .left .overviewBoxA .row,
-.adminDashboardDiv .dashboardOverview .right .overviewBoxA .row {
-    display: flex;
-    justify-content: space-between;
-}
-
-.adminDashboardDiv .dashboardOverview .left .leftBottom,
-.adminDashboardDiv .dashboardOverview .right .rightTop {
-    display: flex;
-    gap: 20px;
-}
-
-.adminDashboardDiv .adminOrdersDiv {
-    margin: 40px 0px;
-}
-
-
-
-
-
-
-/* ****************************** ADMIN REVENUE PAGE ****************************** */
-
-.adminRevenueDiv .header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 25px;
-}
-
-.adminRevenueDiv .header .headerRight {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-}
-
-.adminRevenueDiv .revenueOverviewDetails {
-    display: flex;
-    gap: 20px;
-}
-
-.adminRevenueDiv .revenueDetailsUpper {
-    margin: 20px 0px;
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-}
-
-.adminRevenueDiv .revenueDetailsUpper .revenueBarChart {
-    padding: 20px 25px;
-    background: var(--white);
-    border-radius: 8px;
-    width: 75%;
-}
-
-.adminRevenueDiv .revenueDetailsUpper .revenueBarChart .upper {
-    margin-top: 10px;
-    margin-bottom: 20px;
-}
-
-.adminRevenueDiv .revenueDetailsUpper .revenueBarChartOverview {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 24%;
-}
-
-.adminRevenueDiv .revenueDetailsUpper .revenueBarChartOverview .revenuePieChart .secondaryHeading {
-    margin-bottom: 10px;
-}
-
-
-.adminRevenueDiv .revenueDetailsLower {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    flex: 1;
-}
-
-.adminRevenueDiv .revenueDetailsLower .upper {
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-.adminRevenueDiv .revenueDetailsLower .revenueLineChart,
-.adminRevenueDiv .revenueDetailsLower .profitLineChart {
-    width: 49%;
-    background: var(--white);
-    border-radius: 8px;
-    padding: 15px 25px;
-}
-
-
-
-
-/* ****************************** ADMIN PAYMENTS PAGE ****************************** */
-
-.adminPaymentsDiv .adminPaymentMethodsDiv {
-    background: var(--white);
-    padding: 20px 30px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-
-.adminPaymentsDiv .paymentMethods {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--lightGray);
-    padding: 13px 20px;
-    border-radius: 8px;
-    margin: 10px 0px;
-}
-
-.adminPaymentsDiv .paymentMethods .method {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.adminPaymentsDiv .paymentsDetails {
-    background: var(--white);
-    padding: 20px 30px;
-    border-radius: 8px;
-}
-
-.adminPaymentsDiv .paymentsDetails .css-19kzrtu {
-    padding: 0 !important;
-}
-
-.adminPaymentsDiv .pendingPaymentsDiv .popupDiv .sellerDetails .sellerHistory {
-    width: 100%;
-}
-
-.adminPaymentsDiv .pendingPaymentsDiv .popupDiv .sellerDetails .sellerHistory .sellerHistoryUpper {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.adminPaymentsDiv .popupDiv .rowsParent {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 8px;
-}
-
-.adminPaymentsDiv .popupDiv .rowsParent .row {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    gap: 25px;
-}
-
-.adminPaymentsDiv .popupDiv .rowsParent .row div {
-    max-width: 75%;
-    text-align: justify;
-}
-
-.adminPaymentsDiv .releasePopupContent {
-    max-width: 50% !important;
-}
-
-.adminPaymentsDiv .takePaymentDiv {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-    margin-top: 20px;
-}
-
 
 
 
@@ -816,268 +388,6 @@
     color: var(--black);
 }
 
-
-
-
-/* ****************************** ADMIN DISPUTES + ADMIN MANAGE DISPUTE ****************************** */
-
-.adminManageDisputeDiv .adminManageDisputeContent {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    background: var(--white);
-    padding: 20px 30px;
-    border-radius: 8px;
-}
-
-.adminManageDisputeDiv .adminManageDisputeContainer {
-    display: flex;
-    justify-content: space-between;
-}
-
-.adminManageDisputeDiv .adminManageDisputeContainer .chatRoom {
-    width: 58%;
-}
-
-.adminManageDisputeDiv .adminManageDisputeContainer .adminDisputeDetails {
-    width: 40%;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    padding: 0px 20px;
-    overflow-y: auto;
-}
-
-.adminManageDisputeDiv .adminManageDisputeContainer .adminDisputeDetails .item {
-    display: flex;
-    gap: 15px;
-}
-
-.adminManageDisputeDiv .adminManageDisputeContainer .adminDisputeDetails .item img {
-    width: 80px;
-}
-
-.adminManageDisputeDiv .adminManageDisputeContainer .adminDisputeDetails .item p {
-    font-size: 0.85rem;
-    color: var(--lightBlackPrimary);
-}
-
-.adminManageDisputeDiv .adminManageDisputeContainer .adminDisputeDetails .rows {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    width: 100%;
-}
-
-.adminManageDisputeDiv .adminManageDisputeContainer .adminDisputeDetails .rows .row {
-    display: flex;
-    justify-content: space-between;
-}
-
-
-
-
-
-
-
-
-
-/* ********************** Email Templates Section Styles ********************** */
-
-.templatesSection {
-    padding: 10px 30px;
-    margin-bottom: 20px;
-}
-
-.templatesSection .templatesGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-    margin: 20px 0px;
-}
-
-.templatesSection .templatesGrid .templateCard {
-    background: var(--white);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.templatesSection .templatesGrid .templateCard:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.templatesSection .templatesGrid .templateCard .templateImageContainer {
-    position: relative;
-    width: 100%;
-    height: 0;
-    padding-bottom: 75%;
-    overflow: hidden;
-}
-
-.templatesSection .templatesGrid .templateCard .templateImageContainer .templateImage {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.templatesSection .templatesGrid .templateCard .templateImageContainer .templateOverlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    padding: 20px;
-}
-
-.templatesSection .templatesGrid .templateCard .templateImageContainer:hover .templateOverlay {
-    opacity: 1;
-}
-
-.templatesSection .templatesGrid .templateCard .templateImageContainer .templateOverlay .templateName {
-    color: var(--white);
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 8px;
-    text-align: center;
-}
-
-.templatesSection .templatesGrid .templateCard .templateImageContainer .templateOverlay .templateDescription {
-    color: var(--white);
-    font-size: 0.9rem;
-    text-align: center;
-    margin-bottom: 20px;
-    opacity: 0.9;
-}
-
-.templatesSection .templatesGrid .templateCard .templateImageContainer .templateOverlay .templateActions {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.templatesSection .templatesGrid .templateCard .templateImageContainer .templateOverlay .templateActions .templateBtn {
-    padding: 8px 16px;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    border: none;
-}
-
-.templatesSection .templatesGrid .templateCard .templateImageContainer .templateOverlay .templateActions .previewBtn {
-    background-color: var(--white);
-    color: var(--primaryBlue);
-}
-
-.templatesSection .templatesGrid .templateCard .templateImageContainer .templateOverlay .templateActions .previewBtn:hover {
-    background-color: var(--gray);
-}
-
-.templatesSection .templatesGrid .templateCard .templateImageContainer .templateOverlay .templateActions .downloadBtn {
-    background-color: var(--primaryCopper);
-    color: var(--white);
-}
-
-.templatesSection .templatesGrid .templateCard .templateImageContainer .templateOverlay .templateActions .downloadBtn:hover {
-    background-color: var(--primaryCopperDark);
-}
-
-.templatesSection .templatesGrid .templateCard .templateImageContainer .templateOverlay .templateActions .copyBtn {
-    background-color: var(--primaryBlue);
-    color: var(--white);
-}
-
-.templatesSection .templatesGrid .templateCard .templateImageContainer .templateOverlay .templateActions .copyBtn:hover {
-    background-color: var(--black);
-}
-
-
-
-/* Modal Styles */
-.templatesSection .modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.templatesSection .modalOverlay .modalContent {
-    background: var(--white);
-    border-radius: 8px;
-    width: 90%;
-    max-width: 900px;
-    max-height: 90vh;
-    overflow-y: auto;
-}
-
-.templatesSection .modalOverlay .modalContent .modalHeader {
-    padding: 15px 20px;
-    border-bottom: 1px solid var(--gray);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.templatesSection .modalOverlay .modalContent .modalHeader .modalCloseBtn {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: var(--darkGray);
-    cursor: pointer;
-    padding: 5px;
-    transition: color 0.3s ease;
-}
-
-.templatesSection .modalOverlay .modalContent .modalHeader .modalCloseBtn:hover {
-    color: var(--primaryBlue);
-}
-
-.templatesSection .modalOverlay .modalContent .modalBody {
-    padding: 20px;
-}
-
-.templatesSection .modalOverlay .modalContent .modalHeader .modalActions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.templatesSection .modalOverlay .modalContent .modalHeader .modalActions .templateBtn {
-    padding: 8px 16px;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: none;
-    background-color: var(--secondaryBlue);
-    color: var(--white);
-}
-
-.templatesSection .modalOverlay .modalContent .modalHeader .modalActions .templateBtn:hover {
-    background-color: var(--black);
-}
 
 
 
@@ -1188,6 +498,7 @@
 .adminProductsDiv .popupDiv .rows .row {
     display: flex;
     justify-content: space-between;
+    gap: 100px;
     width: 100%;
 }
 
@@ -1224,332 +535,6 @@
 .adminServicesDiv .popupDiv .packageSection {
     width: 100%;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* ********************** ADMIN RESTRICTED COUNTRIES ********************** */
-
-.adminRestrictedCountriesDiv {
-    position: relative;
-}
-
-.adminRestrictedCountriesDiv .adminRestrictedCountriesContent {
-    background-color: var(--white);
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.adminRestrictedCountriesDiv .adminRestrictedCountriesContent .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 25px;
-}
-
-.adminRestrictedCountriesDiv .adminRestrictedCountriesContent table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.adminRestrictedCountriesDiv .adminRestrictedCountriesContent th,
-.adminRestrictedCountriesDiv .adminRestrictedCountriesContent td {
-    padding: 15px 25px;
-    text-align: left;
-}
-
-.adminRestrictedCountriesDiv .adminRestrictedCountriesContent th {
-    background-color: var(--primaryBlue);
-    color: var(--white);
-    font-weight: 600;
-}
-
-.adminRestrictedCountriesDiv .adminRestrictedCountriesContent td {
-    border-bottom: 1px solid var(--lightGray);
-}
-
-.adminRestrictedCountriesDiv .adminRestrictedCountriesContent tr:hover {
-    background-color: var(--extraLightGray);
-}
-
-.adminRestrictedCountriesDiv .adminRestrictedCountriesContent .icon {
-    cursor: pointer;
-    margin-right: 10px;
-    font-size: 1.2rem;
-    color: var(--lightBlackPrimary);
-}
-
-.adminRestrictedCountriesDiv .adminRestrictedCountriesContent .icon:hover {
-    color: var(--primaryCopper);
-}
-
-.adminRestrictedCountriesDiv .restrictionBadge {
-    background-color: var(--lightGray);
-    color: var(--black);
-    padding: 2px 8px;
-    border-radius: 12px;
-    margin-right: 5px;
-    font-size: 0.8rem;
-}
-
-.adminRestrictedCountriesDiv .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.adminRestrictedCountriesDiv .modalContent {
-    background-color: var(--white);
-    padding: 30px;
-    border-radius: 10px;
-    width: fit-content;
-    position: relative;
-}
-
-.adminRestrictedCountriesDiv .modalContent h3 {
-    margin-bottom: 20px;
-    font-size: 1.5rem;
-    color: var(--primaryBlue);
-}
-
-.adminRestrictedCountriesDiv .modalContent .form-group {
-    margin-bottom: 20px;
-}
-
-.adminRestrictedCountriesDiv .modalContent .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 500;
-}
-
-.adminRestrictedCountriesDiv .modalContent .restrictions {
-    margin-bottom: 20px;
-}
-
-.adminRestrictedCountriesDiv .modalContent .restrictions p {
-    font-weight: 500;
-    margin-bottom: 10px;
-}
-
-.adminRestrictedCountriesDiv .modalContent .restrictions label {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-.adminRestrictedCountriesDiv .modalContent .restrictions input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-}
-
-.adminRestrictedCountriesDiv .modalContent .closeIcon {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: var(--darkGray);
-}
-
-.adminRestrictedCountriesDiv .modalContent .closeIcon:hover {
-    color: var(--black);
-}
-
-.adminRestrictedCountriesDiv .modalContent .buttons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* ********************** ADMIN GENERAL SETTINGS ********************** */
-
-.adminSettingsDiv .chatRestrictionsTableDiv .warningField,
-.adminSettingsDiv .chatRestrictionsTableDiv .warningMessage {
-    width: 400% !important;
-}
-
-
-/* Admin Settings - Banner Modal Additional Styles */
-
-.adminSettingsDiv .bannerModalContent {
-    max-width: 600px;
-}
-
-.adminSettingsDiv .bannerRecommendation {
-    background: #f0f7ff;
-    border-left: 4px solid #4a90e2;
-    padding: 12px 16px;
-    margin-bottom: 20px;
-    border-radius: 4px;
-}
-
-.adminSettingsDiv .bannerRecommendation p {
-    margin: 4px 0;
-    font-size: 14px;
-    color: #2c5282;
-}
-
-.adminSettingsDiv .bannerRecommendation p:first-child {
-    font-weight: 600;
-}
-
-.adminSettingsDiv .bannerImageUploadSection {
-    margin-bottom: 20px;
-}
-
-.adminSettingsDiv .bannerImageUploadHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-}
-
-.adminSettingsDiv .bannerImageUploadHeader label {
-    font-weight: 600;
-    font-size: 14px;
-    color: #333;
-}
-
-.adminSettingsDiv .bannerImageUploadHeader .clearBtn {
-    background: #ff4444;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.adminSettingsDiv .bannerImageUploadHeader .clearBtn:hover {
-    background: #cc0000;
-    transform: translateY(-1px);
-}
-
-.adminSettingsDiv .bannerImageUploadContent {
-    width: 100%;
-}
-
-.adminSettingsDiv .bannerUploadLabel {
-    display: block;
-    width: 100%;
-    min-height: 180px;
-    border: 2px dashed #cbd5e0;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    overflow: hidden;
-    background: #f9fafb;
-}
-
-.adminSettingsDiv .bannerUploadLabel:hover {
-    border-color: #4a90e2;
-    background: #f0f7ff;
-}
-
-.adminSettingsDiv .bannerUploadPlaceholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 180px;
-    color: #718096;
-    padding: 0px 20px;
-}
-
-.adminSettingsDiv .bannerUploadPlaceholder .uploadIcon {
-    font-size: 48px;
-    margin-bottom: 12px;
-    color: #a0aec0;
-}
-
-.adminSettingsDiv .bannerUploadPlaceholder p {
-    margin: 0 0 4px 0;
-    font-size: 16px;
-    font-weight: 500;
-    color: #4a5568;
-}
-
-.adminSettingsDiv .bannerUploadPlaceholder span {
-    font-size: 13px;
-    color: #718096;
-}
-
-.adminSettingsDiv .bannerPreviewImage {
-    width: 100%;
-    height: auto;
-    display: block;
-    object-fit: cover;
-    max-height: 180px;
-}
-
-@media (max-width: 768px) {
-    .adminSettingsDiv .bannerModalContent {
-        max-width: 100%;
-    }
-
-    .adminSettingsDiv .bannerRecommendation {
-        padding: 10px 12px;
-    }
-
-    .adminSettingsDiv .bannerRecommendation p {
-        font-size: 13px;
-    }
-
-    .adminSettingsDiv .bannerUploadLabel {
-        min-height: 150px;
-    }
-
-    .adminSettingsDiv .bannerUploadPlaceholder {
-        height: 150px;
-    }
-
-    .adminSettingsDiv .bannerUploadPlaceholder .uploadIcon {
-        font-size: 40px;
-    }
-
-    .adminSettingsDiv .bannerPreviewImage {
-        max-height: 150px;
-    }
-}
-
 
 
 
@@ -1605,7 +590,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.faqDiv .categoryHeader ,
+.faqDiv .categoryHeader,
 .adminFAQDiv .categoryHeader {
     display: flex;
     justify-content: space-between;
@@ -1734,4 +719,157 @@
     border: none;
     cursor: pointer;
     border-radius: 4px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+:root {
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --primary: #4f46e5;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+}
+
+.adminDashboardDiv {
+    min-height: 100vh;
+}
+
+.mainHeading {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 30px;
+}
+
+.dashboardOverview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.overviewBox {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.2s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.overviewBox:hover {
+    transform: translateY(-4px);
+}
+
+.overviewBox .icon {
+    font-size: 32px;
+    padding: 10px;
+    border-radius: 12px;
+    background: #f1f5f9;
+}
+
+/* Icon Colors */
+.icon.blue {
+    color: #3b82f6;
+}
+
+.icon.purple {
+    color: #8b5cf6;
+}
+
+.icon.green {
+    color: #10b981;
+}
+
+.overviewBox .value {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-top: 15px;
+}
+
+.overviewBox .subtitle {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.horizontalLine {
+    height: 1px;
+    background: #f1f5f9;
+    margin: 15px 0;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 15px;
+}
+
+.grid-mini {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.quickStatsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 24px;
+}
+
+.statCard {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: var(--card-shadow);
+}
+
+.statCard h3 {
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.statRow {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.statRow:last-child {
+    border-bottom: none;
+}
+
+.statRow strong {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.quickStatsGrid .icon{
+    margin-right: 8px;
+}
+.quickStatsGrid .icon.red{
+    color: #ff0000;
+}
+.quickStatsGrid .icon.yellow{
+    color: #ffae23;
 }

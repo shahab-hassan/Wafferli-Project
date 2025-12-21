@@ -123,7 +123,7 @@ const Footer: React.FC = () => {
               
               <div className={`flex gap-4 sm:gap-6 order-1 sm:order-2 flex-wrap justify-center ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Link
-                  href="/privacy"
+                  href="/privacy-policy"
                   className="text-small-regular text-grey-3 hover:text-primary transition-colors duration-200 whitespace-nowrap"
                 >
                   {t('legal.privacy')}
@@ -134,13 +134,6 @@ const Footer: React.FC = () => {
                   className="text-small-regular text-grey-3 hover:text-primary transition-colors duration-200 whitespace-nowrap"
                 >
                   {t('legal.terms')}
-                </Link>
-                <span className="text-grey-5 hidden sm:inline">|</span>
-                <Link
-                  href="/cookies"
-                  className="text-small-regular text-grey-3 hover:text-primary transition-colors duration-200 whitespace-nowrap"
-                >
-                  {t('legal.cookies')}
                 </Link>
               </div>
             </div>

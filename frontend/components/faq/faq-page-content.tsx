@@ -1,28 +1,30 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useLocale, useTranslations } from "next-intl"
-import { Search, ChevronDown, MessageCircle, Phone, Mail, Home, ChevronRight } from "lucide-react"
+import { Search, ChevronDown, MessageCircle, Mail } from "lucide-react"
 import { Button } from "@/components/common/button"
 import { Input } from "@/components/common/input"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
+import axios from "axios"
 
 interface FAQItem {
-  id: string
+  _id: string
   question: string
   answer: string
-  category: string
+  category: {
+    _id: string
+    name: string
+    color: string
+  } | null
 }
 
-const categories = [
-  { id: "all", label: "All" },
-  { id: "account", label: "Account & Profile" },
-  { id: "using", label: "Using Wafferli" },
-  { id: "business", label: "For Businesses" },
-  { id: "technical", label: "Technical Support" },
-  { id: "general", label: "General" },
-]
+interface FAQCategory {
+  _id: string
+  name: string
+  color: string
+}
 
 export function FAQPageContent() {
   const locale = useLocale()
@@ -32,42 +34,36 @@ export function FAQPageContent() {
   const [searchQuery, setSearchQuery] = useState("")
   const [activeCategory, setActiveCategory] = useState("all")
   const [expandedItems, setExpandedItems] = useState<string[]>([])
+  const [faqs, setFaqs] = useState<FAQItem[]>([])
+  const [categories, setCategories] = useState<FAQCategory[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const faqItems: FAQItem[] = [
-    {
-      id: "1",
-      question: t("questions.createAccount"),
-      answer: t("answers.createAccount"),
-      category: "account",
-    },
-    {
-      id: "2",
-      question: t("questions.findDeals"),
-      answer: t("answers.findDeals"),
-      category: "using",
-    },
-    {
-      id: "3",
-      question: t("questions.redeemDeals"),
-      answer: t("answers.redeemDeals"),
-      category: "using",
-    },
-    {
-      id: "4",
-      question: t("questions.marketplace"),
-      answer: t("answers.marketplace"),
-      category: "using",
-    },
-    {
-      id: "5",
-      question: t("questions.joinBusiness"),
-      answer: t("answers.joinBusiness"),
-      category: "business",
-    },
-  ]
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [faqsRes, categoriesRes] = await Promise.all([
+          axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}faq/all`),
+          axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}faq/categories`),
+        ])
 
-  const filteredFAQs = faqItems.filter((item) => {
-    const matchesCategory = activeCategory === "all" || item.category === activeCategory
+        if (faqsRes.data.success) {
+          setFaqs(faqsRes.data.faqs)
+        }
+        if (categoriesRes.data.success) {
+          setCategories(categoriesRes.data.categories)
+        }
+      } catch (error) {
+        console.error("Failed to fetch FAQs:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  const filteredFAQs = faqs.filter((item) => {
+    const matchesCategory = activeCategory === "all" || item.category?._id === activeCategory
     const matchesSearch =
       item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.answer.toLowerCase().includes(searchQuery.toLowerCase())
@@ -78,20 +74,8 @@ export function FAQPageContent() {
     setExpandedItems((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]))
   }
 
-  const getCategoryColor = (categoryId: string) => {
-    const colors = {
-      account: "bg-purple-100 text-purple-700",
-      using: "bg-blue-100 text-blue-700",
-      business: "bg-green-100 text-green-700",
-      technical: "bg-orange-100 text-orange-700",
-      general: "bg-gray-100 text-gray-700",
-    }
-    return colors[categoryId as keyof typeof colors] || "bg-gray-100 text-gray-700"
-  }
-
   return (
     <div className="w-full">
-
       <section className="w-full bg-white">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
           <div className="max-w-[1120px] mx-auto py-6 text-center">
@@ -118,7 +102,7 @@ export function FAQPageContent() {
                 <Search
                   className={cn(
                     "absolute top-1/2 transform -translate-y-1/2 text-grey-3 w-4 h-4 sm:w-5 sm:h-5",
-                    isRTL ? "right-4" : "left-4",
+                    isRTL ? "right-4" : "left-4"
                   )}
                 />
                 <Input
@@ -128,26 +112,38 @@ export function FAQPageContent() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className={cn(
                     "w-full h-10 sm:h-12 bg-white border border-grey-4 rounded-full text-sm sm:text-base",
-                    isRTL ? "pr-12 text-right" : "pl-12",
+                    isRTL ? "pr-12 text-right" : "pl-12"
                   )}
                 />
               </div>
             </div>
 
             <div className="flex flex-wrap justify-center gap-1 sm:gap-2">
+              <Button
+                variant={activeCategory === "all" ? "default" : "outline"}
+                onClick={() => setActiveCategory("all")}
+                className={cn(
+                  "rounded-full px-3 py-1 h-8 text-xs sm:text-sm min-w-[100px] sm:min-w-[110px]",
+                  activeCategory === "all"
+                    ? "bg-primary text-white hover:bg-primary/90"
+                    : "bg-white text-grey-2 border-grey-4 hover:bg-grey-5"
+                )}
+              >
+                All
+              </Button>
               {categories.map((category) => (
                 <Button
-                  key={category.id}
-                  variant={activeCategory === category.id ? "default" : "outline"}
-                  onClick={() => setActiveCategory(category.id)}
+                  key={category._id}
+                  variant={activeCategory === category._id ? "default" : "outline"}
+                  onClick={() => setActiveCategory(category._id)}
                   className={cn(
                     "rounded-full px-3 py-1 h-8 text-xs sm:text-sm min-w-[100px] sm:min-w-[110px]",
-                    activeCategory === category.id
+                    activeCategory === category._id
                       ? "bg-primary text-white hover:bg-primary/90"
-                      : "bg-white text-grey-2 border-grey-4 hover:bg-grey-5",
+                      : "bg-white text-grey-2 border-grey-4 hover:bg-grey-5"
                   )}
                 >
-                  {t(`categories.${category.id}`)}
+                  {category.name}
                 </Button>
               ))}
             </div>
@@ -158,52 +154,64 @@ export function FAQPageContent() {
       <section className="w-full bg-grey-6">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
           <div className="max-w-[1120px] mx-auto pb-6">
-            <div className="space-y-3">
-              {filteredFAQs.map((item) => (
-                <div key={item.id} className="bg-white border border-grey-5 rounded-lg overflow-hidden">
-                  <div className="px-4 pt-3">
-                    <span
+            {loading ? (
+              <div className="flex justify-center items-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+              </div>
+            ) : filteredFAQs.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-grey-3">No FAQs found matching your search.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {filteredFAQs.map((item) => (
+                  <div key={item._id} className="bg-white border border-grey-5 rounded-lg overflow-hidden">
+                    <div className="px-4 pt-3">
+                      {item.category && (
+                        <span
+                          className="inline-block px-2 py-0.5 rounded-full text-xs sm:text-sm"
+                          style={{
+                            backgroundColor: `${item.category.color}20`,
+                            color: item.category.color,
+                          }}
+                        >
+                          {item.category.name}
+                        </span>
+                      )}
+                    </div>
+
+                    <button
+                      onClick={() => toggleExpanded(item._id)}
                       className={cn(
-                        "inline-block px-2 py-0.5 rounded-full text-xs sm:text-sm",
-                        getCategoryColor(item.category),
+                        "w-full px-4 py-3 text-left flex items-center justify-between hover:bg-grey-5/50 transition-colors",
+                        isRTL ? "text-right flex-row-reverse" : ""
                       )}
                     >
-                      {t(`categories.${item.category}`)}
-                    </span>
-                  </div>
-
-                  <button
-                    onClick={() => toggleExpanded(item.id)}
-                    className={cn(
-                      "w-full px-4 py-3 text-left flex items-center justify-between hover:bg-grey-5/50 transition-colors",
-                      isRTL ? "text-right flex-row-reverse" : "",
-                    )}
-                  >
-                    <h3 className="text-sm sm:text-base font-semibold text-grey-1 flex-1">{item.question}</h3>
-                    <ChevronDown
-                      className={cn(
-                        "w-4 h-4 sm:w-5 sm:h-5 text-grey-3 transition-transform",
-                        expandedItems.includes(item.id) ? "rotate-180" : "",
-                        isRTL ? "mr-3" : "ml-3",
-                      )}
-                    />
-                  </button>
-
-                  {expandedItems.includes(item.id) && (
-                    <div className="px-4 pb-4">
-                      <p
+                      <h3 className="text-sm sm:text-base font-semibold text-grey-1 flex-1">{item.question}</h3>
+                      <ChevronDown
                         className={cn(
-                          "text-sm sm:text-base text-grey-2 leading-relaxed",
-                          isRTL ? "text-right" : "text-left",
+                          "w-4 h-4 sm:w-5 sm:h-5 text-grey-3 transition-transform",
+                          expandedItems.includes(item._id) ? "rotate-180" : "",
+                          isRTL ? "mr-3" : "ml-3"
                         )}
-                      >
-                        {item.answer}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
+                      />
+                    </button>
+
+                    {expandedItems.includes(item._id) && (
+                      <div className="px-4 pb-4">
+                        <div
+                          className={cn(
+                            "text-sm sm:text-base text-grey-2 leading-relaxed prose prose-sm max-w-none",
+                            isRTL ? "text-right" : "text-left"
+                          )}
+                          dangerouslySetInnerHTML={{ __html: item.answer }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -230,13 +238,6 @@ export function FAQPageContent() {
                   >
                     <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
                     {t("contactUs")}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="border-2 border-white text-white hover:bg-white hover:text-primary px-6 py-3 h-10 rounded-full flex items-center gap-1.5 bg-transparent font-semibold text-sm sm:text-base"
-                  >
-                    <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
-                    {t("callUs")}
                   </Button>
                 </div>
               </div>

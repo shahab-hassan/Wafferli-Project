@@ -1,120 +1,74 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Dropdown from '../components/common/Dropdown';
+import SearchInput from '../components/common/SearchInput';
 import axios from 'axios';
 import { enqueueSnackbar } from 'notistack';
-import { MdKeyboardArrowRight } from 'react-icons/md';
-import { FaLock, FaLockOpen } from 'react-icons/fa';
-import { MdChat } from 'react-icons/md';
-import { useNavigate } from 'react-router-dom';
-import Loader from '../utils/Loader'; // Import Loader
-import ConfirmDialog from '../components/common/ConfirmDialog'; // Import ConfirmDialog
+import { FaBriefcase, FaUser } from 'react-icons/fa';
+import Loader from '../utils/Loader';
 
 function AdminSellers() {
     const [sellers, setSellers] = useState([]);
     const [filterType, setFilterType] = useState('All');
-    const [isUpdated, setIsUpdated] = useState(false);
-    const [isLoading, setIsLoading] = useState(false); // State for loading
-    const [confirmDialogOpen, setConfirmDialogOpen] = useState(false); // State for confirmation dialog
-    const [selectedUserId, setSelectedUserId] = useState(null); // State for selected user ID
-    const [selectedUserBlockStatus, setSelectedUserBlockStatus] = useState(false); // State for selected user block status
+    const [isLoading, setIsLoading] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchType, setSearchType] = useState('email');
 
-    const navigate = useNavigate();
+    const searchFilters = ['Email', 'Name'];
+    const searchTypeMap = {
+        Email: 'email',
+        Name: 'name',
+    };
 
     useEffect(() => {
-        const fetchSellers = async () => {
-            setIsLoading(true);
-            const token = localStorage.getItem('adminToken');
-            try {
-                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/v1/sellers/all/`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                    params: { filterType }, // Only pass filterType to API
-                });
-                if (response.data.success) {
-                    const sortedSellers = response.data.allSellers.sort(
-                        (a, b) => new Date(b.userId.updatedAt) - new Date(a.userId.updatedAt)
-                    );
-                    setSellers(sortedSellers);
-                }
-            } catch (e) {
-                enqueueSnackbar(e.response?.data?.error || 'Something went wrong!', { variant: 'error' });
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
         fetchSellers();
-    }, [filterType, isUpdated]);
+    }, [filterType]);
 
-    const handleBlockUser = async (userId, isBlocked) => {
+    const fetchSellers = async () => {
+        setIsLoading(true);
+        const token = localStorage.getItem('adminToken');
         try {
-            const token = localStorage.getItem('adminToken');
-            const response = await axios.put(
-                `${process.env.REACT_APP_BACKEND_URL}/api/v1/auth/block/`,
-                { userId, isBlocked },
-                { headers: { Authorization: `Bearer ${token}` } }
+            const response = await axios.get(
+                `${process.env.REACT_APP_BACKEND_URL}/api/v1/admin/users/sellers/all`,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                    params: { filterType, search: searchQuery }
+                }
             );
-
             if (response.data.success) {
-                setIsUpdated((prev) => !prev);
-                enqueueSnackbar(
-                    isBlocked ? 'User has been UnBlocked!' : 'User has been blocked!',
-                    { variant: 'success' }
-                );
+                setSellers(response.data.sellers);
             }
         } catch (e) {
             enqueueSnackbar(e.response?.data?.error || 'Something went wrong!', { variant: 'error' });
+        } finally {
+            setIsLoading(false);
         }
     };
 
-    const handleConfirmBlockUser = (userId, isBlocked) => {
-        setSelectedUserId(userId);
-        setSelectedUserBlockStatus(isBlocked);
-        setConfirmDialogOpen(true);
-    };
-
-    const onConfirmAction = () => {
-        handleBlockUser(selectedUserId, selectedUserBlockStatus);
-        setConfirmDialogOpen(false);
-    };
-
-    const onCancelAction = () => {
-        setConfirmDialogOpen(false);
+    const handleSearch = () => {
+        fetchSellers();
     };
 
     const sellerElems = sellers.length > 0 ? (
         sellers.map((item, index) => (
             <div key={index}>
                 <div className="requestRow row">
-                    <div className="titleField field">
+                    <div className="titleField field singleLineText">
                         <p className="title">{item.userId?.email}</p>
                     </div>
-                    <p className="usernameField field">{item.userId?.username}</p>
-                    <p className="typeField field">{item.sellerType}</p>
-                    <p className="statusField field">{item?.userId?.userStatus}</p>
-                    <p className="joinField field">{new Date(item?.createdAt).toLocaleDateString()}</p>
-                    <div className="actionsField field">
-                        <MdChat
-                            className="icon"
-                            onClick={() => navigate(`/chats/?p=${item.userId?._id}`)}
-                        />
-                        {item.userId.userStatus === 'Blocked' ? (
-                            <FaLockOpen
-                                style={{ color: 'var(--success)' }}
-                                className="icon"
-                                onClick={() => handleConfirmBlockUser(item.userId._id, true)}
-                            />
+                    <p className="field">{item.name || item.userId?.fullName || 'N/A'}</p>
+                    <p className="typeField field">
+                        {item.businessType === 'business' ? (
+                            <span className="badge business">
+                                <FaBriefcase /> Business
+                            </span>
                         ) : (
-                            <FaLock
-                                style={{ color: 'var(--danger)' }}
-                                className="icon"
-                                onClick={() => handleConfirmBlockUser(item.userId._id, false)}
-                            />
+                            <span className="badge individual">
+                                <FaUser /> Individual
+                            </span>
                         )}
-                        <MdKeyboardArrowRight
-                            className="icon arrowRight"
-                            onClick={() => navigate(`${item._id}`)}
-                        />
-                    </div>
+                    </p>
+                    <p className="field">{item.totalAds || 0}</p>
+                    <p className="joinField field">{new Date(item.createdAt).toLocaleDateString()}</p>
                 </div>
                 {sellers.length > 1 && sellers.length - 1 !== index && <div className="horizontalLine"></div>}
             </div>
@@ -131,11 +85,21 @@ function AdminSellers() {
                         <div className="upper">
                             <h2 className="secondaryHeading">
                                 <span>{filterType} </span>Sellers
-                                <span className="totalRows">- {(sellers.length < 10 && '0') + sellers.length}</span>
+                                <span className="totalRows">- {(sellers.length < 10 ? '0' : '') + sellers.length}</span>
                             </h2>
                             <div className="upperRight">
+                                <SearchInput
+                                    searchType={searchType}
+                                    setSearchType={setSearchType}
+                                    searchQuery={searchQuery}
+                                    setSearchQuery={setSearchQuery}
+                                    searchFilters={searchFilters}
+                                    searchTypeMap={searchTypeMap}
+                                    placeholder={`Search by ${searchType}`}
+                                    onSearch={handleSearch}
+                                />
                                 <Dropdown
-                                    options={['All', 'Active', 'Blocked', 'Paid', 'Free']}
+                                    options={['All', 'Business', 'Individual']}
                                     onSelect={setFilterType}
                                     selected={filterType}
                                 />
@@ -143,34 +107,19 @@ function AdminSellers() {
                         </div>
                         <div className="header">
                             <p className="title">Email</p>
-                            <p>Username</p>
-                            <p>Seller Type</p>
-                            <p>Status</p>
-                            <p>Seller Since</p>
-                            <p>Actions</p>
+                            <p>Name</p>
+                            <p>Type</p>
+                            <p>Total Ads</p>
+                            <p>Joined</p>
                         </div>
                         {isLoading ? (
-                            <Loader type="simpleMini" /> // Show loader while loading
+                            <Loader type="simpleMini" />
                         ) : (
                             <div className="rows">{sellerElems}</div>
                         )}
                     </div>
                 </div>
             </div>
-
-            {/* Confirmation Dialog */}
-            <ConfirmDialog
-                open={confirmDialogOpen}
-                title={selectedUserBlockStatus ? 'Unblock User' : 'Block User'}
-                message={
-                    selectedUserBlockStatus
-                        ? 'Are you sure you want to unblock this user?'
-                        : 'Are you sure you want to block this user?'
-                }
-                onConfirm={onConfirmAction}
-                onCancel={onCancelAction}
-                isLoading={isLoading}
-            />
         </div>
     );
 }

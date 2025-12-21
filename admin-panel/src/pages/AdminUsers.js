@@ -1,114 +1,158 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 import Dropdown from '../components/common/Dropdown';
+import SearchInput from '../components/common/SearchInput';
 import axios from 'axios';
 import { enqueueSnackbar } from 'notistack';
-import { FaEnvelope, FaLock, FaLockOpen } from 'react-icons/fa';
-import { MdChat } from "react-icons/md";
+import { FaTrash, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import AdminSendEmailPopup from '../components/admin/AdminSendEmailPopup';
-import Loader from '../utils/Loader'; // Import Loader
-import ConfirmDialog from '../components/common/ConfirmDialog'; // Import ConfirmDialog
+import Loader from '../utils/Loader';
+import ConfirmDialog from '../components/common/ConfirmDialog';
 
 function AdminUsers() {
     const [users, setUsers] = useState([]);
     const [filterType, setFilterType] = useState('All');
-    const [isUpdated, setIsUpdated] = useState(false);
-    const [isLoading, setIsLoading] = useState(false); // State for loading
-    const [confirmDialogOpen, setConfirmDialogOpen] = useState(false); // State for confirmation dialog
-    const [selectedUserId, setSelectedUserId] = useState(null); // State for selected user ID
-    const [selectedUserBlockStatus, setSelectedUserBlockStatus] = useState(false); // State for selected user block status
+    const [isLoading, setIsLoading] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchType, setSearchType] = useState('email');
+    const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+    const [dialogAction, setDialogAction] = useState(null);
+    const [selectedUserId, setSelectedUserId] = useState(null);
     const navigate = useNavigate();
-    const [showEmailPopup, setShowEmailPopup] = useState(false);
-    const [selectedBuyerEmail, setSelectedBuyerEmail] = useState(null);
 
-    useEffect(() => {
-        const fetchUsers = async () => {
-            setIsLoading(true); // Start loading
-            const token = localStorage.getItem('adminToken');
-            try {
-                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/v1/auth/all/`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                    params: { filterType }
-                });
-                if (response.data.success) {
-                    const sortedUsers = response.data.allUsers.sort(
-                        (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
-                    );
-                    setUsers(sortedUsers);
-                }
-            } catch (e) {
-                enqueueSnackbar(e.response?.data?.error || 'Something went wrong!', { variant: 'error' });
-            } finally {
-                setIsLoading(false); // Stop loading regardless of success or failure
-            }
-        };
-
-        fetchUsers();
-    }, [filterType, isUpdated]);
-
-    const handleSendEmail = (user) => {
-        setSelectedBuyerEmail(user.email);
-        setShowEmailPopup(true);
+    const searchFilters = ['Email', 'Name', 'Phone'];
+    const searchTypeMap = {
+        Email: 'email',
+        Name: 'name',
+        Phone: 'phone'
     };
 
-    const handleBlockUser = async (userId, isBlocked) => {
+    useEffect(() => {
+        fetchUsers();
+    }, [filterType]);
+
+    const fetchUsers = async () => {
+        setIsLoading(true);
+        const token = localStorage.getItem('adminToken');
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_BACKEND_URL}/api/v1/admin/users/users/all`,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                    params: { filterType, search: searchQuery }
+                }
+            );
+            if (response.data.success) {
+                setUsers(response.data.users);
+            }
+        } catch (e) {
+            enqueueSnackbar(e.response?.data?.error || 'Something went wrong!', { variant: 'error' });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleSearch = () => {
+        fetchUsers();
+    };
+
+    const handleDeleteUser = async (userId) => {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await axios.put(
-                `${process.env.REACT_APP_BACKEND_URL}/api/v1/auth/block/`,
-                { userId, isBlocked },
+            const response = await axios.delete(
+                `${process.env.REACT_APP_BACKEND_URL}/api/v1/admin/users/users/delete/${userId}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
             if (response.data.success) {
-                setIsUpdated(prev => !prev)
-                enqueueSnackbar(isBlocked ? "User has been UnBlocked!" : 'User has been blocked!', { variant: 'success' });
+                setUsers(users.filter(u => u._id !== userId));
+                enqueueSnackbar('User deleted successfully!', { variant: 'success' });
             }
         } catch (e) {
             enqueueSnackbar(e.response?.data?.error || 'Something went wrong!', { variant: 'error' });
         }
     };
 
-    const handleConfirmBlockUser = (userId, isBlocked) => {
+    const handleToggleVerification = async (userId) => {
+        try {
+            const token = localStorage.getItem('adminToken');
+            const response = await axios.patch(
+                `${process.env.REACT_APP_BACKEND_URL}/api/v1/admin/users/users/toggle-verification/${userId}`,
+                {},
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            if (response.data.success) {
+                fetchUsers();
+                enqueueSnackbar(
+                    `User ${response.data.isVerified ? 'verified' : 'unverified'} successfully!`,
+                    { variant: 'success' }
+                );
+            }
+        } catch (e) {
+            enqueueSnackbar(e.response?.data?.error || 'Something went wrong!', { variant: 'error' });
+        }
+    };
+
+    const openConfirmDialog = (action, userId) => {
+        setDialogAction(action);
         setSelectedUserId(userId);
-        setSelectedUserBlockStatus(isBlocked);
         setConfirmDialogOpen(true);
     };
 
     const onConfirmAction = () => {
-        handleBlockUser(selectedUserId, selectedUserBlockStatus);
+        if (dialogAction === 'delete') {
+            handleDeleteUser(selectedUserId);
+        } else if (dialogAction === 'toggleVerification') {
+            handleToggleVerification(selectedUserId);
+        }
         setConfirmDialogOpen(false);
     };
 
-    const onCancelAction = () => {
-        setConfirmDialogOpen(false);
-    };
-
-    const userElems = users.length > 0 ? users.map((item, index) => (
-        <div key={index}>
-            <div className="requestRow row">
-                <div className="titleField field">
-                    <p className="title">{item.email}</p>
+    const userElems = users.length > 0 ? (
+        users.map((item, index) => (
+            <div key={index}>
+                <div className="requestRow row">
+                    <div className="titleField field singleLineText">
+                        <p className="title">{item.email}</p>
+                    </div>
+                    <p className="field">{item.fullName || 'N/A'}</p>
+                    <p className="field">{item.phone}</p>
+                    <p className="field">{item.role.charAt(0).toUpperCase() + item.role.slice(1)}</p>
+                    <p className="statusField field">
+                        <span className={`status ${item.isVerified ? 'verified' : 'unverified'}`}>
+                            {item.isVerified ? 'Verified' : 'Unverified'}
+                        </span>
+                    </p>
+                    <p className="joinField field">{new Date(item.createdAt).toLocaleDateString()}</p>
+                    <div className="actionsField field">
+                        {item.isVerified ? (
+                            <FaTimesCircle
+                                style={{ color: 'var(--danger)' }}
+                                className="icon"
+                                onClick={() => openConfirmDialog('toggleVerification', item._id)}
+                                title="Unverify User"
+                            />
+                        ) : (
+                            <FaCheckCircle
+                                style={{ color: 'var(--success)' }}
+                                className="icon"
+                                onClick={() => openConfirmDialog('toggleVerification', item._id)}
+                                title="Verify User"
+                            />
+                        )}
+                        <FaTrash
+                            className="icon delete"
+                            onClick={() => openConfirmDialog('delete', item._id)}
+                            title="Delete User"
+                        />
+                    </div>
                 </div>
-                <p className="usernameField field">{item.username}</p>
-                <p className="statusField field">{item.userStatus}</p>
-                <p className="joinField field">{new Date(item?.createdAt).toLocaleDateString()}</p>
-                <div className="actionsField field">
-                    <MdChat className="icon" onClick={() => navigate(`/chats/?p=${item?._id}`)} />
-                    <FaEnvelope className="icon"
-                        onClick={() => handleSendEmail(item)}
-                    />
-                    {item.userStatus === 'Blocked' ?
-                        <FaLockOpen style={{ color: "var(--success)" }} className="icon" onClick={() => handleConfirmBlockUser(item._id, true)} />
-                        :
-                        <FaLock style={{ color: "var(--danger)" }} className="icon" onClick={() => handleConfirmBlockUser(item._id, false)} />
-                    }
-                </div>
+                {users.length > 1 && users.length - 1 !== index && <div className="horizontalLine"></div>}
             </div>
-            {users.length > 1 && users.length - 1 !== index && <div className="horizontalLine"></div>}
-        </div >
-    ))
-        : <div className="row">Nothing to show here...</div>;
+        ))
+    ) : (
+        <div className="row">Nothing to show here...</div>
+    );
 
     return (
         <div className='adminBuyersDiv'>
@@ -118,50 +162,62 @@ function AdminUsers() {
                         <div className="upper">
                             <h2 className="secondaryHeading">
                                 <span>{filterType} </span>Users
-                                <span className="totalRows">- {(users.length < 10 && '0') + users.length}</span>
+                                <span className="totalRows">- {(users.length < 10 ? '0' : '') + users.length}</span>
                             </h2>
                             <div className="upperRight">
-                                <Dropdown options={["All", "Active", "Blocked"]} onSelect={setFilterType} selected={filterType} />
+                                <SearchInput
+                                    searchType={searchType}
+                                    setSearchType={setSearchType}
+                                    searchQuery={searchQuery}
+                                    setSearchQuery={setSearchQuery}
+                                    searchFilters={searchFilters}
+                                    searchTypeMap={searchTypeMap}
+                                    placeholder={`Search by ${searchType}`}
+                                    onSearch={handleSearch}
+                                />
+                                <Dropdown
+                                    options={['All', 'Verified', 'Unverified', 'Sellers', 'Users']}
+                                    onSelect={setFilterType}
+                                    selected={filterType}
+                                />
                             </div>
                         </div>
                         <div className="header">
                             <p className="title">Email</p>
-                            <p>Username</p>
+                            <p>Full Name</p>
+                            <p>Phone</p>
+                            <p>Role</p>
                             <p>Status</p>
-                            <p>Member Since</p>
+                            <p>Joined</p>
                             <p>Actions</p>
                         </div>
                         {isLoading ? (
-                            <Loader type="simpleMini" /> // Show loader while loading
+                            <Loader type="simpleMini" />
                         ) : (
                             <div className="rows">{userElems}</div>
                         )}
                     </div>
                 </div>
 
-                <AdminSendEmailPopup
-                    show={showEmailPopup}
-                    onClose={() => setShowEmailPopup(false)}
-                    defaultRecipients={selectedBuyerEmail ? [selectedBuyerEmail] : []}
-                    showButtons={true}
-                />
-
-                {/* Confirmation Dialog */}
                 <ConfirmDialog
                     open={confirmDialogOpen}
-                    title={selectedUserBlockStatus ? 'Unblock User' : 'Block User'}
+                    title={
+                        dialogAction === 'delete'
+                            ? 'Delete User'
+                            : 'Toggle User Verification'
+                    }
                     message={
-                        selectedUserBlockStatus
-                            ? 'Are you sure you want to unblock this user?'
-                            : 'Are you sure you want to block this user?'
+                        dialogAction === 'delete'
+                            ? 'Are you sure you want to delete this user? This action cannot be undone.'
+                            : 'Are you sure you want to change this user\'s verification status?'
                     }
                     onConfirm={onConfirmAction}
-                    onCancel={onCancelAction}
+                    onCancel={() => setConfirmDialogOpen(false)}
                     isLoading={isLoading}
                 />
             </div>
         </div>
-    )
+    );
 }
 
-export default AdminUsers
+export default AdminUsers;

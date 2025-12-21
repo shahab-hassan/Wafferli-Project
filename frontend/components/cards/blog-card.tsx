@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl"
 export interface BlogCardProps {
   id: string
   title: string
+  slug?: string
   description: string
   image: string
   date: string

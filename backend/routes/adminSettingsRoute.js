@@ -1,23 +1,31 @@
-// File: src/routes/adminSettingsRoute.js
 const express = require('express');
 const router = express.Router();
-const { addEmails, deleteEmail, sendEmailFromAdmin, getAllEmails, subscribeEmailByUser, getTerms, createOrUpdateTerms, getSocialLinks, createOrUpdateSocialLinks, getGeneralDashboardInfo, receiveEmailFromUser } = require('../controllers/adminSettingsCtrl');
+const {
+    addEmails,
+    deleteEmail,
+    sendEmailFromAdmin,
+    getAllEmails,
+    subscribeEmailByUser,
+    getTermsAndPrivacy,
+    createOrUpdateTermsAndPrivacy,
+    getGeneralDashboardInfo,
+    receiveEmailFromUser
+} = require('../controllers/adminSettingsCtrl');
 const { authorizeAdmin } = require('../middlewares/authorization');
 
-router.get('/terms', getTerms);
-router.post('/terms', authorizeAdmin, createOrUpdateTerms);
+// Dashboard
+router.get('/dashboard/general', authorizeAdmin, getGeneralDashboardInfo);
 
-router.get('/social-links', getSocialLinks);
-router.post('/social-links', authorizeAdmin, createOrUpdateSocialLinks);
+// Terms & Privacy Policy
+router.get('/terms-privacy', getTermsAndPrivacy);
+router.post('/terms-privacy', authorizeAdmin, createOrUpdateTermsAndPrivacy);
 
+// Email Management
 router.post('/receive/email', receiveEmailFromUser);
-
 router.post('/subscribe', subscribeEmailByUser);
 router.get('/emails', authorizeAdmin, getAllEmails);
 router.post('/send/email', authorizeAdmin, sendEmailFromAdmin);
-
 router.post('/emails/delete', authorizeAdmin, deleteEmail);
 router.post('/emails/add', authorizeAdmin, addEmails);
-
 
 module.exports = router;

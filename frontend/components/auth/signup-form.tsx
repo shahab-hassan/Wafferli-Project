@@ -148,10 +148,9 @@ export function SignupForm() {
     try {
       setLoading(true);
       const res = await dispatch(VerifySignupOtp(signupData) as any).unwrap();
-      console.log(res, "res");
       if (res?.data?.token) {
         localStorage.setItem("token", res.data.token);
-        router.push("/");
+        window.location.href = "/";
       }
     } catch (error: any) {
       toast.error(error || "OTP verification failed");
@@ -388,14 +387,16 @@ export function SignupForm() {
                 >
                   {t("Auth.signup.agreeToTerms")}{" "}
                   <a
-                    href="#"
+                    href="/terms"
+                    target="__blank"
                     className="text-primary hover:underline font-medium transition-colors"
                   >
                     {t("Auth.signup.termsOfService")}
                   </a>{" "}
                   {t("Auth.signup.and")}{" "}
                   <a
-                    href="#"
+                    href="/privacy-policy"
+                    target="__blank"
                     className="text-primary hover:underline font-medium transition-colors"
                   >
                     {t("Auth.signup.privacyPolicy")}

@@ -49,7 +49,7 @@ export function LoginForm() {
       } else {
         sessionStorage.setItem("token", token); // clear on browser close
       }
-      router.push("/");
+      window.location.href = "/";
     } catch (error) {
       setIsLoading(false);
       console.log(error);

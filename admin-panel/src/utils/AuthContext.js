@@ -8,6 +8,7 @@ export const AuthProvider = ({ children }) => {
 
     const [isAdminLogin, setIsAdminLogin] = useState(null);
     const [admin, setAdmin] = useState(null);
+    const isTabletPro = window.innerWidth <= 1024;
 
     const fetchAdminData = async () => {
         const token = localStorage.getItem('adminToken');
@@ -56,17 +57,17 @@ export const AuthProvider = ({ children }) => {
 
     const adminLogout = () => {
         if (window.confirm("Are you sure you want to logout?")) {
+            localStorage.setItem("loggedOut", 'true');
+            window.location.href = "/login";
             localStorage.removeItem('adminToken');
             setIsAdminLogin(false);
             setAdmin(null);
-            localStorage.setItem("loggedOut", 'true');
-            window.location.href = "/login";
         }
     };
 
 
     return (
-        <AuthContext.Provider value={{ adminLogout, fetchAdminData, adminLogin, isAdminLogin, admin }}>
+        <AuthContext.Provider value={{ adminLogout, fetchAdminData, adminLogin, isAdminLogin, admin, isTabletPro }}>
             {children}
         </AuthContext.Provider>
     );

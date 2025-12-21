@@ -4,7 +4,6 @@ import { SnackbarProvider } from "notistack"
 
 import App from "./App"
 import "./styles/utils.css"
-import "./styles/common.css"
 import "./styles/admin.css"
 import { AuthProvider } from "./utils/AuthContext"
 
