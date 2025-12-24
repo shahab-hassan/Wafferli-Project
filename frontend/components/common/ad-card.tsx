@@ -300,7 +300,7 @@ export default function AdCard(props: AdCardProps) {
             </div>
 
             {/* Discount Percentage Badge */}
-            {hasProductDiscount && productProps.discountPercent && (
+            {!!hasProductDiscount && !!productProps.discountPercent && (
               <span className="text-xs text-red-600 font-semibold mt-1">
                 {productProps.discountPercent}% OFF
               </span>
@@ -352,7 +352,7 @@ export default function AdCard(props: AdCardProps) {
             </div>
 
             {/* Discount Percentage Badge */}
-            {hasServiceDiscount && serviceProps.discountPercent && (
+            {!!hasServiceDiscount && !!serviceProps.discountPercent && (
               <span className="text-xs text-red-600 font-semibold mt-1">
                 {serviceProps.discountPercent}% OFF
               </span>
@@ -449,7 +449,7 @@ export default function AdCard(props: AdCardProps) {
 
         return (
           <>
-            {hasProductDiscount && productProps.discountPercent && (
+            {!!hasProductDiscount && !!productProps.discountPercent && (
               <div className="flex mb-1">
                 <span className="inline-block px-3 py-1.5 rounded-[100px] text-[10px] font-semibold bg-red-100 text-red-800">
                   {productProps.discountPercent}% OFF
@@ -476,7 +476,7 @@ export default function AdCard(props: AdCardProps) {
 
         return (
           <>
-            {hasServiceDiscount && serviceProps.discountPercent && (
+            {!!hasServiceDiscount && !!serviceProps.discountPercent && (
               <div className="flex mb-1">
                 <span className="inline-block px-3 py-1.5 rounded-[100px] text-[10px] font-semibold bg-red-100 text-red-800">
                   {serviceProps.discountPercent}% OFF
@@ -518,7 +518,7 @@ export default function AdCard(props: AdCardProps) {
         const offerProps = props as OfferAdProps;
         return (
           <>
-            {offerProps.discount && offerProps.discountPercent > 0 && (
+            {!!offerProps.discount && offerProps.discountPercent > 0 && (
               <div className="flex mb-1">
                 <span className="inline-block px-3 py-1.5 rounded-[100px] text-[10px] font-semibold bg-red-100 text-red-800">
                   {offerProps.discountPercent}% OFF

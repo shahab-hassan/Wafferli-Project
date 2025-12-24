@@ -71,6 +71,7 @@ export default function BlogPage() {
   }, [])
 
   const fetchBlogs = async () => {
+    setLoading(true)
     try {
       const { data } = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}blog/published`)
       if (data.success) {
@@ -105,6 +106,15 @@ export default function BlogPage() {
 
   const filteredBlogs =
     selectedCategory === "all" ? blogs : blogs.filter((post) => post.category === selectedCategory)
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+      </div>
+    )
+  }
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-purple-50" dir={dir}>
@@ -150,8 +160,8 @@ export default function BlogPage() {
                 <Card
                   key={category.id}
                   className={`cursor-pointer transition-all duration-300 rounded-xl border-1 border-grey-5 ${selectedCategory === category.id
-                      ? "shadow-lg scale-105 bg-purple-50 border-2 border-purple-200"
-                      : "hover:shadow-lg hover:scale-103 bg-black/1"
+                    ? "shadow-lg scale-105 bg-purple-50 border-2 border-purple-200"
+                    : "hover:shadow-lg hover:scale-103 bg-black/1"
                     }`}
                   onClick={() => setSelectedCategory(category.id)}
                 >
@@ -163,7 +173,6 @@ export default function BlogPage() {
             </div>
           </div>
 
-          {/* Featured Blogs */}
           {featuredBlogs.length > 0 && (
             <div className="mb-12">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">{t("featuredArticles")}</h2>
@@ -282,7 +291,7 @@ export default function BlogPage() {
                               </div>
                               <div className="flex items-center space-x-1">
                                 <MessageCircle className="w-4 h-4" />
-                                <span>{post.comments.length}</span>
+                                <span>{post?.comments?.length || 0}</span>
                               </div>
                             </div>
                           </CardContent>

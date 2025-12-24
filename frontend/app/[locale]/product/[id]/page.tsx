@@ -53,8 +53,6 @@ export default function ProductDetailPage({
     (state: RootState) => state.ad.featuredProductDetails
   );
 
-  console.log("featuredProductDetails", featuredProductDetails);
-
   const responseData = featuredProductDetails as any;
 
   const productData = responseData?.product || {};
