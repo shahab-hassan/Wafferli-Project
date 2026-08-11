@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Dropdown from '../components/common/Dropdown';
 import SearchInput from '../components/common/SearchInput';
 import axios from 'axios';
 import { enqueueSnackbar } from 'notistack';
 import { FaTrash, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
 import Loader from '../utils/Loader';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 
@@ -17,7 +16,6 @@ function AdminUsers() {
     const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
     const [dialogAction, setDialogAction] = useState(null);
     const [selectedUserId, setSelectedUserId] = useState(null);
-    const navigate = useNavigate();
 
     const searchFilters = ['Email', 'Name', 'Phone'];
     const searchTypeMap = {
@@ -26,11 +24,14 @@ function AdminUsers() {
         Phone: 'phone'
     };
 
+    // Read at fetch time rather than depended on: typing in the search box
+    // must not fire a request, only the Search button and the filter dropdown do.
+    const searchQueryRef = useRef(searchQuery);
     useEffect(() => {
-        fetchUsers();
-    }, [filterType]);
+        searchQueryRef.current = searchQuery;
+    }, [searchQuery]);
 
-    const fetchUsers = async () => {
+    const fetchUsers = useCallback(async () => {
         setIsLoading(true);
         const token = localStorage.getItem('adminToken');
         try {
@@ -38,7 +39,7 @@ function AdminUsers() {
                 `${process.env.REACT_APP_BACKEND_URL}/api/v1/admin/users/users/all`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
-                    params: { filterType, search: searchQuery }
+                    params: { filterType, search: searchQueryRef.current }
                 }
             );
             if (response.data.success) {
@@ -49,7 +50,11 @@ function AdminUsers() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [filterType]);
+
+    useEffect(() => {
+        fetchUsers();
+    }, [fetchUsers]);
 
     const handleSearch = () => {
         fetchUsers();

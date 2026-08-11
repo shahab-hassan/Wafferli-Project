@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import { enqueueSnackbar } from 'notistack';
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
@@ -37,11 +37,7 @@ function AdminBlogs() {
         'Culture', 'Technology', 'Travel', 'Health & Wellness'
     ];
 
-    useEffect(() => {
-        fetchAllBlogs();
-    }, [filterStatus]);
-
-    const fetchAllBlogs = async () => {
+    const fetchAllBlogs = useCallback(async () => {
         try {
             setIsLoading(true);
             const url = filterStatus === 'all'
@@ -58,7 +54,11 @@ function AdminBlogs() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [filterStatus, token]);
+
+    useEffect(() => {
+        fetchAllBlogs();
+    }, [fetchAllBlogs]);
 
     const joditConfig = {
         readonly: isLoading,

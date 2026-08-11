@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Dropdown from '../components/common/Dropdown';
 import SearchInput from '../components/common/SearchInput';
 import axios from 'axios';
@@ -26,11 +26,14 @@ function AdminEventAds() {
         Type: 'type'
     };
 
+    // Read at fetch time rather than depended on: typing in the search box
+    // must not fire a request, only the Search button and the filter dropdown do.
+    const searchQueryRef = useRef(searchQuery);
     useEffect(() => {
-        fetchEvents();
-    }, [filterType]);
+        searchQueryRef.current = searchQuery;
+    }, [searchQuery]);
 
-    const fetchEvents = async () => {
+    const fetchEvents = useCallback(async () => {
         setIsLoading(true);
         const token = localStorage.getItem('adminToken');
         try {
@@ -38,7 +41,7 @@ function AdminEventAds() {
                 `${process.env.REACT_APP_BACKEND_URL}/api/v1/admin/ads/events/all`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
-                    params: { filterType, search: searchQuery }
+                    params: { filterType, search: searchQueryRef.current }
                 }
             );
             if (response.data.success) {
@@ -49,7 +52,11 @@ function AdminEventAds() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [filterType]);
+
+    useEffect(() => {
+        fetchEvents();
+    }, [fetchEvents]);
 
     const handleSearch = () => {
         fetchEvents();
