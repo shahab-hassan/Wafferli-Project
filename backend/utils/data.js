@@ -70,8 +70,10 @@ const productCategoriesEnum = [
   "sports",
 ];
 
+// Keys must match the values in productCategoriesEnum exactly — the ProductAd
+// schema validates subCategory with productSubCategoriesEnum[this.category].
 const productSubCategoriesEnum = {
-  Electronics: [
+  electronics: [
     "smartphones",
     "laptops",
     "tablets",
@@ -79,10 +81,10 @@ const productSubCategoriesEnum = {
     "cameras",
     "headphones",
   ],
-  Fashion: ["clothing", "shoes", "accessories", "watches", "jewelry", "bags"],
-  Home: ["furniture", "appliances", "decor", "kitchen", "garden", "lighting"],
-  Vehicles: ["cars", "motorcycles", "bicycles", "parts", "accessories"],
-  Sports: ["equipment", "clothing", "shoes", "accessories", "fitness"],
+  fashion: ["clothing", "shoes", "accessories", "watches", "jewelry", "bags"],
+  home: ["furniture", "appliances", "decor", "kitchen", "garden", "lighting"],
+  vehicles: ["cars", "motorcycles", "bicycles", "parts", "accessories"],
+  sports: ["equipment", "clothing", "shoes", "accessories", "fitness"],
 };
 
 // Service

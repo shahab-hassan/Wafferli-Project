@@ -30,7 +30,9 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "build": "npm i"
+    "build": "npm i",
+    "seed": "node seed/index.js",
+    "seed:refresh": "node seed/refresh.js"
   },
   "name": "backend",
   "version": "1.0.0",

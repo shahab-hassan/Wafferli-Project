@@ -1,0 +1,411 @@
+/**
+ * People behind the demo marketplace: 18 seller accounts (12 businesses,
+ * 6 individuals) and 32 buyer accounts.
+ *
+ * Names, districts and phone prefixes follow Kuwait's actual mix — Kuwaiti
+ * nationals alongside the Egyptian, Levantine, South Asian and Filipino
+ * communities that make up most of the country's residents. Business names are
+ * invented rather than borrowed from real Kuwaiti companies.
+ */
+
+const { IMG, LOGO } = require("./images");
+
+// Kuwaiti mobile numbers are 8 digits starting with 5, 6 or 9.
+const kw = (n) => `+965${n}`;
+
+const SELLERS = [
+  {
+    key: "gulftech",
+    fullName: "Yousef Al-Mutairi",
+    email: "yousef.almutairi@gulftechq8.com",
+    phone: kw("55102284"),
+    loyaltyPoints: 1450,
+    seller: {
+      businessType: "business",
+      category: "electronics",
+      name: "Gulf Tech Traders",
+      description:
+        "Authorised reseller of Apple, Samsung and Sony devices in Kuwait since 2016. Every unit ships with a 12-month local warranty, an original charger and a free screen protector fitted in store. Trade-in valuations available on the spot at our Salmiya showroom.",
+      logo: LOGO.phoneA,
+      website: "https://gulftechq8.com",
+      images: [IMG.phoneB, IMG.laptopA, IMG.headphonesA],
+      city: "hawalli",
+      neighbourhood: "salmiya",
+      socialLinks: {
+        instagram: "https://instagram.com/gulftechq8",
+        twitter: "https://twitter.com/gulftechq8",
+        facebook: "https://facebook.com/gulftechq8",
+      },
+    },
+  },
+  {
+    key: "mandi",
+    fullName: "Khaled Al-Ajmi",
+    email: "khaled@baytalmandi.com",
+    phone: kw("66418890"),
+    loyaltyPoints: 320,
+    seller: {
+      businessType: "business",
+      category: "restaurant",
+      name: "Bayt Al Mandi",
+      description:
+        "Traditional Yemeni mandi and madhbi slow-cooked in underground clay ovens. Family trays for 6–8 people, live grill station and a dedicated family seating area. Delivery across Farwaniya and Jahra within 45 minutes.",
+      logo: LOGO.arabicFoodA,
+      website: "https://baytalmandi.com",
+      images: [IMG.arabicFoodB, IMG.grillA, IMG.restaurantA],
+      city: "farwaniya",
+      neighbourhood: "khaitan",
+      socialLinks: {
+        instagram: "https://instagram.com/baytalmandi",
+        facebook: "https://facebook.com/baytalmandi",
+      },
+    },
+  },
+  {
+    key: "layali",
+    fullName: "Noura Al-Sabah",
+    email: "noura@layalioud.com",
+    phone: kw("99735512"),
+    loyaltyPoints: 2680,
+    seller: {
+      businessType: "business",
+      category: "shopping",
+      name: "Layali Perfumes & Oud",
+      description:
+        "Hand-blended Arabic attars, Cambodian oud and bakhoor sourced directly from Assam and Trat. Custom blending service available — bring a scent you love and our perfumer will recreate it in a 12ml bottle within 48 hours.",
+      logo: LOGO.attarA,
+      website: "https://layalioud.com",
+      images: [IMG.attarA, IMG.attarB, IMG.souqB],
+      city: "kuwait-city",
+      neighbourhood: "mubarakiya",
+      socialLinks: {
+        instagram: "https://instagram.com/layalioud",
+        youtube: "https://youtube.com/@layalioud",
+      },
+    },
+  },
+  {
+    key: "sadeeq",
+    fullName: "Mohammed Al-Otaibi",
+    email: "m.alotaibi@sadeeqauto.com",
+    phone: kw("55490071"),
+    loyaltyPoints: 780,
+    seller: {
+      businessType: "business",
+      category: "automotive",
+      name: "Al Sadeeq Auto Care",
+      description:
+        "Full-service garage in Al-Rai specialising in Japanese and German saloons and 4x4s. Computerised diagnostics, AC regassing, ceramic coating and pre-purchase inspections. Courtesy car available for jobs over one day.",
+      logo: LOGO.carRepairA,
+      website: "https://sadeeqauto.com",
+      images: [IMG.carRepairA, IMG.carDetailA, IMG.carPartsA],
+      city: "farwaniya",
+      neighbourhood: "al-rai",
+      socialLinks: { instagram: "https://instagram.com/sadeeqauto" },
+    },
+  },
+  {
+    key: "coral",
+    fullName: "Sara Haddad",
+    email: "sara@coralroasters.co",
+    phone: kw("60227744"),
+    loyaltyPoints: 3410,
+    seller: {
+      businessType: "business",
+      category: "food",
+      name: "Coral Roasters",
+      description:
+        "Specialty coffee roasted in small batches every Sunday and Wednesday in Salmiya. Single-origin Ethiopian and Colombian lots, plus a Gulf-style cardamom blend. Brew bar, cupping sessions and a subscription that ships to your door.",
+      logo: LOGO.coffeeA,
+      website: "https://coralroasters.co",
+      images: [IMG.cafeB, IMG.coffeeB, IMG.bakeryA],
+      city: "hawalli",
+      neighbourhood: "salmiya",
+      socialLinks: {
+        instagram: "https://instagram.com/coralroasters",
+        twitter: "https://twitter.com/coralroasters",
+      },
+    },
+  },
+  {
+    key: "diwan",
+    fullName: "Ahmed El-Sayed",
+    email: "ahmed@diwanhome.com",
+    phone: kw("97112365"),
+    loyaltyPoints: 940,
+    seller: {
+      businessType: "business",
+      category: "home",
+      name: "Diwan Home Furnishings",
+      description:
+        "Contemporary and majlis-style furniture built in our Shuwaikh workshop. Custom sofa dimensions, over 60 upholstery fabrics and a 5-year frame warranty. Free delivery and assembly anywhere in Kuwait on orders above 150 KD.",
+      logo: LOGO.sofaA,
+      website: "https://diwanhome.com",
+      images: [IMG.sofaB, IMG.decorA, IMG.lightingA],
+      city: "kuwait-city",
+      neighbourhood: "shuwaikh",
+      socialLinks: {
+        instagram: "https://instagram.com/diwanhome",
+        facebook: "https://facebook.com/diwanhome",
+      },
+    },
+  },
+  {
+    key: "nadi",
+    fullName: "Dana Al-Rashid",
+    email: "dana@nadifitness.com",
+    phone: kw("55678123"),
+    loyaltyPoints: 2140,
+    seller: {
+      businessType: "business",
+      category: "fitness",
+      name: "Nadi Fitness Club",
+      description:
+        "Ladies-only and mixed training floors across two levels in Jabriya. Reformer pilates, functional strength, boxing and a 25m indoor pool. All memberships include an InBody assessment and a monthly session with a coach.",
+      logo: LOGO.gymA,
+      website: "https://nadifitness.com",
+      images: [IMG.gymB, IMG.pilatesA, IMG.trainerA],
+      city: "hawalli",
+      neighbourhood: "jabriya",
+      socialLinks: {
+        instagram: "https://instagram.com/nadifitness",
+        youtube: "https://youtube.com/@nadifitness",
+      },
+    },
+  },
+  {
+    key: "fahaheel",
+    fullName: "Bader Al-Hajri",
+    email: "bader@fahaheelmobile.com",
+    phone: kw("66330419"),
+    loyaltyPoints: 510,
+    seller: {
+      businessType: "business",
+      category: "electronics",
+      name: "Fahaheel Mobile Hub",
+      description:
+        "Phones, tablets and gaming gear at Fahaheel's main street since 2019. Certified pre-owned devices come battery-tested with a printed health report, plus same-day screen and battery replacement while you wait.",
+      logo: LOGO.phoneC,
+      website: "https://fahaheelmobile.com",
+      images: [IMG.phoneA, IMG.consoleA, IMG.tabletA],
+      city: "ahmadi",
+      neighbourhood: "fahaheel",
+      socialLinks: { instagram: "https://instagram.com/fahaheelmobile" },
+    },
+  },
+  {
+    key: "yasmeen",
+    fullName: "Maryam Al-Fadhli",
+    email: "maryam@yasmeenspa.com",
+    phone: kw("99820046"),
+    loyaltyPoints: 1780,
+    seller: {
+      businessType: "business",
+      category: "spa",
+      name: "Zain Al Yasmeen Spa",
+      description:
+        "Ladies' day spa in Mishref offering Moroccan hammam, hot stone therapy, hydrafacials and bridal packages. Private treatment suites, licensed therapists and organic products free from parabens and sulphates.",
+      logo: LOGO.spaA,
+      website: "https://yasmeenspa.com",
+      images: [IMG.massageA, IMG.salonA, IMG.nailsA],
+      city: "hawalli",
+      neighbourhood: "mishref",
+      socialLinks: {
+        instagram: "https://instagram.com/yasmeenspa",
+        facebook: "https://facebook.com/yasmeenspa",
+      },
+    },
+  },
+  {
+    key: "buildright",
+    fullName: "Rajesh Menon",
+    email: "rajesh@buildrightq8.com",
+    phone: kw("50117832"),
+    loyaltyPoints: 260,
+    seller: {
+      businessType: "business",
+      category: "home-services",
+      name: "BuildRight Maintenance Co.",
+      description:
+        "Licensed maintenance contractor covering AC servicing, plumbing, electrical and joinery for villas, flats and offices. Annual maintenance contracts, emergency call-outs within 4 hours and fully insured technicians.",
+      logo: LOGO.plumbingB,
+      website: "https://buildrightq8.com",
+      images: [IMG.electricalA, IMG.plumbingA, IMG.carpentryA],
+      city: "mubarak-al-kabeer",
+      neighbourhood: "subhan",
+      socialLinks: { instagram: "https://instagram.com/buildrightq8" },
+    },
+  },
+  {
+    key: "tours",
+    fullName: "Faisal Al-Duwaisan",
+    email: "faisal@q8adventures.com",
+    phone: kw("97445508"),
+    loyaltyPoints: 1290,
+    seller: {
+      businessType: "business",
+      category: "travel",
+      name: "Kuwait Adventure Tours",
+      description:
+        "Licensed tour operator running Failaka Island day trips, desert camping weekends in Kabd and dhow cruises along the Arabian Gulf coast. Small groups, bilingual guides and all permits handled for you.",
+      logo: LOGO.desertA,
+      website: "https://q8adventures.com",
+      images: [IMG.islandA, IMG.desertA, IMG.divingA],
+      city: "kuwait-city",
+      neighbourhood: "sharq",
+      socialLinks: {
+        instagram: "https://instagram.com/q8adventures",
+        youtube: "https://youtube.com/@q8adventures",
+      },
+    },
+  },
+  {
+    key: "littlesteps",
+    fullName: "Layla Nassar",
+    email: "layla@littlestepsq8.com",
+    phone: kw("60559013"),
+    loyaltyPoints: 620,
+    seller: {
+      businessType: "business",
+      category: "education",
+      name: "Little Steps Learning Center",
+      description:
+        "After-school tutoring and enrichment for ages 5–16 in Bayan. British and American curriculum support, Arabic and French classes, IGCSE and SAT prep. Maximum six students per group so every child gets attention.",
+      logo: LOGO.tutoringB,
+      website: "https://littlestepsq8.com",
+      images: [IMG.tutoringA, IMG.languageA, IMG.musicA],
+      city: "hawalli",
+      neighbourhood: "bayan",
+      socialLinks: { instagram: "https://instagram.com/littlestepsq8" },
+    },
+  },
+
+  // ---- individual sellers ----
+  {
+    key: "fatima",
+    fullName: "Fatima Al-Kandari",
+    email: "fatima.alkandari@gmail.com",
+    phone: kw("99112047"),
+    loyaltyPoints: 1120,
+    seller: {
+      businessType: "individual",
+      category: "fashion",
+      city: "hawalli",
+      neighbourhood: "rumaithiya",
+      socialLinks: { instagram: "https://instagram.com/fatima.closet.q8" },
+    },
+  },
+  {
+    key: "yousef",
+    fullName: "Yousef Al-Enezi",
+    email: "yousef.enezi91@gmail.com",
+    phone: kw("55803376"),
+    loyaltyPoints: 480,
+    seller: {
+      businessType: "individual",
+      category: "vehicles",
+      city: "ahmadi",
+      neighbourhood: "mangaf",
+      socialLinks: { instagram: "https://instagram.com/yousef.motors" },
+    },
+  },
+  {
+    key: "mariam",
+    fullName: "Mariam Haddad",
+    email: "mariam.haddad.pt@gmail.com",
+    phone: kw("60712298"),
+    loyaltyPoints: 2260,
+    seller: {
+      businessType: "individual",
+      category: "wellness",
+      city: "hawalli",
+      neighbourhood: "salmiya",
+      socialLinks: {
+        instagram: "https://instagram.com/mariam.moves",
+        youtube: "https://youtube.com/@mariammoves",
+      },
+    },
+  },
+  {
+    key: "rohit",
+    fullName: "Rohit Sharma",
+    email: "rohit.sharma.dev@gmail.com",
+    phone: kw("50664471"),
+    loyaltyPoints: 150,
+    seller: {
+      businessType: "individual",
+      category: "professional",
+      city: "farwaniya",
+      neighbourhood: "khaitan",
+      socialLinks: {
+        linkedin: "https://linkedin.com/in/rohitsharmadev",
+        twitter: "https://twitter.com/rohitbuilds",
+      },
+    },
+  },
+  {
+    key: "abdullah",
+    fullName: "Abdullah Al-Shammari",
+    email: "abdullah.shammari@outlook.com",
+    phone: kw("97003318"),
+    loyaltyPoints: 890,
+    seller: {
+      businessType: "individual",
+      category: "sports",
+      city: "mubarak-al-kabeer",
+      neighbourhood: "qurain",
+      socialLinks: { instagram: "https://instagram.com/abdullah.padel" },
+    },
+  },
+  {
+    key: "grace",
+    fullName: "Grace Villanueva",
+    email: "grace.villanueva.q8@gmail.com",
+    phone: kw("66129954"),
+    loyaltyPoints: 340,
+    seller: {
+      businessType: "individual",
+      category: "home-services",
+      city: "hawalli",
+      neighbourhood: "hawalli-city",
+      socialLinks: { instagram: "https://instagram.com/gracecleans.q8" },
+    },
+  },
+];
+
+const BUYERS = [
+  { fullName: "Ali Al-Baghli", email: "ali.albaghli@gmail.com", phone: kw("55201188"), loyaltyPoints: 3250 },
+  { fullName: "Hessa Al-Mansour", email: "hessa.mansour@gmail.com", phone: kw("99604412"), loyaltyPoints: 2840 },
+  { fullName: "Omar Farouk", email: "omar.farouk88@gmail.com", phone: kw("66772003"), loyaltyPoints: 2110 },
+  { fullName: "Shaikha Al-Qattan", email: "shaikha.qattan@outlook.com", phone: kw("50338821"), loyaltyPoints: 1960 },
+  { fullName: "Anjali Nair", email: "anjali.nair.kw@gmail.com", phone: kw("97558104"), loyaltyPoints: 1740 },
+  { fullName: "Nasser Al-Hammadi", email: "nasser.hammadi@gmail.com", phone: kw("55917726"), loyaltyPoints: 1580 },
+  { fullName: "Reem Darwish", email: "reem.darwish@gmail.com", phone: kw("60443390"), loyaltyPoints: 1420 },
+  { fullName: "Hamad Al-Sane", email: "hamad.alsane@gmail.com", phone: kw("99247765"), loyaltyPoints: 1310 },
+  { fullName: "Priya Venkatesh", email: "priya.venkatesh@gmail.com", phone: kw("50876619"), loyaltyPoints: 1180 },
+  { fullName: "Talal Al-Zamel", email: "talal.zamel@outlook.com", phone: kw("66015542"), loyaltyPoints: 1050 },
+  { fullName: "Joanna Reyes", email: "joanna.reyes.q8@gmail.com", phone: kw("97330826"), loyaltyPoints: 970 },
+  { fullName: "Salem Al-Dosari", email: "salem.dosari@gmail.com", phone: kw("55462277"), loyaltyPoints: 880 },
+  { fullName: "Nour Chamoun", email: "nour.chamoun@gmail.com", phone: kw("60920137"), loyaltyPoints: 760 },
+  { fullName: "Imran Qureshi", email: "imran.qureshi.kw@gmail.com", phone: kw("50712488"), loyaltyPoints: 690 },
+  { fullName: "Ghada Al-Awadhi", email: "ghada.awadhi@gmail.com", phone: kw("99083345"), loyaltyPoints: 610 },
+  { fullName: "Meshal Al-Rasheed", email: "meshal.rasheed@gmail.com", phone: kw("55639901"), loyaltyPoints: 540 },
+  { fullName: "Lina Haidar", email: "lina.haidar@outlook.com", phone: kw("66284470"), loyaltyPoints: 470 },
+  { fullName: "Vikram Desai", email: "vikram.desai.kw@gmail.com", phone: kw("97146623"), loyaltyPoints: 420 },
+  { fullName: "Aisha Al-Fahad", email: "aisha.alfahad@gmail.com", phone: kw("50291174"), loyaltyPoints: 380 },
+  { fullName: "Jassim Al-Bahar", email: "jassim.bahar@gmail.com", phone: kw("60158802"), loyaltyPoints: 340 },
+  { fullName: "Carla Mendoza", email: "carla.mendoza.q8@gmail.com", phone: kw("99471256"), loyaltyPoints: 300 },
+  { fullName: "Waleed Al-Sharrah", email: "waleed.sharrah@gmail.com", phone: kw("55074439"), loyaltyPoints: 260 },
+  { fullName: "Zainab Al-Mousawi", email: "zainab.mousawi@gmail.com", phone: kw("66593018"), loyaltyPoints: 220 },
+  { fullName: "Karim Abdelrahman", email: "karim.abdelrahman@gmail.com", phone: kw("97862205"), loyaltyPoints: 180 },
+  { fullName: "Dalal Al-Ibrahim", email: "dalal.ibrahim@outlook.com", phone: kw("50405593"), loyaltyPoints: 150 },
+  { fullName: "Sanjay Pillai", email: "sanjay.pillai.kw@gmail.com", phone: kw("60687741"), loyaltyPoints: 120 },
+  { fullName: "Munira Al-Saleh", email: "munira.alsaleh@gmail.com", phone: kw("99215064"), loyaltyPoints: 90 },
+  { fullName: "Tareq Al-Haddad", email: "tareq.haddad@gmail.com", phone: kw("55328816"), loyaltyPoints: 60 },
+  { fullName: "Eman Al-Yaqout", email: "eman.yaqout@gmail.com", phone: kw("66840392"), loyaltyPoints: 40 },
+  { fullName: "Daniel Okonkwo", email: "daniel.okonkwo.kw@gmail.com", phone: kw("97609187"), loyaltyPoints: 20 },
+  { fullName: "Hanan Al-Mutawa", email: "hanan.mutawa@gmail.com", phone: kw("50953370"), loyaltyPoints: 0 },
+  { fullName: "Bashar Khalil", email: "bashar.khalil@outlook.com", phone: kw("60371425"), loyaltyPoints: 0 },
+];
+
+module.exports = { SELLERS, BUYERS };

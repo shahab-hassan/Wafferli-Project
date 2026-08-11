@@ -59,15 +59,18 @@ export const offerCategories = [
   "travel",
   "services",
 ];
+// Values here are submitted straight to the API and validated against
+// productSubCategoriesEnum in backend/utils/data.js — keep the two in step.
 export const productCategoryOptions = {
   electronics: {
     label: "electronics",
     subcategories: [
-      { value: "phones", label: "Phones" },
+      { value: "smartphones", label: "Phones" },
       { value: "laptops", label: "Laptops" },
       { value: "tablets", label: "Tablets" },
       { value: "accessories", label: "Accessories" },
       { value: "cameras", label: "Cameras" },
+      { value: "headphones", label: "Headphones" },
     ],
   },
   fashion: {
@@ -78,6 +81,7 @@ export const productCategoryOptions = {
       { value: "accessories", label: "Accessories" },
       { value: "watches", label: "Watches" },
       { value: "jewelry", label: "Jewelry" },
+      { value: "bags", label: "Bags" },
     ],
   },
   home: {
@@ -88,6 +92,7 @@ export const productCategoryOptions = {
       { value: "decor", label: "Decor" },
       { value: "kitchen", label: "Kitchen" },
       { value: "garden", label: "Garden" },
+      { value: "lighting", label: "Lighting" },
     ],
   },
   vehicles: {
@@ -96,7 +101,18 @@ export const productCategoryOptions = {
       { value: "cars", label: "Cars" },
       { value: "motorcycles", label: "Motorcycles" },
       { value: "bicycles", label: "Bicycles" },
-      { value: "parts", label: "Parts & Accessories" },
+      { value: "parts", label: "Parts" },
+      { value: "accessories", label: "Accessories" },
+    ],
+  },
+  sports: {
+    label: "sports",
+    subcategories: [
+      { value: "equipment", label: "Equipment" },
+      { value: "clothing", label: "Clothing" },
+      { value: "shoes", label: "Shoes" },
+      { value: "accessories", label: "Accessories" },
+      { value: "fitness", label: "Fitness" },
     ],
   },
 };
@@ -120,7 +136,7 @@ export const productSubCategories = {
   fashion: ["clothing", "shoes", "accessories", "watches", "jewelry", "bags"],
   home: ["furniture", "appliances", "decor", "kitchen", "garden", "lighting"],
   vehicles: ["cars", "motorcycles", "bicycles", "parts", "accessories"],
-  Sports: ["equipment", "clothing", "shoes", "accessories", "fitness"],
+  sports: ["equipment", "clothing", "shoes", "accessories", "fitness"],
 };
 
 // data/service-data.ts
